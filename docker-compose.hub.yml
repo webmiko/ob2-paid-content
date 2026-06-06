@@ -1,0 +1,15 @@
+# Override: web из образа Docker Hub (без пересборки на сервере).
+# DOCKER_IMAGE=user/ob2-paid-content:sha docker compose -f docker-compose.yml -f docker-compose.hub.yml up -d
+services:
+  web:
+    image: ${DOCKER_IMAGE:?Задайте DOCKER_IMAGE}
+    pull_policy: always
+
+  frontend:
+    profiles:
+      - build-frontend
+
+  nginx:
+    depends_on: !override
+      web:
+        condition: service_healthy
