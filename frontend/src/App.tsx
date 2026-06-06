@@ -1,42 +1,30 @@
-import { useEffect, useState } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-type HealthResponse = {
-  status: string;
-};
+import Layout from "./components/Layout";
+import { AuthProvider } from "./context/AuthContext";
+import LoginPage from "./pages/LoginPage";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import PostDetailPage from "./pages/PostDetailPage";
+import PostsPage from "./pages/PostsPage";
+import ProfilePage from "./pages/ProfilePage";
+import RegisterPage from "./pages/RegisterPage";
 
 export default function App() {
-  const [health, setHealth] = useState<string>("…");
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch("/api/health/")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-        return response.json() as Promise<HealthResponse>;
-      })
-      .then((data) => setHealth(data.status))
-      .catch((err: unknown) => {
-        const message = err instanceof Error ? err.message : "unknown error";
-        setError(message);
-      });
-  }, []);
-
   return (
-    <main className="app">
-      <h1>OB2 — платформа платного контента</h1>
-      <p>Итерация 1: каркас SPA + API через nginx.</p>
-      <section className="card">
-        <h2>Health check</h2>
-        {error ? (
-          <p className="error">API недоступен: {error}</p>
-        ) : (
-          <p>
-            <code>/api/health/</code> → <strong>{health}</strong>
-          </p>
-        )}
-      </section>
-    </main>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<PostsPage />} />
+            <Route path="posts/:id" element={<PostDetailPage />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="payment/success" element={<PaymentSuccessPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
