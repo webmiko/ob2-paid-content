@@ -38,3 +38,10 @@ def test_can_view_paid_post_for_subscriber(other_user, paid_post) -> None:
 def test_can_view_paid_post_denied_for_auth_without_sub(other_user, paid_post) -> None:
     """Авторизованный без подписки не видит чужой paid body."""
     assert can_view_post_body(other_user, paid_post) is False
+
+
+@pytest.mark.django_db
+def test_can_view_post_body_uses_subscription_cache(other_user, paid_post) -> None:
+    """Кэш subscription_active избегает повторного запроса подписки."""
+    assert can_view_post_body(other_user, paid_post, subscription_active=True) is True
+    assert can_view_post_body(other_user, paid_post, subscription_active=False) is False

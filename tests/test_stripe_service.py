@@ -35,7 +35,11 @@ def test_retrieve_checkout_session_returns_status(mock_retrieve: MagicMock) -> N
         id="cs_retrieve",
         url="https://pay.example",
         payment_status="paid",
+        metadata={"payment_id": "1"},
+        amount_total=99000,
     )
     session = retrieve_checkout_session("cs_retrieve")
     assert session.payment_status == "paid"
     assert session.session_id == "cs_retrieve"
+    assert session.payment_id == "1"
+    assert session.amount_total == 99000

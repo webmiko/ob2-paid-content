@@ -13,6 +13,15 @@ POSTS_URL = "/api/posts/"
 PASSWORD = "SecurePass123"
 
 
+@pytest.fixture(autouse=True)
+def disable_api_throttling(monkeypatch) -> None:
+    """Отключает rate limit DRF в тестах."""
+    monkeypatch.setattr(
+        "rest_framework.throttling.SimpleRateThrottle.allow_request",
+        lambda self, request, view: True,
+    )
+
+
 @pytest.fixture
 def api_client() -> APIClient:
     """HTTP-клиент API без авторизации."""
