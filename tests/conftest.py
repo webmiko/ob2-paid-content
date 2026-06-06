@@ -20,6 +20,36 @@ def api_client() -> APIClient:
 
 
 @pytest.fixture
+def user(author: User) -> User:
+    """Алиас author — пользователь по умолчанию в тестах."""
+    return author
+
+
+@pytest.fixture
+def jwt_client(auth_client: APIClient) -> APIClient:
+    """Алиас auth_client — JWT-клиент автора."""
+    return auth_client
+
+
+@pytest.fixture
+def post_free(free_post: Post) -> Post:
+    """Алиас free_post."""
+    return free_post
+
+
+@pytest.fixture
+def post_paid(paid_post: Post) -> Post:
+    """Алиас paid_post."""
+    return paid_post
+
+
+@pytest.fixture
+def payer(db) -> User:
+    """Пользователь-плательщик без подписки."""
+    return User.objects.create_user(phone="79005556677", password=PASSWORD)
+
+
+@pytest.fixture
 def author(db) -> User:
     """Автор публикаций."""
     return User.objects.create_user(phone="79001111111", password=PASSWORD)

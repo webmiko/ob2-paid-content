@@ -23,12 +23,6 @@ def payment_detail_url(payment_id: int) -> str:
 
 
 @pytest.fixture
-def payer(db) -> User:
-    """Пользователь без подписки."""
-    return User.objects.create_user(phone="79005556677", password=PASSWORD)
-
-
-@pytest.fixture
 def payer_client(payer: User) -> APIClient:
     """JWT-клиент плательщика."""
     client = APIClient()
