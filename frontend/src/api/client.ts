@@ -5,6 +5,7 @@ import type { ApiErrorBody } from "./types";
 const REFRESH_STORAGE_KEY = "ob2_refresh_token";
 
 let accessToken: string | null = null;
+let refreshInFlight: Promise<string | null> | null = null;
 
 export class ApiError extends Error {
   status: number;
@@ -36,22 +37,34 @@ export function hasRefreshToken(): boolean {
 }
 
 async function refreshAccessToken(): Promise<string | null> {
-  const refresh = localStorage.getItem(REFRESH_STORAGE_KEY);
-  if (!refresh) {
-    return null;
+  if (refreshInFlight) {
+    return refreshInFlight;
   }
-  const response = await fetch("/api/token/refresh/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh }),
-  });
-  if (!response.ok) {
-    clearTokens();
-    return null;
+
+  refreshInFlight = (async () => {
+    const refresh = localStorage.getItem(REFRESH_STORAGE_KEY);
+    if (!refresh) {
+      return null;
+    }
+    const response = await fetch("/api/token/refresh/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh }),
+    });
+    if (!response.ok) {
+      clearTokens();
+      return null;
+    }
+    const data = (await response.json()) as { access: string };
+    accessToken = data.access;
+    return accessToken;
+  })();
+
+  try {
+    return await refreshInFlight;
+  } finally {
+    refreshInFlight = null;
   }
-  const data = (await response.json()) as { access: string };
-  accessToken = data.access;
-  return accessToken;
 }
 
 export async function apiFetch(path: string, options: RequestInit = {}): Promise<Response> {
@@ -89,4 +102,22 @@ export async function apiJson<T>(path: string, options: RequestInit = {}): Promi
     return undefined as T;
   }
   return (await response.json()) as T;
+}
+
+export async function logoutApi(): Promise<void> {
+  const refresh = localStorage.getItem(REFRESH_STORAGE_KEY);
+  if (!refresh) {
+    clearTokens();
+    return;
+  }
+  try {
+    await apiJson("/api/token/logout/", {
+      method: "POST",
+      body: JSON.stringify({ refresh }),
+    });
+  } catch {
+    // Выход на клиенте выполняем даже при ошибке API.
+  } finally {
+    clearTokens();
+  }
 }

@@ -13,7 +13,7 @@ export interface Post {
   body: string | null;
   is_paid: boolean;
   can_view_body: boolean;
-  author_phone: string;
+  author_id: number;
   created_at: string;
   updated_at: string;
 }

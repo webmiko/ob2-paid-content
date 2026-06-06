@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Navigate } from "react-router-dom";
 
 import { apiJson } from "../api/client";
-import type { PaymentCreateResponse } from "../api/types";
+import type { PaymentCreateResponse, PaymentSuccessResponse } from "../api/types";
 import { useAuth } from "../context/AuthContext";
 
 export default function ProfilePage() {
@@ -34,6 +34,16 @@ export default function ProfilePage() {
     } catch {
       setPayError("Не удалось создать платёж. Попробуйте позже.");
       setPayLoading(false);
+    }
+  };
+
+  const handleSyncSubscription = async () => {
+    setPayError(null);
+    try {
+      await apiJson<PaymentSuccessResponse>("/api/payments/sync/", { method: "POST" });
+      await refreshProfile();
+    } catch {
+      setPayError("Не удалось проверить оплату. Попробуйте позже.");
     }
   };
 
@@ -139,9 +149,16 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <button type="button" className="btn btn-link mt-3 ps-0" onClick={() => void refreshProfile()}>
-        Обновить статус подписки
-      </button>
+      <div className="d-flex flex-wrap gap-2 mt-3">
+        <button type="button" className="btn btn-link ps-0" onClick={() => void refreshProfile()}>
+          Обновить профиль
+        </button>
+        {!user.subscription_active && (
+          <button type="button" className="btn btn-link" onClick={() => void handleSyncSubscription()}>
+            Проверить оплату в Stripe
+          </button>
+        )}
+      </div>
     </section>
   );
 }

@@ -24,7 +24,11 @@ export default function Layout() {
                 <span className="navbar-text text-white-50 d-none d-md-inline">
                   {user?.phone}
                 </span>
-                <button type="button" className="btn btn-outline-light btn-sm" onClick={logout}>
+                <button
+                  type="button"
+                  className="btn btn-outline-light btn-sm"
+                  onClick={() => void logout()}
+                >
                   Выйти
                 </button>
               </>

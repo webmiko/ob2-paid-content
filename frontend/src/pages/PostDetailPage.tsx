@@ -20,7 +20,7 @@ export default function PostDetailPage() {
         const data = await apiJson<Post>(`/api/posts/${id}/`);
         setPost(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Ошибка загрузки");
+        setError(err instanceof Error ? err.message : "Не удалось загрузить публикацию.");
       } finally {
         setLoading(false);
       }
@@ -48,7 +48,7 @@ export default function PostDetailPage() {
       </Link>
       <h1 className="mb-2">{post.title}</h1>
       <p className="text-muted">
-        Автор: {post.author_phone}
+        Автор #{post.author_id}
         {post.is_paid && (
           <span className="badge text-bg-warning ms-2">Платная</span>
         )}

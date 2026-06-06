@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { apiJson, clearTokens, hasRefreshToken, setTokens } from "../api/client";
+import { ApiError, apiJson, clearTokens, hasRefreshToken, logoutApi, setTokens } from "../api/client";
 import type { TokenPair, UserProfile } from "../api/types";
 
 interface AuthContextValue {
@@ -17,7 +17,7 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   login: (phone: string, password: string) => Promise<void>;
   register: (phone: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
 
@@ -42,9 +42,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const profile = await apiJson<UserProfile>("/api/users/me/");
       setUser(profile);
-    } catch {
-      clearTokens();
-      setUser(null);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        clearTokens();
+        setUser(null);
+      }
     }
   }, []);
 
@@ -75,8 +77,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await login(phone, password);
   }, [login]);
 
-  const logout = useCallback(() => {
-    clearTokens();
+  const logout = useCallback(async () => {
+    await logoutApi();
     setUser(null);
   }, []);
 
