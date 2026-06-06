@@ -21,6 +21,7 @@ def test_me_returns_profile(auth_client, author) -> None:
     assert response.data == {
         "id": author.pk,
         "phone": author.phone,
+        "display_name": "",
         "subscription_active": False,
     }
 

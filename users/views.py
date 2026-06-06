@@ -7,7 +7,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from config.throttling import AuthRateThrottle
-from users.serializers import RegisterSerializer, UserProfileSerializer, UserPublicSerializer
+from users.serializers import (
+    RegisterSerializer,
+    UserProfileSerializer,
+    UserProfileUpdateSerializer,
+    UserPublicSerializer,
+)
 
 
 class UserMeView(APIView):
@@ -24,6 +29,24 @@ class UserMeView(APIView):
         Returns:
             Response с id, phone и subscription_active.
         """
+        return Response(UserProfileSerializer(request.user).data)
+
+    def patch(self, request: Request) -> Response:
+        """Обновляет публичное имя автора.
+
+        Args:
+            request: HTTP-запрос с JSON {display_name}.
+
+        Returns:
+            Response с обновлённым профилем.
+        """
+        serializer = UserProfileUpdateSerializer(
+            request.user,
+            data=request.data,
+            partial=True,
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(UserProfileSerializer(request.user).data)
 
 

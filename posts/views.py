@@ -1,6 +1,6 @@
 """API-представления posts."""
 
-from django.db.models import QuerySet
+from django.db.models import Count, QuerySet
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from rest_framework.serializers import BaseSerializer
@@ -8,6 +8,7 @@ from rest_framework.serializers import BaseSerializer
 from posts.models import Post
 from posts.permissions import IsAuthorOrReadOnly
 from posts.serializers import PostSerializer, PostWriteSerializer
+from posts.services.queryset import filter_posts_list_queryset
 from users.services.access import user_has_active_subscription
 
 
@@ -46,6 +47,18 @@ class PostViewSet(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         if self.action in ("update", "partial_update", "destroy"):
             return queryset.filter(author=self.request.user)
+        if self.action in ("list", "retrieve"):
+            queryset = queryset.annotate(comment_count=Count("comments"))
+        if self.action == "list":
+            subscription_active = False
+            user = self.request.user
+            if user.is_authenticated:
+                subscription_active = user_has_active_subscription(user)
+            return filter_posts_list_queryset(
+                queryset,
+                self.request,
+                user_has_active_subscription=subscription_active,
+            )
         return queryset
 
     def perform_create(self, serializer: BaseSerializer) -> None:

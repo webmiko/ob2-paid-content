@@ -11,4 +11,4 @@ class PostAdminForm(StyleFormMixin, forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ("title", "body", "is_paid", "author")
+        fields = ("title", "body", "is_paid", "topic", "video_url", "author")

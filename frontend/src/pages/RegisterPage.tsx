@@ -8,6 +8,7 @@ import { useAuth } from "../context/AuthContext";
 export default function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
+  const [displayName, setDisplayName] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -18,17 +19,22 @@ export default function RegisterPage() {
     setSubmitting(true);
     setError(null);
     try {
-      await register(phone, password);
+      await register(phone, password, displayName);
       navigate("/profile");
     } catch (err) {
       if (err instanceof ApiError) {
+        const displayNameErrors = err.body.display_name;
         const phoneErrors = err.body.phone;
         setError(
-          typeof phoneErrors === "string"
-            ? phoneErrors
-            : Array.isArray(phoneErrors)
-              ? String(phoneErrors[0])
-              : "Не удалось зарегистрироваться",
+          typeof displayNameErrors === "string"
+            ? displayNameErrors
+            : Array.isArray(displayNameErrors)
+              ? String(displayNameErrors[0])
+              : typeof phoneErrors === "string"
+                ? phoneErrors
+                : Array.isArray(phoneErrors)
+                  ? String(phoneErrors[0])
+                  : "Не удалось зарегистрироваться",
         );
       } else {
         setError("Ошибка регистрации");
@@ -39,46 +45,55 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="row justify-content-center">
-      <div className="col-md-6 col-lg-5">
-        <h1 className="mb-4">Регистрация</h1>
-        <form className="card card-body" onSubmit={handleSubmit}>
-          {error && <div className="alert alert-danger">{error}</div>}
-          <div className="mb-3">
-            <label className="form-label" htmlFor="phone">
-              Телефон
-            </label>
-            <input
-              id="phone"
-              className="form-control"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+7 900 123-45-67"
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label" htmlFor="password">
-              Пароль
-            </label>
-            <input
-              id="password"
-              type="password"
-              className="form-control"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-            />
-          </div>
-          <button type="submit" className="btn btn-primary w-100" disabled={submitting}>
-            {submitting ? "Регистрация…" : "Зарегистрироваться"}
-          </button>
-        </form>
-        <p className="mt-3">
-          Уже есть аккаунт? <Link to="/login">Вход</Link>
-        </p>
-      </div>
+    <div className="auth-wrap">
+      <h1 className="page-title">
+        <i className="fa-solid fa-user-plus" aria-hidden="true" /> Регистрация
+      </h1>
+      <form className="card" onSubmit={handleSubmit}>
+        {error && <div className="alert-custom alert-danger-custom">{error}</div>}
+        <div className="form-group">
+          <label htmlFor="display_name">Никнейм</label>
+          <input
+            id="display_name"
+            className="form-control-custom"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            placeholder="Как вас видят на платформе"
+            required
+            minLength={2}
+            maxLength={80}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="phone">Телефон для входа</label>
+          <input
+            id="phone"
+            className="form-control-custom"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+7 900 123-45-67"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Пароль</label>
+          <input
+            id="password"
+            type="password"
+            className="form-control-custom"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={8}
+          />
+        </div>
+        <button type="submit" className="btn-pill" disabled={submitting} style={{ width: "100%" }}>
+          {submitting ? "Регистрация…" : "Зарегистрироваться"}
+        </button>
+      </form>
+      <p className="mt-3">
+        Уже есть аккаунт? <Link className="text-link" to="/login">Вход</Link>
+      </p>
     </div>
   );
 }

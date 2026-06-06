@@ -26,6 +26,13 @@ class User(AbstractUser):
 
     username = None  # type: ignore[assignment]
     phone = models.CharField(max_length=PHONE_MAX_LENGTH, unique=True, verbose_name="Телефон")
+    display_name = models.CharField(
+        max_length=80,
+        blank=True,
+        default="",
+        verbose_name="Публичное имя",
+        help_text="Отображается в ленте вместо маскированного телефона.",
+    )
 
     objects: UserManager = UserManager()  # type: ignore[misc, assignment]
 

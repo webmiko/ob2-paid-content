@@ -15,7 +15,11 @@ def test_register_response_excludes_password(api_client) -> None:
     """Register не возвращает password в JSON."""
     response = api_client.post(
         "/api/users/register/",
-        {"phone": "+7 900 777-88-99", "password": PASSWORD},
+        {
+            "phone": "+7 900 777-88-99",
+            "password": PASSWORD,
+            "display_name": "Security Tester",
+        },
         format="json",
     )
     assert response.status_code == status.HTTP_201_CREATED

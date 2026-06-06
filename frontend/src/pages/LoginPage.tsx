@@ -28,45 +28,42 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="row justify-content-center">
-      <div className="col-md-6 col-lg-5">
-        <h1 className="mb-4">Вход</h1>
-        <form className="card card-body" onSubmit={handleSubmit}>
-          {error && <div className="alert alert-danger">{error}</div>}
-          <div className="mb-3">
-            <label className="form-label" htmlFor="phone">
-              Телефон
-            </label>
-            <input
-              id="phone"
-              className="form-control"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label" htmlFor="password">
-              Пароль
-            </label>
-            <input
-              id="password"
-              type="password"
-              className="form-control"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-            />
-          </div>
-          <button type="submit" className="btn btn-primary w-100" disabled={submitting}>
-            {submitting ? "Вход…" : "Войти"}
-          </button>
-        </form>
-        <p className="mt-3">
-          Нет аккаунта? <Link to="/register">Регистрация</Link>
-        </p>
-      </div>
+    <div className="auth-wrap">
+      <h1 className="page-title">
+        <i className="fa-solid fa-right-to-bracket" aria-hidden="true" /> Вход
+      </h1>
+      <form className="card" onSubmit={handleSubmit}>
+        {error && <div className="alert-custom alert-danger-custom">{error}</div>}
+        <div className="form-group">
+          <label htmlFor="phone">Телефон</label>
+          <input
+            id="phone"
+            className="form-control-custom"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+7 900 123-45-67"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Пароль</label>
+          <input
+            id="password"
+            type="password"
+            className="form-control-custom"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={8}
+          />
+        </div>
+        <button type="submit" className="btn-pill" disabled={submitting} style={{ width: "100%" }}>
+          {submitting ? "Вход…" : "Войти"}
+        </button>
+      </form>
+      <p className="mt-3">
+        Нет аккаунта? <Link className="text-link" to="/register">Регистрация</Link>
+      </p>
     </div>
   );
 }

@@ -52,20 +52,28 @@ export default function PaymentSuccessPage() {
     void confirm();
   }, [sessionId, loading, refreshProfile]);
 
+  const alertClass =
+    success === true
+      ? "alert-success-custom"
+      : success === false
+        ? "alert-warning-custom"
+        : "alert-info-custom";
+
   return (
-    <section className="text-center py-5">
-      <h1 className="mb-3">Оплата</h1>
-      <div
-        className={`alert ${success ? "alert-success" : success === false ? "alert-warning" : "alert-info"}`}
-      >
+    <section className="auth-wrap text-center">
+      <h1 className="page-title">Оплата</h1>
+      <div className={`card alert-custom ${alertClass}`}>
         {loading ? "Загрузка…" : message}
       </div>
-      <Link className="btn btn-primary" to="/">
+      <Link className="btn-pill" to="/">
         К публикациям
       </Link>
       {needsLogin && (
         <p className="mt-3">
-          <Link to="/login">Войти</Link>, если вы ещё не авторизованы.
+          <Link className="text-link" to="/login">
+            Войти
+          </Link>
+          , если вы ещё не авторизованы.
         </p>
       )}
     </section>

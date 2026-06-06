@@ -1,53 +1,81 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 
+import MobileBottomNav from "./MobileBottomNav";
 import { useAuth } from "../context/AuthContext";
+import { userAvatarLabel, userNickname } from "../utils/avatar";
 
 export default function Layout() {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, loading } = useAuth();
 
   return (
-    <>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
-        <div className="container">
-          <Link className="navbar-brand" to="/">
-            OB2
-          </Link>
-          <div className="navbar-nav ms-auto flex-row gap-3">
-            <Link className="nav-link" to="/">
-              Публикации
-            </Link>
-            {isAuthenticated ? (
-              <>
-                <Link className="nav-link" to="/profile">
-                  Профиль
-                </Link>
-                <span className="navbar-text text-white-50 d-none d-md-inline">
-                  {user?.phone}
-                </span>
-                <button
-                  type="button"
-                  className="btn btn-outline-light btn-sm"
-                  onClick={() => void logout()}
-                >
-                  Выйти
-                </button>
-              </>
-            ) : (
-              <>
-                <Link className="nav-link" to="/login">
-                  Вход
-                </Link>
-                <Link className="nav-link" to="/register">
-                  Регистрация
-                </Link>
-              </>
-            )}
-          </div>
+    <div className="app-container">
+      <div className="ambient-glow" aria-hidden="true" />
+      <header className="top-bar">
+        <Link className="logo-link" to="/">
+          <h1>
+            <i className="fa-solid fa-pen-fancy" aria-hidden="true" /> Creavity
+          </h1>
+          <span className="logo-tagline">Платформа авторов и платного контента</span>
+        </Link>
+
+        <div className="user-controls">
+          {isAuthenticated && user ? (
+            <>
+              <div className="user-avatar" aria-hidden="true">
+                {userAvatarLabel(user.display_name, user.phone)}
+              </div>
+              <span className="user-nickname">{userNickname(user.display_name)}</span>
+              <button
+                type="button"
+                className="btn-pill btn-sm-pill btn-pill-secondary desktop-only"
+                onClick={() => void logout()}
+              >
+                Выйти
+              </button>
+            </>
+          ) : (
+            !loading && (
+              <span className="text-muted guest-label">Гость</span>
+            )
+          )}
         </div>
+      </header>
+
+      <nav className="nav-tabs nav-desktop" aria-label="Основная навигация">
+        <NavLink end className={({ isActive }) => `nav-btn${isActive ? " active" : ""}`} to="/">
+          <i className="fa-solid fa-stream" aria-hidden="true" />
+          Лента
+        </NavLink>
+        <NavLink className={({ isActive }) => `nav-btn${isActive ? " active" : ""}`} to="/explore">
+          <i className="fa-solid fa-table-cells-large" aria-hidden="true" />
+          Каталог
+        </NavLink>
+        {isAuthenticated ? (
+          <NavLink className={({ isActive }) => `nav-btn${isActive ? " active" : ""}`} to="/profile">
+            <i className="fa-solid fa-user" aria-hidden="true" />
+            Профиль
+          </NavLink>
+        ) : (
+          <>
+            <NavLink className={({ isActive }) => `nav-btn${isActive ? " active" : ""}`} to="/login">
+              <i className="fa-solid fa-right-to-bracket" aria-hidden="true" />
+              Вход
+            </NavLink>
+            <NavLink className={({ isActive }) => `nav-btn${isActive ? " active" : ""}`} to="/register">
+              <i className="fa-solid fa-user-plus" aria-hidden="true" />
+              Регистрация
+            </NavLink>
+          </>
+        )}
       </nav>
-      <main className="container pb-5">
+
+      <main>
         <Outlet />
       </main>
-    </>
+
+      <footer className="app-footer">Creavity — одна подписка на весь платный контент платформы</footer>
+
+      <MobileBottomNav isAuthenticated={isAuthenticated} onLogout={() => void logout()} />
+    </div>
   );
 }

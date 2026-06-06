@@ -13,7 +13,7 @@ class UserPublicSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "phone")
+        fields = ("id", "phone", "display_name")
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "phone", "subscription_active")
+        fields = ("id", "phone", "display_name", "subscription_active")
 
     def get_subscription_active(self, obj: User) -> bool:
         """Возвращает флаг активной подписки пользователя.
@@ -37,14 +37,37 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return user_has_active_subscription(obj)
 
 
-class RegisterSerializer(serializers.ModelSerializer):
-    """Регистрация пользователя по телефону и паролю."""
-
-    password = serializers.CharField(write_only=True, min_length=8, style={"input_type": "password"})
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    """Обновление никнейма пользователя."""
 
     class Meta:
         model = User
-        fields = ("phone", "password")
+        fields = ("display_name",)
+
+    def validate_display_name(self, value: str) -> str:
+        """Проверяет длину и формат никнейма."""
+        nickname = value.strip()[:80]
+        if len(nickname) < 2:
+            raise serializers.ValidationError("Никнейм должен быть не короче 2 символов.")
+        return nickname
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    """Регистрация пользователя по телефону, никнейму и паролю."""
+
+    password = serializers.CharField(write_only=True, min_length=8, style={"input_type": "password"})
+    display_name = serializers.CharField(max_length=80)
+
+    class Meta:
+        model = User
+        fields = ("phone", "display_name", "password")
+
+    def validate_display_name(self, value: str) -> str:
+        """Проверяет никнейм при регистрации."""
+        nickname = value.strip()[:80]
+        if len(nickname) < 2:
+            raise serializers.ValidationError("Никнейм должен быть не короче 2 символов.")
+        return nickname
 
     def validate_phone(self, value: str) -> str:
         """Нормализует телефон и проверяет уникальность.

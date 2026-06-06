@@ -16,7 +16,7 @@ interface AuthContextValue {
   loading: boolean;
   isAuthenticated: boolean;
   login: (phone: string, password: string) => Promise<void>;
-  register: (phone: string, password: string) => Promise<void>;
+  register: (phone: string, password: string, displayName: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -69,10 +69,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(profile);
   }, []);
 
-  const register = useCallback(async (phone: string, password: string) => {
+  const register = useCallback(async (phone: string, password: string, displayName: string) => {
     await apiJson("/api/users/register/", {
       method: "POST",
-      body: JSON.stringify({ phone, password }),
+      body: JSON.stringify({ phone, password, display_name: displayName.trim() }),
     });
     await login(phone, password);
   }, [login]);

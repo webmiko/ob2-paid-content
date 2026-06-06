@@ -141,3 +141,21 @@ def paid_post(author: User) -> Post:
 def post_detail_url(post_id: int) -> str:
     """URL детальной публикации."""
     return f"{POSTS_URL}{post_id}/"
+
+
+RECOMMENDED_URL = f"{POSTS_URL}recommended/"
+
+
+def post_comments_url(post_id: int) -> str:
+    """URL комментариев к публикации."""
+    return f"{POSTS_URL}{post_id}/comments/"
+
+
+def post_comment_detail_url(post_id: int, comment_id: int) -> str:
+    """URL удаления комментария."""
+    return f"{POSTS_URL}{post_id}/comments/{comment_id}/"
+
+
+def post_similar_url(post_id: int) -> str:
+    """URL похожих публикаций."""
+    return f"{POSTS_URL}{post_id}/similar/"
