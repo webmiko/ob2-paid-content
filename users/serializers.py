@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from users.models import User
+from users.services.access import user_has_active_subscription
 from users.validators import normalize_phone
 
 
@@ -13,6 +14,20 @@ class UserPublicSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "phone")
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    """Профиль текущего пользователя для SPA."""
+
+    subscription_active = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ("id", "phone", "subscription_active")
+
+    def get_subscription_active(self, obj: User) -> bool:
+        """Флаг активной подписки из единой функции access."""
+        return user_has_active_subscription(obj)
 
 
 class RegisterSerializer(serializers.ModelSerializer):

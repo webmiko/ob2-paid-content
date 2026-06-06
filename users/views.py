@@ -1,12 +1,22 @@
 """API-представления приложения users."""
 
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from users.serializers import RegisterSerializer, UserPublicSerializer
+from users.serializers import RegisterSerializer, UserProfileSerializer, UserPublicSerializer
+
+
+class UserMeView(APIView):
+    """GET /api/users/me/ — профиль текущего пользователя."""
+
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request: Request) -> Response:
+        """Возвращает phone и статус подписки."""
+        return Response(UserProfileSerializer(request.user).data)
 
 
 class RegisterView(APIView):

@@ -8,7 +8,7 @@ DEFAULT_JWT_REFRESH_DAYS = 1
 STRIPE_CURRENCY_MULTIPLIER = 100
 DEFAULT_STRIPE_CURRENCY = "rub"
 DEFAULT_STRIPE_SUBSCRIPTION_AMOUNT_RUB = 990
-DEFAULT_STRIPE_SUCCESS_URL = "http://localhost/payments/success/"
+DEFAULT_STRIPE_SUCCESS_URL = "http://localhost/payment/success"
 DEFAULT_STRIPE_CANCEL_URL = "http://localhost/payments/cancel/"
 
 # Телефон (validators/users)
