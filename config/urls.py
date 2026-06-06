@@ -9,6 +9,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from users.payment_views import payment_success_page
 from users.serializers import PhoneTokenObtainPairSerializer
 
 
@@ -32,11 +33,13 @@ class PhoneTokenRefreshView(TokenRefreshView):
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("payments/success/", payment_success_page, name="payment-success-page"),
     path("api/health/", health_view, name="health"),
     path("api/token/", PhoneTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", PhoneTokenRefreshView.as_view(), name="token_refresh"),
     path("api/users/", include("users.urls")),
     path("api/posts/", include("posts.urls")),
+    path("api/payments/", include("users.payment_urls")),
 ]
 
 if settings.DEBUG:
