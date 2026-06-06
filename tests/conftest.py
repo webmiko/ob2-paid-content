@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 
 from posts.models import Post
+from users.models import Subscription
 
 User = get_user_model()
 
@@ -31,27 +32,49 @@ def other_user(db) -> User:
 
 
 @pytest.fixture
-def auth_client(api_client: APIClient, author: User) -> APIClient:
+def auth_client(author: User) -> APIClient:
     """API client с JWT автора."""
-    token_response = api_client.post(
+    client = APIClient()
+    token_response = client.post(
         "/api/token/",
         {"phone": author.phone, "password": PASSWORD},
         format="json",
     )
-    api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token_response.data['access']}")
-    return api_client
+    client.credentials(HTTP_AUTHORIZATION=f"Bearer {token_response.data['access']}")
+    return client
 
 
 @pytest.fixture
-def other_auth_client(api_client: APIClient, other_user: User) -> APIClient:
+def other_auth_client(other_user: User) -> APIClient:
     """API client с JWT другого пользователя."""
-    token_response = api_client.post(
+    client = APIClient()
+    token_response = client.post(
         "/api/token/",
         {"phone": other_user.phone, "password": PASSWORD},
         format="json",
     )
-    api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token_response.data['access']}")
-    return api_client
+    client.credentials(HTTP_AUTHORIZATION=f"Bearer {token_response.data['access']}")
+    return client
+
+
+@pytest.fixture
+def subscriber(other_user: User) -> User:
+    """Пользователь с активной подпиской."""
+    Subscription.objects.create(user=other_user, is_active=True)
+    return other_user
+
+
+@pytest.fixture
+def subscriber_client(subscriber: User) -> APIClient:
+    """JWT-клиент подписчика."""
+    client = APIClient()
+    token_response = client.post(
+        "/api/token/",
+        {"phone": subscriber.phone, "password": PASSWORD},
+        format="json",
+    )
+    client.credentials(HTTP_AUTHORIZATION=f"Bearer {token_response.data['access']}")
+    return client
 
 
 @pytest.fixture
