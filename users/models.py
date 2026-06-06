@@ -72,6 +72,13 @@ class Payment(models.Model):
         verbose_name = "Платёж"
         verbose_name_plural = "Платежи"
         ordering = ("-created_at",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=("user",),
+                condition=models.Q(status=PaymentStatus.PENDING),
+                name="unique_pending_payment_per_user",
+            ),
+        ]
 
     def __str__(self) -> str:
         return f"Payment #{self.pk} ({self.status})"

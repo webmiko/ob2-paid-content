@@ -28,6 +28,22 @@ class StripeCheckoutSession:
     session_id: str
     payment_url: str
     payment_status: str
+    payment_id: str | None = None
+    amount_total: int | None = None
+
+
+def _session_from_stripe(session: object) -> StripeCheckoutSession:
+    """Преобразует объект Stripe Session в dataclass."""
+    metadata = getattr(session, "metadata", None) or {}
+    payment_id = metadata.get("payment_id") if isinstance(metadata, dict) else None
+    amount_total = getattr(session, "amount_total", None)
+    return StripeCheckoutSession(
+        session_id=str(session.id),
+        payment_url=str(getattr(session, "url", "") or ""),
+        payment_status=str(getattr(session, "payment_status", None) or "unpaid"),
+        payment_id=str(payment_id) if payment_id else None,
+        amount_total=int(amount_total) if amount_total is not None else None,
+    )
 
 
 def _setup_logger() -> logging.Logger:
@@ -97,11 +113,7 @@ def create_checkout_session(payment: Payment) -> StripeCheckoutSession:
         logger.error("Stripe session missing url or id for payment %s", payment.pk)
         raise StripeServiceError("Stripe session incomplete")
 
-    return StripeCheckoutSession(
-        session_id=session.id,
-        payment_url=session.url,
-        payment_status=str(session.payment_status or "unpaid"),
-    )
+    return _session_from_stripe(session)
 
 
 def retrieve_checkout_session(session_id: str) -> StripeCheckoutSession:
@@ -123,8 +135,4 @@ def retrieve_checkout_session(session_id: str) -> StripeCheckoutSession:
         logger.exception("Stripe Checkout Session retrieve failed: %s", session_id)
         raise StripeServiceError from exc
 
-    return StripeCheckoutSession(
-        session_id=session.id,
-        payment_url=str(session.url or ""),
-        payment_status=str(session.payment_status or "unpaid"),
-    )
+    return _session_from_stripe(session)
