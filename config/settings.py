@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "drf_yasg",
     "users",
     "posts",
@@ -127,6 +128,12 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": DEFAULT_PAGE_SIZE,
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "60/min",
+        "user": "120/min",
+        "auth": "10/min",
+        "payment": "30/min",
+    },
 }
 
 SIMPLE_JWT = {
@@ -148,14 +155,24 @@ STRIPE_CANCEL_URL = os.getenv("STRIPE_CANCEL_URL", DEFAULT_STRIPE_CANCEL_URL)
 STRIPE_SUBSCRIPTION_AMOUNT = int(
     os.getenv("STRIPE_SUBSCRIPTION_AMOUNT", str(DEFAULT_STRIPE_SUBSCRIPTION_AMOUNT_RUB)),
 )
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "")
 
 USE_HTTPS = os.getenv("USE_HTTPS", "false").lower() in ("1", "true", "yes")
 
+MIN_SECRET_KEY_LENGTH = 50
+
 if not DEBUG and SECRET_KEY == DEV_INSECURE_SECRET_KEY:
     raise ImproperlyConfigured("SECRET_KEY must be set when DEBUG is False.")
+
+if not DEBUG and len(SECRET_KEY) < MIN_SECRET_KEY_LENGTH:
+    raise ImproperlyConfigured(
+        f"SECRET_KEY must be at least {MIN_SECRET_KEY_LENGTH} characters when DEBUG is False.",
+    )
 
 if USE_HTTPS:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True

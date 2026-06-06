@@ -6,6 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from config.throttling import AuthRateThrottle
 from users.serializers import RegisterSerializer, UserProfileSerializer, UserPublicSerializer
 
 
@@ -30,6 +31,7 @@ class RegisterView(APIView):
     """Регистрация нового пользователя по телефону и паролю."""
 
     permission_classes = (AllowAny,)
+    throttle_classes = (AuthRateThrottle,)
 
     def post(self, request: Request) -> Response:
         """Регистрирует пользователя по телефону.

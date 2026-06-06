@@ -11,7 +11,6 @@ class PostSerializer(serializers.ModelSerializer):
 
     can_view_body = serializers.SerializerMethodField()
     body = serializers.SerializerMethodField()
-    author_phone = serializers.CharField(source="author.phone", read_only=True)
 
     class Meta:
         model = Post
@@ -21,7 +20,7 @@ class PostSerializer(serializers.ModelSerializer):
             "body",
             "is_paid",
             "can_view_body",
-            "author_phone",
+            "author_id",
             "created_at",
             "updated_at",
         )
@@ -38,20 +37,17 @@ class PostSerializer(serializers.ModelSerializer):
         """
         request = self.context.get("request")
         user = request.user if request else None
-        return can_view_post_body(user, obj)
+        subscription_active = self.context.get("user_has_active_subscription")
+        result = can_view_post_body(user, obj, subscription_active=subscription_active)
+        obj._can_view_body_cached = result  # noqa: SLF001
+        return result
 
     def get_body(self, obj: Post) -> str | None:
-        """Возвращает текст публикации или None без права доступа.
-
-        Args:
-            obj: Публикация из queryset.
-
-        Returns:
-            body при доступе; иначе None.
-        """
-        if self.get_can_view_body(obj):
-            return obj.body
-        return None
+        """Возвращает текст публикации или None без права доступа."""
+        cached = getattr(obj, "_can_view_body_cached", None)
+        if cached is None:
+            cached = self.get_can_view_body(obj)
+        return obj.body if cached else None
 
 
 class PostWriteSerializer(serializers.ModelSerializer):

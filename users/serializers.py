@@ -63,7 +63,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         except ValueError as exc:
             raise serializers.ValidationError(str(exc)) from exc
         if User.objects.filter(phone=normalized).exists():
-            raise serializers.ValidationError("Пользователь с таким телефоном уже существует.")
+            raise serializers.ValidationError("Не удалось зарегистрироваться. Проверьте данные.")
         return normalized
 
     def create(self, validated_data: dict[str, object]) -> User:

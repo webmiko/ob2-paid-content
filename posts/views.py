@@ -8,6 +8,7 @@ from rest_framework.serializers import BaseSerializer
 from posts.models import Post
 from posts.permissions import IsAuthorOrReadOnly
 from posts.serializers import PostSerializer, PostWriteSerializer
+from users.services.access import user_has_active_subscription
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -54,3 +55,14 @@ class PostViewSet(viewsets.ModelViewSet):
             serializer: Валидированные данные новой публикации.
         """
         serializer.save(author=self.request.user)
+
+    def get_serializer_context(self) -> dict:
+        """Добавляет кэш флага подписки для list/retrieve без N+1."""
+        context = super().get_serializer_context()
+        request = self.request
+        user = request.user
+        if user.is_authenticated:
+            context["user_has_active_subscription"] = user_has_active_subscription(user)
+        else:
+            context["user_has_active_subscription"] = False
+        return context
