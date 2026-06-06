@@ -37,19 +37,19 @@ logger = _setup_logger()
 
 @transaction.atomic
 def activate_subscription(payment_id: int) -> Subscription:
-    """Активирует подписку пользователя после оплаты (idempotent).
+    """Активирует подписку пользователя после успешной оплаты.
 
-    Единственная точка активации подписки в v1.
+    Повторный вызов для уже активированной подписки безопасен.
 
     Args:
-        payment_id: ID записи Payment.
+        payment_id: ID записи Payment в статусе PAID.
 
     Returns:
-        Активная подписка пользователя.
+        Запись Subscription с is_active=True.
 
     Raises:
-        Payment.DoesNotExist: Если платёж не найден.
-        ValueError: Если платёж не в статусе PAID.
+        Payment.DoesNotExist: Платёж не найден.
+        ValueError: Платёж не в статусе PAID.
     """
     payment = Payment.objects.select_for_update().get(pk=payment_id)
     subscription, _ = Subscription.objects.select_for_update().get_or_create(

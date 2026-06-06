@@ -8,14 +8,14 @@ ME_URL = "/api/users/me/"
 
 @pytest.mark.django_db
 def test_me_requires_auth(api_client) -> None:
-    """GET /api/users/me/ без JWT → 401."""
+    """GET профиля без авторизации → 401."""
     response = api_client.get(ME_URL)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 @pytest.mark.django_db
 def test_me_returns_profile(auth_client, author) -> None:
-    """GET /api/users/me/ возвращает phone и subscription_active."""
+    """GET профиля возвращает phone и subscription_active."""
     response = auth_client.get(ME_URL)
     assert response.status_code == status.HTTP_200_OK
     assert response.data == {

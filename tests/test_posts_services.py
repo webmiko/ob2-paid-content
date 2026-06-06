@@ -1,4 +1,4 @@
-"""Unit-тесты can_view_post_body."""
+"""Unit-тесты проверки доступа к body публикации."""
 
 import pytest
 from django.contrib.auth.models import AnonymousUser

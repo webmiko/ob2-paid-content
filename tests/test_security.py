@@ -95,7 +95,7 @@ def test_no_raw_sql_in_post_list(api_client, free_post) -> None:
 
 @pytest.mark.django_db
 def test_payment_success_page_renders(client: Client) -> None:
-    """Django template success page доступен (тег Templates)."""
+    """Страница успешной оплаты доступна без авторизации."""
     response = client.get("/payments/success/")
     assert response.status_code == status.HTTP_200_OK
     assert "Оплата прошла успешно".encode() in response.content

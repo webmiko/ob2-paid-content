@@ -1,4 +1,4 @@
-"""Сериализаторы DRF для posts."""
+"""Сериализаторы публикаций для REST API."""
 
 from rest_framework import serializers
 
@@ -7,7 +7,7 @@ from posts.services.access import can_view_post_body
 
 
 class PostSerializer(serializers.ModelSerializer):
-    """Чтение публикации: body скрывается без can_view_post_body."""
+    """Чтение публикации; body скрывается без права доступа."""
 
     can_view_body = serializers.SerializerMethodField()
     body = serializers.SerializerMethodField()
@@ -28,13 +28,27 @@ class PostSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_can_view_body(self, obj: Post) -> bool:
-        """Флаг доступа к body для SPA (paywall UI)."""
+        """Возвращает флаг доступа к полному тексту публикации.
+
+        Args:
+            obj: Публикация из queryset.
+
+        Returns:
+            True, если body можно показать текущему пользователю.
+        """
         request = self.context.get("request")
         user = request.user if request else None
         return can_view_post_body(user, obj)
 
     def get_body(self, obj: Post) -> str | None:
-        """Возвращает body только при наличии доступа."""
+        """Возвращает текст публикации или None без права доступа.
+
+        Args:
+            obj: Публикация из queryset.
+
+        Returns:
+            body при доступе; иначе None.
+        """
         if self.get_can_view_body(obj):
             return obj.body
         return None

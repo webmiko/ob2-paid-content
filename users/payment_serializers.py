@@ -6,7 +6,10 @@ from users.models import Payment
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    """Публичное представление платежа без stripe_* полей."""
+    """Публичное представление платежа без stripe_* полей.
+
+    Поля: id, status, payment_url, amount, currency, created_at.
+    """
 
     class Meta:
         model = Payment
@@ -15,7 +18,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class PaymentSuccessSerializer(serializers.Serializer):
-    """Ответ после успешной синхронизации оплаты."""
+    """Ответ после подтверждения оплаты."""
 
     status = serializers.CharField()
     subscription_active = serializers.BooleanField()

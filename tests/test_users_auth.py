@@ -14,7 +14,7 @@ REFRESH_URL = "/api/token/refresh/"
 
 @pytest.fixture
 def api_client() -> APIClient:
-    """DRF API client."""
+    """HTTP-клиент API."""
     return APIClient()
 
 

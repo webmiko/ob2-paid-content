@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-/** CTA при can_view_body=false — paywall только по данным API. */
+/** Баннер paywall: показывается, когда полный текст публикации недоступен (can_view_body=false). */
 export default function PaywallBanner() {
   return (
     <div className="alert alert-warning" role="alert">

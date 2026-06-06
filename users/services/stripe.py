@@ -18,7 +18,7 @@ STRIPE_SESSION_ID_PLACEHOLDER = "{CHECKOUT_SESSION_ID}"
 
 
 class StripeServiceError(Exception):
-    """Ошибка вызова Stripe API."""
+    """Ошибка при вызове Stripe."""
 
 
 @dataclass(frozen=True)
@@ -67,7 +67,7 @@ def create_checkout_session(payment: Payment) -> StripeCheckoutSession:
         Данные session_id и payment_url для редиректа пользователя.
 
     Raises:
-        StripeServiceError: При ошибке Stripe API.
+        StripeServiceError: Сбой при обращении к Stripe.
     """
     _configure_stripe()
     unit_amount = payment.amount * STRIPE_CURRENCY_MULTIPLIER
@@ -105,16 +105,16 @@ def create_checkout_session(payment: Payment) -> StripeCheckoutSession:
 
 
 def retrieve_checkout_session(session_id: str) -> StripeCheckoutSession:
-    """Синхронизирует статус Checkout Session через Stripe API.
+    """Запрашивает актуальный статус Checkout Session у Stripe.
 
     Args:
-        session_id: Идентификатор Checkout Session.
+        session_id: Идентификатор сессии Checkout.
 
     Returns:
-        Актуальные данные session, включая payment_status.
+        session_id, payment_url и payment_status.
 
     Raises:
-        StripeServiceError: При ошибке Stripe API.
+        StripeServiceError: Сбой при обращении к Stripe.
     """
     _configure_stripe()
     try:

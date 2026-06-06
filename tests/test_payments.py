@@ -118,7 +118,7 @@ def test_success_idempotent(_mock_retrieve, payer_client: APIClient, payer: User
 @pytest.mark.django_db
 @patch("users.payment_views.create_checkout_session", side_effect=StripeServiceError)
 def test_create_stripe_error_returns_502(_mock_create, payer_client: APIClient) -> None:
-    """Ошибка Stripe при create → 502 без деталей SDK."""
+    """Ошибка Stripe при create → 502 без деталей провайдера."""
     response = payer_client.post(CREATE_URL)
     assert response.status_code == status.HTTP_502_BAD_GATEWAY
     assert response.data["detail"] == "Payment service unavailable"

@@ -20,12 +20,20 @@ STRIPE_PAID_STATUS = "paid"
 
 
 class PaymentCreateView(APIView):
-    """POST /api/payments/create/ — создаёт или возвращает PENDING Checkout."""
+    """Создание Stripe Checkout для оплаты подписки."""
 
     permission_classes = (IsAuthenticated,)
 
     def post(self, request: Request) -> Response:
-        """Создаёт Stripe Checkout или возвращает существующий PENDING url."""
+        """Создаёт Stripe Checkout или возвращает существующий PENDING url.
+
+        Args:
+            request: HTTP-запрос авторизованного пользователя.
+
+        Returns:
+            Response 201 с payment_url или 200 при повторном запросе с тем же ожидающим платежом.
+            При сбое Stripe — 502 без текста ошибки провайдера.
+        """
         user = cast(User, request.user)
         pending = (
             Payment.objects.filter(
@@ -63,12 +71,20 @@ class PaymentCreateView(APIView):
 
 
 class PaymentSuccessView(APIView):
-    """GET /api/payments/success/?session_id= — sync Stripe и activate_subscription."""
+    """Подтверждение оплаты по session_id и активация подписки."""
 
     permission_classes = (IsAuthenticated,)
 
     def get(self, request: Request) -> Response:
-        """Проверяет session_id в Stripe и активирует подписку."""
+        """Синхронизирует оплату в Stripe и активирует подписку.
+
+        Args:
+            request: HTTP-запрос; обязателен query-параметр session_id.
+
+        Returns:
+            Response со status и subscription_active.
+            400 без session_id; 404 для чужого session_id; 502 при ошибке Stripe.
+        """
         session_id = request.query_params.get("session_id", "").strip()
         if not session_id:
             return Response({"session_id": ["Обязательный параметр."]}, status=status.HTTP_400_BAD_REQUEST)
@@ -103,12 +119,20 @@ class PaymentSuccessView(APIView):
 
 
 class PaymentDetailView(APIView):
-    """GET /api/payments/<id>/ — статус своего платежа."""
+    """Просмотр статуса платежа владельцем."""
 
     permission_classes = (IsAuthenticated,)
 
     def get(self, request: Request, payment_id: int) -> Response:
-        """Возвращает платёж только владельцу; чужой → 404."""
+        """Возвращает статус платежа владельцу.
+
+        Args:
+            request: HTTP-запрос с JWT.
+            payment_id: ID платежа.
+
+        Returns:
+            Response с PaymentSerializer или 404 для чужого/несуществующего id.
+        """
         try:
             payment = Payment.objects.get(pk=payment_id, user=cast(User, request.user))
         except Payment.DoesNotExist:
@@ -117,5 +141,12 @@ class PaymentDetailView(APIView):
 
 
 def payment_success_page(request: HttpRequest) -> HttpResponse:
-    """Страница после редиректа Stripe (тег Templates)."""
+    """Страница «оплата успешна» после редиректа из Stripe.
+
+    Args:
+        request: HTTP-запрос браузера.
+
+    Returns:
+        HTML-страница с сообщением об успешной оплате.
+    """
     return render(request, "payments/success.html")

@@ -1,4 +1,4 @@
-"""Формы приложения users (admin и Django Forms)."""
+"""Формы редактирования пользователя в админке."""
 
 from django import forms
 
@@ -8,7 +8,7 @@ from users.validators import normalize_phone
 
 
 class UserAdminForm(StyleFormMixin, forms.ModelForm):
-    """Форма редактирования пользователя в Django admin."""
+    """Форма редактирования пользователя в админке."""
 
     class Meta:
         model = User
@@ -23,7 +23,14 @@ class UserAdminForm(StyleFormMixin, forms.ModelForm):
         )
 
     def clean_phone(self) -> str:
-        """Нормализует телефон перед сохранением."""
+        """Нормализует телефон перед сохранением.
+
+        Returns:
+            Нормализованный номер телефона.
+
+        Raises:
+            forms.ValidationError: Некорректный или неподдерживаемый формат номера.
+        """
         phone = self.cleaned_data["phone"]
         try:
             return normalize_phone(phone)

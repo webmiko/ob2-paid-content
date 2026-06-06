@@ -12,19 +12,13 @@ def can_view_post_body(
 ) -> bool:
     """Определяет, может ли пользователь видеть body публикации.
 
-    Единая точка логики paywall для serializers и permissions.
-
     Args:
-        user: Текущий пользователь (guest — AnonymousUser или None).
+        user: Текущий пользователь; guest — AnonymousUser или None.
         post: Публикация.
 
     Returns:
         True для бесплатных постов, для автора своего paid-поста
         или для пользователя с активной подпиской на paid-посты.
-
-    Example:
-        >>> can_view_post_body(None, free_post)
-        True
     """
     if not post.is_paid:
         return True

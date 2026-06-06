@@ -4,11 +4,17 @@ from django import forms
 
 
 class StyleFormMixin:
-    """Проставляет классы Bootstrap 5 полям формы после super().__init__."""
+    """Проставляет классы Bootstrap 5 полям формы при инициализации."""
 
     fields: dict[str, forms.Field]
 
     def __init__(self, *args: object, **kwargs: object) -> None:
+        """Инициализирует форму и проставляет Bootstrap-классы полям.
+
+        Args:
+            *args: Позиционные аргументы конструктора формы.
+            **kwargs: Именованные аргументы конструктора формы.
+        """
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             widget = field.widget

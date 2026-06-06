@@ -14,19 +14,23 @@ from users.serializers import PhoneTokenObtainPairSerializer
 
 
 def health_view(_request: HttpRequest) -> JsonResponse:
-    """Проверка доступности сервиса."""
+    """Проверяет доступность backend-сервиса.
+
+    Returns:
+        JsonResponse {"status": "ok"}.
+    """
     return JsonResponse({"status": "ok"})
 
 
 class PhoneTokenObtainPairView(TokenObtainPairView):
-    """JWT: вход по телефону, публичный endpoint."""
+    """Выдача пары access/refresh по телефону и паролю."""
 
     permission_classes = [AllowAny]  # type: ignore[assignment]
     serializer_class = PhoneTokenObtainPairSerializer
 
 
 class PhoneTokenRefreshView(TokenRefreshView):
-    """Обновление JWT, публичный endpoint."""
+    """Обновление access-токена по refresh-токену."""
 
     permission_classes = [AllowAny]  # type: ignore[assignment]
 

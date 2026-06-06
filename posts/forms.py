@@ -1,4 +1,4 @@
-"""Формы posts для Django admin."""
+"""Формы редактирования публикаций в админке."""
 
 from django import forms
 
@@ -7,7 +7,7 @@ from posts.models import Post
 
 
 class PostAdminForm(StyleFormMixin, forms.ModelForm):
-    """Форма редактирования публикации в Django admin."""
+    """Форма редактирования публикации в админке."""
 
     class Meta:
         model = Post

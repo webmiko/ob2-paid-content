@@ -1,4 +1,4 @@
-"""Сериализаторы DRF для users."""
+"""Сериализаторы пользователей для REST API."""
 
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -17,7 +17,7 @@ class UserPublicSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    """Профиль текущего пользователя для SPA."""
+    """Профиль авторизованного пользователя."""
 
     subscription_active = serializers.SerializerMethodField()
 
@@ -26,7 +26,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ("id", "phone", "subscription_active")
 
     def get_subscription_active(self, obj: User) -> bool:
-        """Флаг активной подписки из единой функции access."""
+        """Возвращает флаг активной подписки пользователя.
+
+        Args:
+            obj: Пользователь из контекста serializer.
+
+        Returns:
+            True, если у пользователя есть активная подписка.
+        """
         return user_has_active_subscription(obj)
 
 
@@ -40,7 +47,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ("phone", "password")
 
     def validate_phone(self, value: str) -> str:
-        """Нормализует телефон и проверяет уникальность."""
+        """Нормализует телефон и проверяет уникальность.
+
+        Args:
+            value: Введённый номер телефона.
+
+        Returns:
+            Нормализованная строка для сохранения в User.phone.
+
+        Raises:
+            serializers.ValidationError: Некорректный формат или занятый номер.
+        """
         try:
             normalized = normalize_phone(value)
         except ValueError as exc:
@@ -50,7 +67,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         return normalized
 
     def create(self, validated_data: dict[str, object]) -> User:
-        """Создаёт пользователя с хешированным паролем."""
+        """Создаёт пользователя с хешированным паролем.
+
+        Args:
+            validated_data: Поля phone и password после validate_phone.
+
+        Returns:
+            Новый User; пароль сохраняется только в виде хеша.
+        """
         password = validated_data.pop("password")
         phone = validated_data.pop("phone")
         return User.objects.create_user(phone=str(phone), password=str(password), **validated_data)
@@ -60,7 +84,17 @@ class PhoneTokenObtainPairSerializer(TokenObtainPairSerializer):
     """JWT: вход по полю phone вместо username."""
 
     def validate(self, attrs: dict[str, object]) -> dict[str, str]:
-        """Нормализует phone перед аутентификацией."""
+        """Нормализует phone и выдаёт JWT-пару.
+
+        Args:
+            attrs: Поля phone и password из запроса.
+
+        Returns:
+            Словарь с ключами access и refresh.
+
+        Raises:
+            serializers.ValidationError: Неверный телефон или пароль.
+        """
         phone = attrs.get(self.username_field)
         if isinstance(phone, str):
             try:

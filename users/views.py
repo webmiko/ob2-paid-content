@@ -10,22 +10,39 @@ from users.serializers import RegisterSerializer, UserProfileSerializer, UserPub
 
 
 class UserMeView(APIView):
-    """GET /api/users/me/ — профиль текущего пользователя."""
+    """Профиль текущего авторизованного пользователя."""
 
     permission_classes = (IsAuthenticated,)
 
     def get(self, request: Request) -> Response:
-        """Возвращает phone и статус подписки."""
+        """Возвращает профиль текущего пользователя.
+
+        Args:
+            request: HTTP-запрос авторизованного пользователя.
+
+        Returns:
+            Response с id, phone и subscription_active.
+        """
         return Response(UserProfileSerializer(request.user).data)
 
 
 class RegisterView(APIView):
-    """POST /api/users/register/ — регистрация по телефону."""
+    """Регистрация нового пользователя по телефону и паролю."""
 
     permission_classes = (AllowAny,)
 
     def post(self, request: Request) -> Response:
-        """Создаёт пользователя и возвращает id и phone без пароля."""
+        """Регистрирует пользователя по телефону.
+
+        Args:
+            request: HTTP-запрос с JSON {phone, password}.
+
+        Returns:
+            Response 201 с id и phone без password.
+
+        Raises:
+            serializers.ValidationError: Ошибки валидации (ответ 400).
+        """
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()

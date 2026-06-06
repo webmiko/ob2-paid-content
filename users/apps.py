@@ -4,7 +4,7 @@ from django.apps import AppConfig
 
 
 class UsersConfig(AppConfig):
-    """Пользователи, JWT и подписки."""
+    """Пользователи, аутентификация и подписки."""
 
     default_auto_field = "django.db.models.BigAutoField"
     name = "users"

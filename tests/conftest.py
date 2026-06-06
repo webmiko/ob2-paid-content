@@ -15,7 +15,7 @@ PASSWORD = "SecurePass123"
 
 @pytest.fixture
 def api_client() -> APIClient:
-    """DRF API client без авторизации."""
+    """HTTP-клиент API без авторизации."""
     return APIClient()
 
 
