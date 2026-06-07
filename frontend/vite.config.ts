@@ -1,6 +1,22 @@
 import react from "@vitejs/plugin-react";
+import type { Plugin } from "vite";
 import { defineConfig, loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
+
+/** Сборочный CSS не блокирует первую отрисовку (критичные стили — inline в index.html). */
+function asyncCssPlugin(): Plugin {
+  return {
+    name: "async-css",
+    apply: "build",
+    transformIndexHtml(html) {
+      return html.replace(
+        /<link rel="stylesheet"( crossorigin)? href="(\/assets\/[^"]+\.css)">/g,
+        '<link rel="preload" href="$2" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">' +
+          '<noscript><link rel="stylesheet"$1 href="$2"></noscript>',
+      );
+    },
+  };
+}
 
 const PWA_NAME = "Creavity";
 const PWA_DESCRIPTION =
@@ -15,6 +31,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
+      asyncCssPlugin(),
       VitePWA({
         registerType: "autoUpdate",
         includeAssets: ["favicon.svg", "og-default.svg", "pwa-192.png", "pwa-512.png"],

@@ -128,8 +128,18 @@ export function resolveCoords(): GeoCoords {
   return readStoredCoords() ?? DEFAULT_COORDS;
 }
 
+/** Geolocation доступна только в secure context (HTTPS, localhost). */
+export function canUseGeolocation(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    window.isSecureContext &&
+    typeof navigator !== "undefined" &&
+    Boolean(navigator.geolocation)
+  );
+}
+
 export function requestBrowserCoords(): Promise<GeoCoords | null> {
-  if (!navigator.geolocation) {
+  if (!canUseGeolocation()) {
     return Promise.resolve(null);
   }
   return new Promise((resolve) => {
