@@ -70,9 +70,19 @@ printf '%s' '${DOCKER_HUB_TOKEN}' | docker login -u '${DOCKER_HUB_USERNAME}' --p
 
 export DOCKER_IMAGE='${DOCKER_IMAGE}'
 docker compose -f '${COMPOSE_FILE}' pull web
-docker compose -f '${COMPOSE_FILE}' up -d db web nginx
+docker compose -f '${COMPOSE_FILE}' up -d db web
 
-for attempt in \$(seq 1 30); do
+for attempt in \$(seq 1 40); do
+  if docker compose -f '${COMPOSE_FILE}' ps web 2>/dev/null | grep -q '(healthy)'; then
+    echo "Web container healthy"
+    break
+  fi
+  sleep 3
+done
+
+docker compose -f '${COMPOSE_FILE}' up -d --force-recreate nginx
+
+for attempt in \$(seq 1 40); do
   if curl -fsS http://127.0.0.1/api/health/ >/dev/null; then
     echo "Health OK"
     curl -fsS http://127.0.0.1/api/health/
