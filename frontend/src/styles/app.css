@@ -277,6 +277,45 @@ main {
   color: inherit;
 }
 
+.post-card--topic-tech {
+  background: linear-gradient(135deg, rgba(238, 242, 255, 0.94) 0%, rgba(219, 228, 255, 0.82) 100%);
+  border-color: rgba(165, 180, 252, 0.38);
+}
+
+.post-card--topic-business {
+  background: linear-gradient(135deg, rgba(236, 253, 245, 0.94) 0%, rgba(209, 250, 229, 0.82) 100%);
+  border-color: rgba(110, 231, 183, 0.34);
+}
+
+.post-card--topic-lifestyle {
+  background: linear-gradient(135deg, rgba(255, 241, 242, 0.94) 0%, rgba(252, 231, 243, 0.82) 100%);
+  border-color: rgba(251, 182, 206, 0.34);
+}
+
+.post-card--topic-education {
+  background: linear-gradient(135deg, rgba(255, 251, 235, 0.94) 0%, rgba(254, 243, 199, 0.82) 100%);
+  border-color: rgba(252, 211, 77, 0.34);
+}
+
+.post-card--topic-creative {
+  background: linear-gradient(135deg, rgba(245, 243, 255, 0.94) 0%, rgba(237, 233, 254, 0.82) 100%);
+  border-color: rgba(196, 181, 253, 0.38);
+}
+
+.post-card--topic-other {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.94) 0%, rgba(241, 245, 249, 0.82) 100%);
+  border-color: rgba(203, 213, 225, 0.38);
+}
+
+.post-card--topic-tech:hover,
+.post-card--topic-business:hover,
+.post-card--topic-lifestyle:hover,
+.post-card--topic-education:hover,
+.post-card--topic-creative:hover,
+.post-card--topic-other:hover {
+  border-color: rgba(255, 255, 255, 0.96);
+}
+
 .post-header {
   display: flex;
   justify-content: space-between;

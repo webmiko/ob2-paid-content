@@ -4,6 +4,7 @@ import type { Post } from "../api/types";
 import { videoProviderLabel } from "../utils/videoProviders";
 import PostBadge from "./PostBadge";
 import { formatPostDate } from "../utils/avatar";
+import { topicCardClassName } from "../utils/topicStyles";
 
 interface PostCardProps {
   post: Post;
@@ -13,7 +14,7 @@ export default function PostCard({ post }: PostCardProps) {
   const providerLabel = videoProviderLabel(post.video_provider);
 
   return (
-    <article className="card post-card">
+    <article className={topicCardClassName(post.topic)}>
       <div className="post-header">
         <div className="post-meta">
           <Link to={`/authors/${post.author_id}`} className="author-label author-link">
