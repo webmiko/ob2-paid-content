@@ -79,27 +79,34 @@ export default defineConfig(({ mode }) => {
             /^\/robots\.txt$/,
             /^\/sitemap\.xml$/,
           ],
-          runtimeCaching: [
-            {
-              urlPattern: /^https:\/\/cdnjs\.cloudflare\.com\/.*/i,
-              handler: "CacheFirst",
-              options: {
-                cacheName: "cdn-fontawesome",
-                expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365,
-                },
-              },
-            },
-          ],
+          runtimeCaching: [],
         },
         devOptions: {
           enabled: false,
         },
       }),
     ],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            "vendor-router": ["react-router-dom"],
+          },
+        },
+      },
+    },
     server: {
       port: 5173,
+      proxy: {
+        "/api": { target: apiTarget, changeOrigin: true },
+        "/admin": { target: apiTarget, changeOrigin: true },
+        "/payments": { target: apiTarget, changeOrigin: true },
+        "/robots.txt": { target: apiTarget, changeOrigin: true },
+        "/sitemap.xml": { target: apiTarget, changeOrigin: true },
+      },
+    },
+    preview: {
+      port: 4173,
       proxy: {
         "/api": { target: apiTarget, changeOrigin: true },
         "/admin": { target: apiTarget, changeOrigin: true },
