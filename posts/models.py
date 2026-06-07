@@ -32,6 +32,27 @@ class Post(models.Model):
         help_text="YouTube, Vimeo, Rutube, VK Video или Дзен — показывается при доступе к публикации.",
     )
     view_count = models.PositiveIntegerField(default=0, verbose_name="Просмотры")
+    meta_title = models.CharField(
+        max_length=70,
+        blank=True,
+        default="",
+        verbose_name="SEO заголовок",
+        help_text="Заполняется автоматически при сохранении.",
+    )
+    meta_description = models.CharField(
+        max_length=160,
+        blank=True,
+        default="",
+        verbose_name="SEO описание",
+        help_text="Meta description для поисковиков и Open Graph.",
+    )
+    meta_keywords = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        verbose_name="SEO ключевые слова",
+        help_text="Keywords через запятую; генерируются автоматически.",
+    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
 

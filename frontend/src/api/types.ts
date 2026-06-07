@@ -14,6 +14,9 @@ export interface Post {
   is_paid: boolean;
   topic: string;
   topic_label: string;
+  meta_title: string;
+  meta_description: string;
+  meta_keywords: string;
   has_video: boolean;
   video_provider: string | null;
   video_url: string | null;

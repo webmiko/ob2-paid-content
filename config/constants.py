@@ -11,6 +11,10 @@ DEFAULT_STRIPE_SUBSCRIPTION_AMOUNT_RUB = 990
 DEFAULT_STRIPE_SUCCESS_URL = "http://localhost/payment/success"
 DEFAULT_STRIPE_CANCEL_URL = "http://localhost/payment/cancel"
 DEFAULT_SITE_URL = "http://localhost"
+SITE_NAME = "Creavity"
+META_TITLE_MAX = 70
+META_DESCRIPTION_MAX = 160
+META_KEYWORDS_MAX = 255
 
 # Телефон (validators/users)
 PHONE_DIGITS_LENGTH = 11

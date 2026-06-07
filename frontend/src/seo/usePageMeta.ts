@@ -17,6 +17,7 @@ export interface PageMetaOptions {
   publishedTime?: string;
   modifiedTime?: string;
   authorName?: string;
+  keywords?: string;
 }
 
 function upsertMeta(attribute: "name" | "property", key: string, content: string): void {
@@ -55,6 +56,7 @@ function applyPageMeta(options: PageMetaOptions): void {
     publishedTime,
     modifiedTime,
     authorName,
+    keywords,
   } = options;
 
   const pageTitle = buildPageTitle(title);
@@ -65,6 +67,11 @@ function applyPageMeta(options: PageMetaOptions): void {
   document.title = pageTitle;
   upsertMeta("name", "description", description);
   upsertMeta("name", "robots", robots);
+  if (keywords?.trim()) {
+    upsertMeta("name", "keywords", keywords.trim());
+  } else {
+    document.head.querySelector('meta[name="keywords"]')?.remove();
+  }
   upsertLink("canonical", canonical);
   upsertLink("icon", "/favicon.svg", { type: "image/svg+xml" });
   upsertLink("alternate", getSiteUrl(), { hreflang: "ru" });
@@ -110,5 +117,6 @@ export function usePageMeta(options: PageMetaOptions): void {
     options.publishedTime,
     options.modifiedTime,
     options.authorName,
+    options.keywords,
   ]);
 }

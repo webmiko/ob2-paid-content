@@ -12,7 +12,8 @@ import PostComments from "../components/PostComments";
 import PostVideo from "../components/PostVideo";
 import { formatPostDate } from "../utils/avatar";
 import { markPostViewed } from "../utils/viewedPosts";
-import { absoluteUrl, getSiteUrl, truncateDescription, SITE_NAME } from "../seo/site";
+import { postJsonLdData, postPageMetaOptions } from "../seo/postSeo";
+import { topicCardClassName } from "../utils/topicStyles";
 
 export default function PostDetailPage() {
   const { id } = useParams();
@@ -72,78 +73,15 @@ export default function PostDetailPage() {
     );
   }
 
-  const postDescription = post.can_view_body && post.body
-    ? truncateDescription(post.body)
-    : post.is_paid
-      ? `Платная публикация «${post.title}» автора ${post.author_label} на Creavity.`
-      : truncateDescription(`${post.title}. ${post.author_label} на Creavity.`);
-
   return (
     <>
-      <PageMeta
-        title={post.title}
-        description={postDescription}
-        path={`/posts/${post.id}`}
-        ogType="article"
-        publishedTime={post.created_at}
-        modifiedTime={post.updated_at}
-        authorName={post.author_label}
-      />
-      <JsonLd
-        data={[
-          {
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: post.title,
-            description: postDescription,
-            url: absoluteUrl(`/posts/${post.id}`),
-            datePublished: post.created_at,
-            dateModified: post.updated_at,
-            author: {
-              "@type": "Person",
-              name: post.author_label,
-              url: absoluteUrl(`/authors/${post.author_id}`),
-            },
-            publisher: {
-              "@type": "Organization",
-              name: SITE_NAME,
-              url: getSiteUrl(),
-            },
-            mainEntityOfPage: absoluteUrl(`/posts/${post.id}`),
-            isAccessibleForFree: !post.is_paid,
-            inLanguage: "ru-RU",
-          },
-          {
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              {
-                "@type": "ListItem",
-                position: 1,
-                name: "Лента",
-                item: absoluteUrl("/"),
-              },
-              {
-                "@type": "ListItem",
-                position: 2,
-                name: post.topic_label,
-                item: absoluteUrl(`/topics/${post.topic}`),
-              },
-              {
-                "@type": "ListItem",
-                position: 3,
-                name: post.title,
-                item: absoluteUrl(`/posts/${post.id}`),
-              },
-            ],
-          },
-        ]}
-      />
+      <PageMeta {...postPageMetaOptions(post)} />
+      <JsonLd data={postJsonLdData(post)} />
       <article>
       <Link className="back-link" to="/">
         ← В ленту
       </Link>
-      <div className="card">
+      <div className={topicCardClassName(post.topic, "card")}>
         <div className="post-header">
           <div className="post-meta">
             <Link to={`/authors/${post.author_id}`} className="author-label author-link">

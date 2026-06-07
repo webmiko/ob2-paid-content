@@ -25,4 +25,15 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ("is_paid", "topic", "created_at")
     search_fields = ("title", "body", "author__phone")
     raw_id_fields = ("author",)
-    readonly_fields = ("created_at", "updated_at")
+    readonly_fields = ("created_at", "updated_at", "meta_title", "meta_description", "meta_keywords")
+    fieldsets = (
+        (None, {"fields": ("title", "body", "topic", "is_paid", "video_url", "author")}),
+        (
+            "SEO",
+            {
+                "fields": ("meta_title", "meta_description", "meta_keywords"),
+                "description": "Заполняются автоматически при сохранении публикации.",
+            },
+        ),
+        ("Служебное", {"fields": ("view_count", "created_at", "updated_at")}),
+    )
