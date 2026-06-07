@@ -11,12 +11,14 @@ from rest_framework.views import APIView
 
 from config.throttling import AccountDeleteThrottle, AuthRateThrottle
 from users.serializers import (
+    PhoneSendCodeSerializer,
     RegisterSerializer,
     UserDeleteAccountSerializer,
     UserProfileSerializer,
     UserProfileUpdateSerializer,
     UserPublicSerializer,
 )
+from users.services.sms_verification import send_verification_code
 from users.services.tokens import blacklist_user_tokens
 
 
@@ -79,6 +81,23 @@ class UserMeView(APIView):
         blacklist_user_tokens(user, refresh=refresh)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PhoneSendCodeView(APIView):
+    """Имитация отправки SMS-кода для подтверждения номера при регистрации."""
+
+    permission_classes = (AllowAny,)
+    throttle_classes = (AuthRateThrottle,)
+
+    def post(self, request: Request) -> Response:
+        serializer = PhoneSendCodeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        phone = str(serializer.validated_data["phone"])
+        simulation_code, detail = send_verification_code(phone)
+        payload: dict[str, str] = {"detail": detail}
+        if simulation_code:
+            payload["simulation_code"] = simulation_code
+        return Response(payload, status=status.HTTP_200_OK)
 
 
 class RegisterView(APIView):

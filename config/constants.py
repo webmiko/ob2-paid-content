@@ -16,9 +16,13 @@ META_TITLE_MAX = 70
 META_DESCRIPTION_MAX = 160
 META_KEYWORDS_MAX = 255
 
-# Телефон (validators/users)
+# Телефон (validators/users) — RU/KZ; BY: 12 цифр, префикс 375
 PHONE_DIGITS_LENGTH = 11
 PHONE_COUNTRY_DIGIT = "7"
+
+# SMS-подтверждение (имитация без внешнего провайдера)
+DEFAULT_SMS_CODE_TTL_SECONDS = 600
+DEFAULT_SMS_VERIFIED_TTL_SECONDS = 1800
 
 # Пагинация списка публикаций
 DEFAULT_PAGE_SIZE = 10

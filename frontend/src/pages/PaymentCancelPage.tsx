@@ -16,7 +16,7 @@ export default function PaymentCancelPage() {
       <div className="card alert-custom alert-warning-custom mb-4">
         Платёж не был завершён. Подписка не активирована.
       </div>
-      <div className="d-flex flex-wrap justify-content-center gap-2">
+      <div className="btn-row-center">
         <Link className="btn-pill" to="/profile">
           В профиль
         </Link>

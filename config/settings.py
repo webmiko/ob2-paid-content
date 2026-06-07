@@ -15,6 +15,8 @@ from config.constants import (
     DEFAULT_JWT_REFRESH_DAYS,
     DEFAULT_PAGE_SIZE,
     DEFAULT_SITE_URL,
+    DEFAULT_SMS_CODE_TTL_SECONDS,
+    DEFAULT_SMS_VERIFIED_TTL_SECONDS,
     DEFAULT_STRIPE_CANCEL_URL,
     DEFAULT_STRIPE_CURRENCY,
     DEFAULT_STRIPE_SUBSCRIPTION_AMOUNT_RUB,
@@ -172,6 +174,29 @@ STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "")
 SITE_URL = os.getenv("SITE_URL", DEFAULT_SITE_URL).rstrip("/")
 
 USE_HTTPS = os.getenv("USE_HTTPS", "false").lower() in ("1", "true", "yes")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "ob2-default-cache",
+    },
+}
+
+SMS_VERIFICATION_REQUIRED = os.getenv("SMS_VERIFICATION_REQUIRED", "true").lower() in (
+    "1",
+    "true",
+    "yes",
+)
+SMS_CODE_TTL_SECONDS = int(
+    os.getenv("SMS_CODE_TTL_SECONDS", str(DEFAULT_SMS_CODE_TTL_SECONDS)),
+)
+SMS_VERIFIED_TTL_SECONDS = int(
+    os.getenv("SMS_VERIFIED_TTL_SECONDS", str(DEFAULT_SMS_VERIFIED_TTL_SECONDS)),
+)
+SMS_SHOW_CODE_IN_RESPONSE = os.getenv(
+    "SMS_SHOW_CODE_IN_RESPONSE",
+    "true" if DEBUG else "false",
+).lower() in ("1", "true", "yes")
 
 MIN_SECRET_KEY_LENGTH = 50
 

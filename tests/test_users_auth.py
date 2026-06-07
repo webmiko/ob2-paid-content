@@ -2,14 +2,38 @@
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
 
 User = get_user_model()
 
 REGISTER_URL = "/api/users/register/"
+SEND_CODE_URL = "/api/users/phone/send-code/"
 TOKEN_URL = "/api/token/"
 REFRESH_URL = "/api/token/refresh/"
+
+
+def _register_payload(
+    api_client: APIClient,
+    phone: str,
+    password: str,
+    display_name: str,
+    country: str = "ru",
+) -> dict[str, str]:
+    send = api_client.post(
+        SEND_CODE_URL,
+        {"phone": phone, "country": country},
+        format="json",
+    )
+    assert send.status_code == status.HTTP_200_OK, send.data
+    return {
+        "phone": phone,
+        "password": password,
+        "display_name": display_name,
+        "country": country,
+        "sms_code": send.data["simulation_code"],
+    }
 
 
 @pytest.fixture
@@ -25,20 +49,19 @@ def user_password() -> str:
 
 
 @pytest.mark.django_db
+@override_settings(SMS_SHOW_CODE_IN_RESPONSE=True, SMS_VERIFICATION_REQUIRED=True)
 def test_register_returns_201_without_password(
     api_client: APIClient,
     user_password: str,
 ) -> None:
     """POST register создаёт пользователя и не возвращает password."""
-    response = api_client.post(
-        REGISTER_URL,
-        {
-            "phone": "+7 (900) 111-22-33",
-            "display_name": "CreavityUser",
-            "password": user_password,
-        },
-        format="json",
+    payload = _register_payload(
+        api_client,
+        "+7 (900) 111-22-33",
+        user_password,
+        "CreavityUser",
     )
+    response = api_client.post(REGISTER_URL, payload, format="json")
     assert response.status_code == status.HTTP_201_CREATED
     assert response.data == {
         "id": response.data["id"],
@@ -51,29 +74,29 @@ def test_register_returns_201_without_password(
 
 
 @pytest.mark.django_db
+@override_settings(SMS_SHOW_CODE_IN_RESPONSE=True, SMS_VERIFICATION_REQUIRED=True)
 def test_register_requires_display_name(api_client: APIClient, user_password: str) -> None:
     """Регистрация без никнейма → 400."""
-    response = api_client.post(
-        REGISTER_URL,
-        {"phone": "79009998877", "password": user_password},
-        format="json",
-    )
+    payload = _register_payload(api_client, "79009998877", user_password, "Nick")
+    del payload["display_name"]
+    response = api_client.post(REGISTER_URL, payload, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 @pytest.mark.django_db
+@override_settings(SMS_SHOW_CODE_IN_RESPONSE=True, SMS_VERIFICATION_REQUIRED=True)
 def test_register_duplicate_phone_returns_400(
     api_client: APIClient,
     user_password: str,
 ) -> None:
     """Повторная регистрация с тем же телефоном в другом формате → 400."""
     User.objects.create_user(phone="79001112233", password=user_password)
-    response = api_client.post(
-        REGISTER_URL,
-        {"phone": "89001112233", "password": user_password, "display_name": "Duplicate"},
+    send = api_client.post(
+        SEND_CODE_URL,
+        {"phone": "89001112233", "country": "ru"},
         format="json",
     )
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert send.status_code == status.HTTP_400_BAD_REQUEST
 
 
 @pytest.mark.django_db
