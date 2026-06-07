@@ -14,7 +14,7 @@ import ProtectedPaidPost from "../components/ProtectedPaidPost";
 import { formatPostDate } from "../utils/avatar";
 import { markPostViewed } from "../utils/viewedPosts";
 import { postJsonLdData, postPageMetaOptions } from "../seo/postSeo";
-import { topicCardClassName } from "../utils/topicStyles";
+import { topicChipClassName } from "../utils/topicStyles";
 
 export default function PostDetailPage() {
   const { id } = useParams();
@@ -82,14 +82,17 @@ export default function PostDetailPage() {
       <Link className="back-link" to="/">
         ← В ленту
       </Link>
-      <div className={topicCardClassName(post.topic, "card")}>
+      <div className="card">
         <div className="post-header">
           <div className="post-meta">
             <Link to={`/authors/${post.author_id}`} className="author-label author-link">
               {post.author_label}
             </Link>
             <PostBadge isPaid={post.is_paid} />
-            <Link to={`/topics/${post.topic}`} className="topic-chip topic-link">
+            <Link
+              to={`/topics/${post.topic}`}
+              className={topicChipClassName(post.topic, "topic-link")}
+            >
               {post.topic_label}
             </Link>
           </div>

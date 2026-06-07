@@ -5,7 +5,7 @@ import { videoProviderLabel } from "../utils/videoProviders";
 import PostBadge from "./PostBadge";
 import ProtectedPaidPost from "./ProtectedPaidPost";
 import { formatPostDate } from "../utils/avatar";
-import { topicCardClassName } from "../utils/topicStyles";
+import { topicChipClassName } from "../utils/topicStyles";
 
 interface PostCardProps {
   post: Post;
@@ -15,7 +15,7 @@ export default function PostCard({ post }: PostCardProps) {
   const providerLabel = videoProviderLabel(post.video_provider);
 
   return (
-    <article className={topicCardClassName(post.topic)}>
+    <article className="card post-card">
       <div className="post-header">
         <div className="post-meta">
           <Link to={`/authors/${post.author_id}`} className="author-label author-link">
@@ -31,7 +31,10 @@ export default function PostCard({ post }: PostCardProps) {
               )}
             </span>
           )}
-          <Link to={`/topics/${post.topic}`} className="topic-chip topic-link">
+          <Link
+            to={`/topics/${post.topic}`}
+            className={topicChipClassName(post.topic, "topic-link")}
+          >
             {post.topic_label}
           </Link>
         </div>

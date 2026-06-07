@@ -18,7 +18,7 @@ import PostEditForm from "../components/PostEditForm";
 import { TOPICS } from "../constants/topics";
 import { useAuth } from "../context/AuthContext";
 import { formatPostDate, userNickname } from "../utils/avatar";
-import { topicCardClassName } from "../utils/topicStyles";
+import { topicChipClassName } from "../utils/topicStyles";
 import { VIDEO_URL_PLACEHOLDER } from "../utils/videoProviders";
 
 export default function ProfilePage() {
@@ -309,7 +309,7 @@ export default function ProfilePage() {
         myPosts.map((post) => (
           <div
             key={post.id}
-            className={`${topicCardClassName(post.topic)} compact-post-card profile-post-item`}
+            className="card post-card compact-post-card profile-post-item"
           >
             {editingPostId === post.id ? (
               <PostEditForm
@@ -326,7 +326,7 @@ export default function ProfilePage() {
                 <div className="post-header">
                   <div className="post-meta">
                     <PostBadge isPaid={post.is_paid} />
-                    <span className="topic-chip">{post.topic_label}</span>
+                    <span className={topicChipClassName(post.topic)}>{post.topic_label}</span>
                     {post.has_video && (
                       <span className="video-chip">
                         <i className="fa-solid fa-video" aria-hidden="true" /> Видео

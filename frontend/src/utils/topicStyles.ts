@@ -1,17 +1,20 @@
-/** CSS-модификатор фона карточки по тематике публикации. */
+/** CSS-модификатор цвета тега тематики (бывшие фоны карточек). */
 
-const TOPIC_CARD_CLASSES = new Set([
-  "post-card--topic-tech",
-  "post-card--topic-business",
-  "post-card--topic-lifestyle",
-  "post-card--topic-education",
-  "post-card--topic-creative",
-  "post-card--topic-other",
+const TOPIC_SLUGS = new Set([
+  "tech",
+  "business",
+  "lifestyle",
+  "education",
+  "creative",
+  "other",
 ]);
 
-export function topicCardClassName(topic: string, baseClass = "card post-card"): string {
-  const modifier = TOPIC_CARD_CLASSES.has(`post-card--topic-${topic}`)
-    ? `post-card--topic-${topic}`
-    : "post-card--topic-other";
-  return `${baseClass} ${modifier}`;
+function topicSlug(topic: string): string {
+  return TOPIC_SLUGS.has(topic) ? topic : "other";
+}
+
+export function topicChipClassName(topic: string, extra = ""): string {
+  const slug = topicSlug(topic);
+  const base = `topic-chip topic-chip--topic-${slug}`;
+  return extra ? `${base} ${extra}` : base;
 }
