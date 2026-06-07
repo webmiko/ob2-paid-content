@@ -13,6 +13,7 @@ __pycache__/
 *.so
 *.egg-info/
 dist/
+frontend/dist/
 frontend/node_modules/
 build/
 

@@ -14,6 +14,7 @@ from config.constants import (
     DEFAULT_JWT_ACCESS_MINUTES,
     DEFAULT_JWT_REFRESH_DAYS,
     DEFAULT_PAGE_SIZE,
+    DEFAULT_SITE_URL,
     DEFAULT_STRIPE_CANCEL_URL,
     DEFAULT_STRIPE_CURRENCY,
     DEFAULT_STRIPE_SUBSCRIPTION_AMOUNT_RUB,
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "drf_yasg",
     "users",
     "posts",
@@ -127,6 +129,21 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": DEFAULT_PAGE_SIZE,
+    "DEFAULT_THROTTLE_CLASSES": (
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ),
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "60/min",
+        "user": "120/min",
+        "auth": "10/min",
+        "payment": "30/min",
+        "comment_create": "30/hour",
+        "comment_delete": "60/hour",
+        "account_delete": "5/hour",
+        "webhook": "120/min",
+        "view_record": "120/hour",
+    },
 }
 
 SIMPLE_JWT = {
@@ -138,6 +155,8 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(
         days=int(os.getenv("JWT_REFRESH_DAYS", str(DEFAULT_JWT_REFRESH_DAYS))),
     ),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
 }
 
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "")
@@ -148,14 +167,28 @@ STRIPE_CANCEL_URL = os.getenv("STRIPE_CANCEL_URL", DEFAULT_STRIPE_CANCEL_URL)
 STRIPE_SUBSCRIPTION_AMOUNT = int(
     os.getenv("STRIPE_SUBSCRIPTION_AMOUNT", str(DEFAULT_STRIPE_SUBSCRIPTION_AMOUNT_RUB)),
 )
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "")
+
+SITE_URL = os.getenv("SITE_URL", DEFAULT_SITE_URL).rstrip("/")
 
 USE_HTTPS = os.getenv("USE_HTTPS", "false").lower() in ("1", "true", "yes")
 
+MIN_SECRET_KEY_LENGTH = 50
+
 if not DEBUG and SECRET_KEY == DEV_INSECURE_SECRET_KEY:
     raise ImproperlyConfigured("SECRET_KEY must be set when DEBUG is False.")
+
+if not DEBUG and len(SECRET_KEY) < MIN_SECRET_KEY_LENGTH:
+    raise ImproperlyConfigured(
+        f"SECRET_KEY must be at least {MIN_SECRET_KEY_LENGTH} characters when DEBUG is False.",
+    )
 
 if USE_HTTPS:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+    CSRF_COOKIE_SAMESITE = "Lax"
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True

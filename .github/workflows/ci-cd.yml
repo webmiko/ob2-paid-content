@@ -1,0 +1,205 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main, develop, feature/ob2_1]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.14"
+  NODE_VERSION: "22"
+  POETRY_VERSION: "2.2.1"
+  DB_NAME: ob2_paid_content
+  DB_USER: postgres
+  DB_PASSWORD: postgres
+  DB_HOST: localhost
+  DB_PORT: "5432"
+  SECRET_KEY: ci-test-secret-key-with-at-least-fifty-characters-long
+  DEBUG: "True"
+  ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+  USE_HTTPS: "false"
+  SITE_URL: http://localhost
+  CORS_ALLOWED_ORIGINS: http://localhost
+  STRIPE_SECRET_KEY: sk_test_ci_placeholder
+  STRIPE_PUBLISHABLE_KEY: pk_test_ci_placeholder
+  STRIPE_SUCCESS_URL: http://localhost/payment/success
+  STRIPE_CANCEL_URL: http://localhost/payment/cancel
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ob2_paid_content
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d ob2_paid_content"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        id: setup-python
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - uses: snok/install-poetry@v1
+        with:
+          version: ${{ env.POETRY_VERSION }}
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - uses: actions/cache@v4
+        id: poetry-venv
+        with:
+          path: .venv
+          key: >-
+            venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-
+            ${{ hashFiles('poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.poetry-venv.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
+
+      - name: Install project
+        run: poetry install --no-interaction
+
+      - name: Migrate
+        run: poetry run python manage.py migrate --noinput
+
+      - name: Pytest
+        run: poetry run pytest
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        id: setup-python
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - uses: snok/install-poetry@v1
+        with:
+          version: ${{ env.POETRY_VERSION }}
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - uses: actions/cache@v4
+        id: poetry-venv
+        with:
+          path: .venv
+          key: >-
+            venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-
+            ${{ hashFiles('poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.poetry-venv.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
+
+      - name: Install project
+        run: poetry install --no-interaction
+
+      - name: Ruff check
+        run: poetry run ruff check .
+
+      - name: Ruff format
+        run: poetry run ruff format --check .
+
+      - name: Mypy
+        run: poetry run mypy config users posts
+
+  build:
+    runs-on: ubuntu-latest
+    needs: lint
+    outputs:
+      docker_image: ${{ steps.meta.outputs.docker_image }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - id: meta
+        run: |
+          IMAGE="${{ secrets.DOCKER_HUB_USERNAME }}/ob2-paid-content:${{ github.sha }}"
+          echo "docker_image=${IMAGE}" >> "${GITHUB_OUTPUT}"
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Build frontend
+        working-directory: frontend
+        env:
+          VITE_API_URL: ""
+          VITE_SITE_URL: ${{ vars.SITE_URL || 'http://localhost' }}
+        run: npm ci && npm run build
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          if-no-files-found: error
+
+      - name: Login to Docker Hub
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build and push web image
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.docker_image }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/ob2-paid-content:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: >-
+      github.event_name == 'push' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    environment: production
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/download-artifact@v5
+        with:
+          name: frontend-dist
+          path: frontend-dist
+
+      - name: Deploy to VM
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+          DOCKER_IMAGE: ${{ needs.build.outputs.docker_image }}
+          FRONTEND_DIST_SOURCE: frontend-dist
+        run: ./scripts/deploy-remote.sh

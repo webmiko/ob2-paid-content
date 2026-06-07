@@ -1,7 +1,5 @@
 """Тесты матрицы доступа к body публикаций."""
 
-from unittest.mock import patch
-
 import pytest
 from rest_framework import status
 
@@ -53,10 +51,9 @@ def test_auth_without_sub_does_not_see_paid_body(other_auth_client, paid_post) -
 
 
 @pytest.mark.django_db
-@patch("posts.services.access.user_has_active_subscription", return_value=True)
-def test_subscriber_sees_paid_body(_mock_sub, other_auth_client, paid_post) -> None:
+def test_subscriber_sees_paid_body(subscriber_client, paid_post) -> None:
     """Подписчик видит body платной публикации."""
-    response = other_auth_client.get(post_detail_url(paid_post.pk))
+    response = subscriber_client.get(post_detail_url(paid_post.pk))
     assert response.status_code == status.HTTP_200_OK
     assert response.data["body"] == paid_post.body
     assert response.data["can_view_body"] is True

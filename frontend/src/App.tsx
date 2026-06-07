@@ -1,42 +1,39 @@
-import { useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-type HealthResponse = {
-  status: string;
-};
+import Layout from "./components/Layout";
+import { AuthProvider } from "./context/AuthContext";
+import AuthorPage from "./pages/AuthorPage";
+import ExplorePage from "./pages/ExplorePage";
+import FeedPage from "./pages/FeedPage";
+import LoginPage from "./pages/LoginPage";
+import PaymentCancelPage from "./pages/PaymentCancelPage";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import PostDetailPage from "./pages/PostDetailPage";
+import ProfilePage from "./pages/ProfilePage";
+import RegisterPage from "./pages/RegisterPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import TopicPage from "./pages/TopicPage";
 
 export default function App() {
-  const [health, setHealth] = useState<string>("…");
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch("/api/health/")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-        return response.json() as Promise<HealthResponse>;
-      })
-      .then((data) => setHealth(data.status))
-      .catch((err: unknown) => {
-        const message = err instanceof Error ? err.message : "unknown error";
-        setError(message);
-      });
-  }, []);
-
   return (
-    <main className="app">
-      <h1>OB2 — платформа платного контента</h1>
-      <p>Итерация 1: каркас SPA + API через nginx.</p>
-      <section className="card">
-        <h2>Health check</h2>
-        {error ? (
-          <p className="error">API недоступен: {error}</p>
-        ) : (
-          <p>
-            <code>/api/health/</code> → <strong>{health}</strong>
-          </p>
-        )}
-      </section>
-    </main>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<FeedPage />} />
+            <Route path="explore" element={<ExplorePage />} />
+            <Route path="authors/:id" element={<AuthorPage />} />
+            <Route path="topics/:slug" element={<TopicPage />} />
+            <Route path="posts/:id" element={<PostDetailPage />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="payment/success" element={<PaymentSuccessPage />} />
+            <Route path="payment/cancel" element={<PaymentCancelPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }

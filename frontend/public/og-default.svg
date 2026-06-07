@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Creavity">
+  <rect width="1200" height="630" fill="#0f172a"/>
+  <rect x="80" y="80" width="1040" height="470" rx="32" fill="#1e293b"/>
+  <text
+    x="600"
+    y="300"
+    fill="#f8fafc"
+    font-family="Arial, sans-serif"
+    font-size="72"
+    font-weight="700"
+    text-anchor="middle"
+  >
+    Creavity
+  </text>
+  <text
+    x="600"
+    y="380"
+    fill="#94a3b8"
+    font-family="Arial, sans-serif"
+    font-size="36"
+    text-anchor="middle"
+  >
+    ;0BD>@<0 02B>@>2 8 ?;0B=>3> :>=B5=B0
+  </text>
+</svg>

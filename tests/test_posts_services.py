@@ -1,6 +1,4 @@
-"""Unit-тесты can_view_post_body."""
-
-from unittest.mock import patch
+"""Unit-тесты проверки доступа к body публикации."""
 
 import pytest
 from django.contrib.auth.models import AnonymousUser
@@ -28,16 +26,22 @@ def test_can_view_paid_post_for_author(author, paid_post) -> None:
 
 
 @pytest.mark.django_db
-@patch("posts.services.access.user_has_active_subscription", return_value=True)
-def test_can_view_paid_post_for_subscriber(_mock_sub, other_user, paid_post) -> None:
+def test_can_view_paid_post_for_subscriber(other_user, paid_post) -> None:
     """Подписчик видит body чужого платного поста."""
-    from django.contrib.auth import get_user_model
+    from users.models import Subscription
 
-    user = get_user_model().objects.get(pk=other_user.pk)
-    assert can_view_post_body(user, paid_post) is True
+    Subscription.objects.create(user=other_user, is_active=True)
+    assert can_view_post_body(other_user, paid_post) is True
 
 
 @pytest.mark.django_db
 def test_can_view_paid_post_denied_for_auth_without_sub(other_user, paid_post) -> None:
     """Авторизованный без подписки не видит чужой paid body."""
     assert can_view_post_body(other_user, paid_post) is False
+
+
+@pytest.mark.django_db
+def test_can_view_post_body_uses_subscription_cache(other_user, paid_post) -> None:
+    """Кэш subscription_active избегает повторного запроса подписки."""
+    assert can_view_post_body(other_user, paid_post, subscription_active=True) is True
+    assert can_view_post_body(other_user, paid_post, subscription_active=False) is False

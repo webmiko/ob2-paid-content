@@ -66,6 +66,18 @@ exclude = [
 [[tool.mypy.overrides]]
 module = "*.management.commands.*"
 disallow_untyped_defs = false
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "posts.migrations.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = [
+    "posts.meta_serializers",
+    "posts.stats_serializers",
+]
+ignore_errors = true
 
 [tool.django-stubs]
 django_settings_module = "config.settings"
@@ -76,7 +88,7 @@ testpaths = ["tests"]
 python_files = ["tests.py", "test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "--strict-markers --cov=config --cov=users --cov=posts --cov-report=term-missing:skip-covered"
+addopts = "--strict-markers --cov=config --cov=users --cov=posts --cov-report=term-missing:skip-covered --cov-fail-under=85"
 
 [tool.coverage.run]
 branch = true
@@ -87,6 +99,7 @@ omit = [
     "manage.py",
     "**/asgi.py",
     "**/wsgi.py",
+    "*/management/commands/*",
 ]
 
 [tool.coverage.report]

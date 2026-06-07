@@ -8,8 +8,13 @@ DEFAULT_JWT_REFRESH_DAYS = 1
 STRIPE_CURRENCY_MULTIPLIER = 100
 DEFAULT_STRIPE_CURRENCY = "rub"
 DEFAULT_STRIPE_SUBSCRIPTION_AMOUNT_RUB = 990
-DEFAULT_STRIPE_SUCCESS_URL = "http://localhost/payments/success/"
-DEFAULT_STRIPE_CANCEL_URL = "http://localhost/payments/cancel/"
+DEFAULT_STRIPE_SUCCESS_URL = "http://localhost/payment/success"
+DEFAULT_STRIPE_CANCEL_URL = "http://localhost/payment/cancel"
+DEFAULT_SITE_URL = "http://localhost"
+SITE_NAME = "Creavity"
+META_TITLE_MAX = 70
+META_DESCRIPTION_MAX = 160
+META_KEYWORDS_MAX = 255
 
 # Телефон (validators/users)
 PHONE_DIGITS_LENGTH = 11
@@ -17,6 +22,12 @@ PHONE_COUNTRY_DIGIT = "7"
 
 # Пагинация списка публикаций
 DEFAULT_PAGE_SIZE = 10
+
+# Рекомендации: максимум ID в query exclude=
+MAX_RECOMMENDED_EXCLUDE_IDS = 50
+
+# Каталог авторов: верхняя граница списка без пагинации
+MAX_AUTHORS_LIST = 100
 
 # PostgreSQL
 DEFAULT_DB_PORT = "5432"

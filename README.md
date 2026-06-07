@@ -215,7 +215,7 @@ ob2-paid-content/
 ├── deploy/nginx/        # ob2.conf
 ├── scripts/             # entrypoint.sh, deploy-remote.sh
 ├── tests/               # pytest + security
-├── wiki/                # ci-cd, frontend, servers (после ит. 7)
+├── wiki/                # ci-cd, frontend, servers
 ├── .github/workflows/   # ci-cd.yml
 ├── docker-compose.yml
 ├── Dockerfile
@@ -330,6 +330,39 @@ curl -s http://localhost/api/health/
 
 ---
 
+## REST API (основные endpoints)
+
+| Метод | URL | Auth | Описание |
+|-------|-----|------|----------|
+| GET | `/api/health/` | — | Health check |
+| POST | `/api/users/register/` | — | Регистрация `{phone, password}` |
+| POST | `/api/token/` | — | JWT `{phone, password}` |
+| POST | `/api/token/refresh/` | — | Обновление access |
+| GET | `/api/users/me/` | JWT | Профиль + `subscription_active` |
+| GET | `/api/posts/` | — | Список (paywall в serializer) |
+| GET | `/api/posts/{id}/` | — | Деталь поста |
+| POST/PATCH/DELETE | `/api/posts/` | JWT | CRUD своих постов |
+| POST | `/api/payments/create/` | JWT | Stripe Checkout URL |
+| GET | `/api/payments/success/?session_id=` | JWT | Sync оплаты + activate |
+| GET | `/api/payments/{id}/` | JWT | Статус своего платежа |
+
+OpenAPI: `/api/docs/` при `DEBUG=True`.
+
+---
+
+## Demo-сценарий (локально)
+
+1. `docker compose up db -d --wait` + `poetry run python manage.py runserver`
+2. `cd frontend && npm run dev` → http://localhost:5173
+3. Guest: главная — free body виден, paid — «Текст скрыт»
+4. Регистрация → профиль → «Оплатить подписку» (нужны Stripe test keys в `.env`)
+5. После success (`/payment/success?session_id=...`) — paid body в API
+6. `/admin/` — редактирование Post через Django Form (теги Forms/Templates)
+
+Подробнее — [COVERAGE.md](COVERAGE.md), [ПЛАН-ПРОЕКТА.md](ПЛАН-ПРОЕКТА.md).
+
+---
+
 ## Качество и безопасность
 
 | Требование | Инструмент / правило |
@@ -350,11 +383,13 @@ curl -s http://localhost/api/health/
 |----------|------------|--------|
 | 0 | Poetry, Django каркас, план | готово |
 | 1 | Docker, nginx, SPA build | готово |
-| 2 | Users, JWT, CORS, forms admin | — |
-| 3 | Posts API, paywall | — |
-| 4 | Stripe sync, подписка | — |
-| 5 | React SPA | — |
-| 6 | Coverage, security tests | — |
-| 7 | CI/CD, деплой на ВМ | — |
+| 2 | Users, JWT, CORS, forms admin | готово |
+| 3 | Posts API, paywall | готово |
+| 4 | Stripe sync, подписка | готово |
+| 5 | React SPA | готово |
+| 6 | Coverage ≥85 %, security tests | готово |
+| 7 | CI/CD, деплой на ВМ | готово |
 
 Подробная декомпозиция — [ПЛАН-ПРОЕКТА.md](ПЛАН-ПРОЕКТА.md).
+
+**CI/CD:** [wiki/ci-cd.md](wiki/ci-cd.md) · **ВМ:** [wiki/servers.md](wiki/servers.md) · **Frontend:** [wiki/frontend.md](wiki/frontend.md)

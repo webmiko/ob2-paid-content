@@ -25,6 +25,7 @@ services:
       - .env
     environment:
       DB_HOST: db
+      DB_PORT: "5432"
       DB_PASSWORD: ${DB_PASSWORD:-postgres}
     expose:
       - "8000"
@@ -45,6 +46,7 @@ services:
       context: ./frontend
       args:
         VITE_API_URL: ""
+        VITE_SITE_URL: ${SITE_URL:-http://localhost}
     restart: "no"
     volumes:
       - ./frontend/dist:/dist

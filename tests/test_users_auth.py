@@ -14,7 +14,7 @@ REFRESH_URL = "/api/token/refresh/"
 
 @pytest.fixture
 def api_client() -> APIClient:
-    """DRF API client."""
+    """HTTP-клиент API."""
     return APIClient()
 
 
@@ -32,14 +32,33 @@ def test_register_returns_201_without_password(
     """POST register создаёт пользователя и не возвращает password."""
     response = api_client.post(
         REGISTER_URL,
-        {"phone": "+7 (900) 111-22-33", "password": user_password},
+        {
+            "phone": "+7 (900) 111-22-33",
+            "display_name": "CreavityUser",
+            "password": user_password,
+        },
         format="json",
     )
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.data == {"id": response.data["id"], "phone": "79001112233"}
+    assert response.data == {
+        "id": response.data["id"],
+        "phone": "79001112233",
+        "display_name": "CreavityUser",
+    }
     assert "password" not in response.data
     user = User.objects.get(pk=response.data["id"])
     assert user.check_password(user_password)
+
+
+@pytest.mark.django_db
+def test_register_requires_display_name(api_client: APIClient, user_password: str) -> None:
+    """Регистрация без никнейма → 400."""
+    response = api_client.post(
+        REGISTER_URL,
+        {"phone": "79009998877", "password": user_password},
+        format="json",
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 @pytest.mark.django_db
@@ -51,7 +70,7 @@ def test_register_duplicate_phone_returns_400(
     User.objects.create_user(phone="79001112233", password=user_password)
     response = api_client.post(
         REGISTER_URL,
-        {"phone": "89001112233", "password": user_password},
+        {"phone": "89001112233", "password": user_password, "display_name": "Duplicate"},
         format="json",
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -62,7 +81,7 @@ def test_register_sqli_string_in_phone_returns_400(api_client: APIClient) -> Non
     """SQLi-подобная строка в phone не вызывает 500."""
     response = api_client.post(
         REGISTER_URL,
-        {"phone": "1' OR '1'='1", "password": "SecurePass123"},
+        {"phone": "1' OR '1'='1", "password": "SecurePass123", "display_name": "Test"},
         format="json",
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -70,7 +89,7 @@ def test_register_sqli_string_in_phone_returns_400(api_client: APIClient) -> Non
 
 @pytest.mark.django_db
 def test_jwt_obtain_and_refresh(api_client: APIClient, user_password: str) -> None:
-    """JWT obtain по phone и refresh возвращают новую пару токенов."""
+    """JWT obtain по phone; refresh ротирует refresh-токен."""
     User.objects.create_user(phone="79002223344", password=user_password)
     token_response = api_client.post(
         TOKEN_URL,
@@ -79,15 +98,20 @@ def test_jwt_obtain_and_refresh(api_client: APIClient, user_password: str) -> No
     )
     assert token_response.status_code == status.HTTP_200_OK
     assert "access" in token_response.data
-    assert "refresh" in token_response.data
+    old_refresh = token_response.data["refresh"]
 
     refresh_response = api_client.post(
         REFRESH_URL,
-        {"refresh": token_response.data["refresh"]},
+        {"refresh": old_refresh},
         format="json",
     )
     assert refresh_response.status_code == status.HTTP_200_OK
     assert "access" in refresh_response.data
+    assert "refresh" in refresh_response.data
+    assert refresh_response.data["refresh"] != old_refresh
+
+    reused = api_client.post(REFRESH_URL, {"refresh": old_refresh}, format="json")
+    assert reused.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 @pytest.mark.django_db
