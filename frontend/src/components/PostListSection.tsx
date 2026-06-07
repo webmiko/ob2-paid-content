@@ -1,4 +1,5 @@
 import PostCard from "./PostCard";
+import PostListSkeleton from "./PostListSkeleton";
 import type { Post } from "../api/types";
 
 interface PostListSectionProps {
@@ -23,7 +24,7 @@ export default function PostListSection({
   emptyText = "Попробуйте другие фильтры или загляните позже",
 }: PostListSectionProps) {
   if (loading) {
-    return <p className="loading-text">Загрузка публикаций…</p>;
+    return <PostListSkeleton />;
   }
 
   if (error && posts.length === 0) {

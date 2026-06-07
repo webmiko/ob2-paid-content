@@ -459,6 +459,8 @@ body::after {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  min-width: 9rem;
+  min-height: 2.75rem;
   padding: 0.45rem 0.45rem 0.45rem 0.65rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.45);
@@ -1034,6 +1036,90 @@ body.modal-open {
   padding: var(--space-xl) 0;
 }
 
+.user-controls-skeleton {
+  display: inline-block;
+  width: 4.5rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.18) 25%,
+    rgba(148, 163, 184, 0.32) 50%,
+    rgba(148, 163, 184, 0.18) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.post-list-skeleton {
+  min-height: 28rem;
+}
+
+.post-card-skeleton {
+  min-height: 10.5rem;
+  margin-bottom: var(--space-lg);
+  pointer-events: none;
+}
+
+.post-card-skeleton-meta,
+.post-card-skeleton-title,
+.post-card-skeleton-line {
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.16) 25%,
+    rgba(148, 163, 184, 0.3) 50%,
+    rgba(148, 163, 184, 0.16) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.post-card-skeleton-meta {
+  width: 55%;
+  height: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.post-card-skeleton-title {
+  width: 72%;
+  height: 1.35rem;
+  margin-bottom: 0.85rem;
+  border-radius: var(--radius-sm);
+}
+
+.post-card-skeleton-line {
+  height: 0.75rem;
+  margin-bottom: 0.55rem;
+}
+
+.post-card-skeleton-line--short {
+  width: 88%;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+[data-theme="dark"] .user-controls-skeleton,
+[data-theme="dark"] .post-card-skeleton-meta,
+[data-theme="dark"] .post-card-skeleton-title,
+[data-theme="dark"] .post-card-skeleton-line {
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.08) 25%,
+    rgba(148, 163, 184, 0.18) 50%,
+    rgba(148, 163, 184, 0.08) 75%
+  );
+  background-size: 200% 100%;
+}
+
 .page-header-row {
   margin-bottom: var(--space-lg);
   padding-bottom: var(--space-md);
@@ -1052,6 +1138,7 @@ body.modal-open {
   flex-wrap: wrap;
   gap: 0.45rem;
   margin-bottom: var(--space-lg);
+  min-height: 3.15rem;
   padding: 0.35rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.38);

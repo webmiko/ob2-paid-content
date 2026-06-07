@@ -21,7 +21,9 @@ export default function Layout() {
 
         <div className="user-controls">
           <ThemeToggle />
-          {isAuthenticated && user ? (
+          {loading ? (
+            <span className="user-controls-skeleton" aria-hidden="true" />
+          ) : isAuthenticated && user ? (
             <>
               <div className="user-avatar" aria-hidden="true">
                 {userAvatarLabel(user.display_name, user.phone)}
@@ -36,9 +38,7 @@ export default function Layout() {
               </button>
             </>
           ) : (
-            !loading && (
-              <span className="text-muted guest-label">Гость</span>
-            )
+            <span className="text-muted guest-label">Гость</span>
           )}
         </div>
       </header>

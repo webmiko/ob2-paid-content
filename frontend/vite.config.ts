@@ -1,19 +1,31 @@
 import react from "@vitejs/plugin-react";
-import type { Plugin } from "vite";
+import type { IndexHtmlTransformContext, Plugin } from "vite";
 import { defineConfig, loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
-/** Сборочный CSS не блокирует первую отрисовку (критичные стили — inline в index.html). */
-function asyncCssPlugin(): Plugin {
+/** Preload Font Awesome woff2 — меньше сдвига иконок при первой отрисовке. */
+function preloadFaFontPlugin(): Plugin {
   return {
-    name: "async-css",
+    name: "preload-fa-font",
     apply: "build",
-    transformIndexHtml(html) {
-      return html.replace(
-        /<link rel="stylesheet"( crossorigin)? href="(\/assets\/[^"]+\.css)">/g,
-        '<link rel="preload" href="$2" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">' +
-          '<noscript><link rel="stylesheet"$1 href="$2"></noscript>',
-      );
+    transformIndexHtml: {
+      order: "post",
+      handler(html: string, ctx: IndexHtmlTransformContext) {
+        const bundle = ctx.bundle;
+        if (!bundle) {
+          return html;
+        }
+        const asset = Object.keys(bundle).find(
+          (name) => name.includes("fa-solid") && name.endsWith(".woff2"),
+        );
+        if (!asset) {
+          return html;
+        }
+        const href = asset.startsWith("/") ? asset : `/${asset}`;
+        const tag =
+          `<link rel="preload" href="${href}" as="font" type="font/woff2" crossorigin>`;
+        return html.replace("</head>", `    ${tag}\n  </head>`);
+      },
     },
   };
 }
@@ -31,7 +43,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
-      asyncCssPlugin(),
+      preloadFaFontPlugin(),
       VitePWA({
         registerType: "autoUpdate",
         includeAssets: ["favicon.svg", "og-default.svg", "pwa-192.png", "pwa-512.png"],

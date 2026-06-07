@@ -10,7 +10,7 @@ import { usePostsList } from "../hooks/usePostsList";
 import { DEFAULT_DESCRIPTION, getSiteUrl, SITE_NAME } from "../seo/site";
 
 export default function FeedPage() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [content, setContent] = useState<"all" | "free" | "paid" | "available">("all");
   const [topic, setTopic] = useState("");
   const [searchInput, setSearchInput] = useState("");
@@ -54,7 +54,11 @@ export default function FeedPage() {
         </p>
       </div>
 
-      <ContentTypeTabs value={content} onChange={setContent} showAvailable={isAuthenticated} />
+      <ContentTypeTabs
+        value={content}
+        onChange={setContent}
+        showAvailable={isAuthenticated && !authLoading}
+      />
 
       <PostFilters
         search={searchInput}
