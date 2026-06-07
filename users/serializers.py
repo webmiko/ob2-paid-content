@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from users.models import User
-from users.phone_regions import PhoneCountry, SUPPORTED_COUNTRIES
+from users.phone_regions import SUPPORTED_COUNTRIES, PhoneCountry
 from users.services.access import user_has_active_subscription
 from users.services.sms_verification import (
     consume_phone_verification,

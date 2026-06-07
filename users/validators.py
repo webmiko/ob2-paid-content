@@ -7,8 +7,8 @@ from users.phone_regions import (
     BY_PREFIX,
     RU_KZ_DIGITS_LENGTH,
     RU_KZ_PREFIX,
-    PhoneCountry,
     SUPPORTED_COUNTRIES,
+    PhoneCountry,
 )
 
 _DIGITS_RE = re.compile(r"\D")
