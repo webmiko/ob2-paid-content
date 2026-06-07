@@ -57,6 +57,15 @@ nano .env
 
 При HTTP на :80 можно `USE_HTTPS=false`; за TLS-прокси — `USE_HTTPS=true`.
 
+Для регистрации по SMS без платного провайдера включите (см. `.env.production.example`):
+
+```env
+SMS_SHOW_CODE_IN_RESPONSE=true
+```
+
+Код показывается на `/register` и в поле `simulation_code` ответа `POST /api/users/phone/send-code/`.
+Deploy автоматически прописывает эту переменную в `.env`, если её ещё нет.
+
 ## 6. Системный nginx
 
 Скрипт деплоя останавливает `systemd nginx`, если он занимает :80. Для prod используется контейнер `nginx` из Compose.

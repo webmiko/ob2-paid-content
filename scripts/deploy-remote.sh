@@ -65,13 +65,16 @@ if systemctl is-active --quiet nginx 2>/dev/null; then
 fi
 
 chmod +x scripts/server-disk-cleanup.sh 2>/dev/null || true
+chmod +x scripts/ensure-sms-demo-env.sh 2>/dev/null || true
 DEPLOY_PATH='${REMOTE_PATH}' COMPOSE_FILE='${COMPOSE_FILE}' ./scripts/server-disk-cleanup.sh
+./scripts/ensure-sms-demo-env.sh .env
 
 printf '%s' '${DOCKER_HUB_TOKEN}' | docker login -u '${DOCKER_HUB_USERNAME}' --password-stdin
 
 export DOCKER_IMAGE='${DOCKER_IMAGE}'
 docker compose -f '${COMPOSE_FILE}' pull web
-docker compose -f '${COMPOSE_FILE}' up -d db web
+docker compose -f '${COMPOSE_FILE}' up -d db
+docker compose -f '${COMPOSE_FILE}' up -d --force-recreate web
 
 for attempt in \$(seq 1 40); do
   if docker compose -f '${COMPOSE_FILE}' ps web 2>/dev/null | grep -q '(healthy)'; then
