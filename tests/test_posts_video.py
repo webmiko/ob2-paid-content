@@ -51,6 +51,15 @@ def test_video_embed_url_empty_returns_none() -> None:
     assert video_embed_url("") is None
 
 
+def test_video_embed_protected_youtube_uses_nocookie() -> None:
+    """Платный режим embed использует youtube-nocookie и ограничивает UI."""
+    embed = video_embed_url(YOUTUBE_WATCH, protected_mode=True)
+    assert embed is not None
+    assert "youtube-nocookie.com/embed/dQw4w9WgXcQ" in embed
+    assert "disablekb=1" in embed
+    assert "modestbranding=1" in embed
+
+
 def test_is_valid_video_url_rejects_unknown_host() -> None:
     """Неподдерживаемые хосты отклоняются."""
     assert is_valid_video_url("https://example.com/video") is False
@@ -92,6 +101,26 @@ def test_guest_sees_rutube_embed_on_free_post(api_client, author) -> None:
     assert response.status_code == status.HTTP_200_OK
     assert response.data["video_embed_url"] == RUTUBE_EMBED
     assert response.data["video_provider"] == PROVIDER_RUTUBE
+
+
+@pytest.mark.django_db
+def test_subscriber_paid_video_embed_without_direct_url(subscriber_client, author) -> None:
+    """Подписчик видит embed, но не прямую ссылку на видео платного поста."""
+    from posts.models import Post
+
+    post = Post.objects.create(
+        title="Paid lesson",
+        body="Secret lesson text",
+        is_paid=True,
+        author=author,
+        video_url=YOUTUBE_WATCH,
+    )
+    response = subscriber_client.get(post_detail_url(post.pk))
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["can_view_body"] is True
+    assert response.data["video_url"] is None
+    assert response.data["video_embed_url"] is not None
+    assert "youtube-nocookie.com" in response.data["video_embed_url"]
 
 
 @pytest.mark.django_db

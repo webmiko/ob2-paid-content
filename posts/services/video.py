@@ -170,20 +170,49 @@ def _dzen_embed_url(url: str) -> str | None:
     return None
 
 
-def video_embed_url(url: str) -> str | None:
+def _append_query_params(url: str, *params: str) -> str:
+    """Добавляет query-параметры к URL embed."""
+    if not params:
+        return url
+    separator = "&" if "?" in url else "?"
+    return f"{url}{separator}{'&'.join(params)}"
+
+
+def _harden_embed_url(embed: str, provider: VideoProvider | None) -> str:
+    """Ужесточает embed для платного контента (меньше утечек и UI скачивания)."""
+    if provider == PROVIDER_YOUTUBE:
+        hardened = embed.replace("www.youtube.com/embed", "www.youtube-nocookie.com/embed")
+        return _append_query_params(
+            hardened,
+            "modestbranding=1",
+            "rel=0",
+            "disablekb=1",
+            "iv_load_policy=3",
+        )
+    if provider == PROVIDER_VIMEO:
+        return _append_query_params(embed, "dnt=1", "title=0", "byline=0")
+    if provider == PROVIDER_RUTUBE:
+        return _append_query_params(embed, "t=0")
+    return embed
+
+
+def video_embed_url(url: str, *, protected_mode: bool = False) -> str | None:
     """Преобразует поддерживаемую ссылку в URL для iframe embed."""
     provider = detect_video_provider(url)
+    embed: str | None = None
     if provider == PROVIDER_YOUTUBE:
-        return _youtube_embed_url(url)
-    if provider == PROVIDER_VIMEO:
-        return _vimeo_embed_url(url)
-    if provider == PROVIDER_RUTUBE:
-        return _rutube_embed_url(url)
-    if provider == PROVIDER_VK:
-        return _vk_embed_url(url)
-    if provider == PROVIDER_DZEN:
-        return _dzen_embed_url(url)
-    return None
+        embed = _youtube_embed_url(url)
+    elif provider == PROVIDER_VIMEO:
+        embed = _vimeo_embed_url(url)
+    elif provider == PROVIDER_RUTUBE:
+        embed = _rutube_embed_url(url)
+    elif provider == PROVIDER_VK:
+        embed = _vk_embed_url(url)
+    elif provider == PROVIDER_DZEN:
+        embed = _dzen_embed_url(url)
+    if embed and protected_mode:
+        return _harden_embed_url(embed, provider)
+    return embed
 
 
 def is_valid_video_url(url: str) -> bool:

@@ -86,8 +86,10 @@ class PostSerializer(serializers.ModelSerializer):
         return detect_video_provider(obj.video_url)
 
     def get_video_url(self, obj: Post) -> str | None:
-        """URL видео только при доступе к содержимому."""
+        """URL видео только при доступе; для paid — только embed, без прямой ссылки."""
         if not obj.video_url or not self.get_can_view_body(obj):
+            return None
+        if obj.is_paid:
             return None
         return obj.video_url
 
@@ -95,7 +97,7 @@ class PostSerializer(serializers.ModelSerializer):
         """Embed URL только при доступе к содержимому."""
         if not obj.video_url or not self.get_can_view_body(obj):
             return None
-        return video_embed_url(obj.video_url)
+        return video_embed_url(obj.video_url, protected_mode=obj.is_paid)
 
     def get_comment_count(self, obj: Post) -> int:
         """Число комментариев (скрыто для paid без доступа)."""
