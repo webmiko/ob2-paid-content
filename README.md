@@ -215,7 +215,7 @@ ob2-paid-content/
 ├── deploy/nginx/        # ob2.conf
 ├── scripts/             # entrypoint.sh, deploy-remote.sh
 ├── tests/               # pytest + security
-├── wiki/                # ci-cd, frontend, servers (после ит. 7)
+├── wiki/                # ci-cd, frontend, servers
 ├── .github/workflows/   # ci-cd.yml
 ├── docker-compose.yml
 ├── Dockerfile
@@ -388,6 +388,8 @@ OpenAPI: `/api/docs/` при `DEBUG=True`.
 | 4 | Stripe sync, подписка | готово |
 | 5 | React SPA | готово |
 | 6 | Coverage ≥85 %, security tests | готово |
-| 7 | CI/CD, деплой на ВМ | — |
+| 7 | CI/CD, деплой на ВМ | готово |
 
 Подробная декомпозиция — [ПЛАН-ПРОЕКТА.md](ПЛАН-ПРОЕКТА.md).
+
+**CI/CD:** [wiki/ci-cd.md](wiki/ci-cd.md) · **ВМ:** [wiki/servers.md](wiki/servers.md) · **Frontend:** [wiki/frontend.md](wiki/frontend.md)
