@@ -8,7 +8,7 @@ import JsonLd from "../components/JsonLd";
 import PageMeta from "../components/PageMeta";
 import PostListSection from "../components/PostListSection";
 import { usePostsList } from "../hooks/usePostsList";
-import { absoluteUrl, truncateDescription } from "../seo/site";
+import { absoluteUrl } from "../seo/site";
 
 export default function AuthorPage() {
   const { id } = useParams();
