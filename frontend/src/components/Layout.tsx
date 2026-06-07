@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
 
 import MobileBottomNav from "./MobileBottomNav";
+import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "../context/AuthContext";
 import { userAvatarLabel, userNickname } from "../utils/avatar";
 
@@ -19,6 +20,7 @@ export default function Layout() {
         </Link>
 
         <div className="user-controls">
+          <ThemeToggle />
           {isAuthenticated && user ? (
             <>
               <div className="user-avatar" aria-hidden="true">
