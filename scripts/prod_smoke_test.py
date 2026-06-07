@@ -106,10 +106,11 @@ def main() -> int:
             str(anon),
         )
 
+    phone = f"7900{__import__('time').time_ns() % 10_000_000:07d}"
     code, reg = req(
         "POST",
         f"{API}/users/register/",
-        body={"phone": f"7900{__import__('time').time_ns() % 10_000_000:07d}", "password": "TestPass123!", "display_name": "Smoke"},
+        body={"phone": phone, "password": "TestPass123!", "display_name": "Smoke"},
     )
     ok("register") if code in (200, 201) else bad("register", str(reg))
 
