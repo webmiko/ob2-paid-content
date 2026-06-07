@@ -64,7 +64,8 @@ if systemctl is-active --quiet nginx 2>/dev/null; then
   sudo systemctl disable nginx || true
 fi
 
-docker system prune -f || true
+chmod +x scripts/server-disk-cleanup.sh 2>/dev/null || true
+DEPLOY_PATH='${REMOTE_PATH}' COMPOSE_FILE='${COMPOSE_FILE}' ./scripts/server-disk-cleanup.sh
 
 printf '%s' '${DOCKER_HUB_TOKEN}' | docker login -u '${DOCKER_HUB_USERNAME}' --password-stdin
 

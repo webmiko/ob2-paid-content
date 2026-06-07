@@ -1,0 +1,22 @@
+name: Server cleanup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Free disk on VM
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: ./scripts/run-remote-cleanup.sh
