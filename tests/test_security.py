@@ -3,7 +3,7 @@
 from unittest.mock import patch
 
 import pytest
-from django.test import Client
+from django.test import Client, override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
@@ -18,14 +18,22 @@ YOUTUBE_WATCH = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 
 @pytest.mark.django_db
+@override_settings(SMS_SHOW_CODE_IN_RESPONSE=True, SMS_VERIFICATION_REQUIRED=True)
 def test_register_response_excludes_password(api_client) -> None:
     """Register не возвращает password в JSON."""
+    send = api_client.post(
+        "/api/users/phone/send-code/",
+        {"phone": "+7 900 777-88-99", "country": "ru"},
+        format="json",
+    )
     response = api_client.post(
         "/api/users/register/",
         {
             "phone": "+7 900 777-88-99",
+            "country": "ru",
             "password": PASSWORD,
             "display_name": "Security Tester",
+            "sms_code": send.data["simulation_code"],
         },
         format="json",
     )

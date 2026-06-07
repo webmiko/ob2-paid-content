@@ -32,6 +32,8 @@ env:
   STRIPE_PUBLISHABLE_KEY: pk_test_ci_placeholder
   STRIPE_SUCCESS_URL: http://localhost/payment/success
   STRIPE_CANCEL_URL: http://localhost/payment/cancel
+  SMS_SHOW_CODE_IN_RESPONSE: "true"
+  SMS_VERIFICATION_REQUIRED: "true"
 
 jobs:
   test:

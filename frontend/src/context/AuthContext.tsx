@@ -10,13 +10,20 @@ import {
 
 import { ApiError, apiJson, clearTokens, hasRefreshToken, logoutApi, setTokens } from "../api/client";
 import type { TokenPair, UserProfile } from "../api/types";
+import type { PhoneCountry } from "../utils/phone";
 
 interface AuthContextValue {
   user: UserProfile | null;
   loading: boolean;
   isAuthenticated: boolean;
   login: (phone: string, password: string) => Promise<void>;
-  register: (phone: string, password: string, displayName: string) => Promise<void>;
+  register: (
+    phone: string,
+    password: string,
+    displayName: string,
+    country: PhoneCountry,
+    smsCode: string,
+  ) => Promise<void>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -69,13 +76,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(profile);
   }, []);
 
-  const register = useCallback(async (phone: string, password: string, displayName: string) => {
-    await apiJson("/api/users/register/", {
-      method: "POST",
-      body: JSON.stringify({ phone, password, display_name: displayName.trim() }),
-    });
-    await login(phone, password);
-  }, [login]);
+  const register = useCallback(
+    async (
+      phone: string,
+      password: string,
+      displayName: string,
+      country: PhoneCountry,
+      smsCode: string,
+    ) => {
+      await apiJson("/api/users/register/", {
+        method: "POST",
+        body: JSON.stringify({
+          phone,
+          password,
+          display_name: displayName.trim(),
+          country,
+          sms_code: smsCode,
+        }),
+      });
+      await login(phone, password);
+    },
+    [login],
+  );
 
   const logout = useCallback(async () => {
     await logoutApi();
