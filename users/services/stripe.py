@@ -38,7 +38,7 @@ def _session_from_stripe(session: object) -> StripeCheckoutSession:
     payment_id = metadata.get("payment_id") if isinstance(metadata, dict) else None
     amount_total = getattr(session, "amount_total", None)
     return StripeCheckoutSession(
-        session_id=str(session.id),
+        session_id=str(getattr(session, "id", "")),
         payment_url=str(getattr(session, "url", "") or ""),
         payment_status=str(getattr(session, "payment_status", None) or "unpaid"),
         payment_id=str(payment_id) if payment_id else None,

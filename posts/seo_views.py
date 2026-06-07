@@ -1,5 +1,7 @@
 """XML sitemap и robots для SEO."""
 
+from datetime import datetime
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest, HttpResponse
@@ -14,7 +16,7 @@ SITEMAP_MAX_POSTS = 5000
 SITEMAP_MAX_AUTHORS = 1000
 
 
-def _format_lastmod(value) -> str:
+def _format_lastmod(value: datetime | None) -> str:
     """Форматирует datetime в W3C для sitemap."""
     if value is None:
         return ""
@@ -59,11 +61,7 @@ def sitemap_xml_view(_request: HttpRequest) -> HttpResponse:
             ),
         )
 
-    authors = (
-        User.objects.filter(posts__isnull=False)
-        .distinct()
-        .order_by("-id")[:SITEMAP_MAX_AUTHORS]
-    )
+    authors = User.objects.filter(posts__isnull=False).distinct().order_by("-id")[:SITEMAP_MAX_AUTHORS]
     for author in authors:
         entries.append(
             _url_entry(

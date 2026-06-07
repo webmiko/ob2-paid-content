@@ -4,7 +4,7 @@ import pytest
 from rest_framework import status
 
 from posts.models import Comment, Post
-from tests.conftest import PASSWORD, ME_URL
+from tests.conftest import ME_URL, PASSWORD
 from users.models import User
 
 

@@ -1,5 +1,8 @@
 """API комментариев, рекомендаций и похожих публикаций."""
 
+from typing import cast
+
+from django.contrib.auth.models import AbstractBaseUser
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
@@ -131,9 +134,10 @@ class PostCommentListCreateView(APIView):
             )
         write_serializer = CommentWriteSerializer(data=request.data)
         write_serializer.is_valid(raise_exception=True)
+        user = cast(AbstractBaseUser, request.user)
         comment = Comment.objects.create(
             post=post,
-            author=request.user,
+            author_id=int(user.pk),
             text=write_serializer.validated_data["text"],
         )
         return Response(
@@ -166,15 +170,13 @@ class PostCommentDetailView(APIView):
         if not can_view_post_body(
             request.user,
             post,
-            subscription_active=user_has_active_subscription(request.user)
-            if request.user.is_authenticated
-            else False,
+            subscription_active=user_has_active_subscription(request.user) if request.user.is_authenticated else False,
         ):
             return Response(
                 {"detail": "Нет доступа к комментариям этой публикации."},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        if not can_delete_comment(request.user, comment, post):
+        if not can_delete_comment(cast(AbstractBaseUser, request.user), comment, post):
             return Response(
                 {"detail": "Нельзя удалить этот комментарий."},
                 status=status.HTTP_403_FORBIDDEN,

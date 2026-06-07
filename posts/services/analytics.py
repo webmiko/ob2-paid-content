@@ -11,22 +11,17 @@ from users.models import Subscription
 
 def get_author_dashboard_stats(author: AbstractBaseUser) -> dict[str, object]:
     """Собирает метрики автора для GET /api/users/me/stats/."""
-    posts = Post.objects.filter(author=author)
+    posts = Post.objects.filter(author_id=author.pk)
     post_ids = posts.values_list("pk", flat=True)
 
-    views_qs = PostView.objects.filter(post__author=author).exclude(user=author)
+    views_qs = PostView.objects.filter(post__author_id=author.pk).exclude(user_id=author.pk)
     auth_readers = views_qs.filter(user__isnull=False).values("user").distinct().count()
     guest_readers = views_qs.filter(user__isnull=True).count()
     total_views = views_qs.count()
 
     total_comments = Comment.objects.filter(post_id__in=post_ids).count()
     platform_subscribers = Subscription.objects.filter(is_active=True).count()
-    subscribers_who_viewed = (
-        views_qs.filter(user__subscription__is_active=True)
-        .values("user")
-        .distinct()
-        .count()
-    )
+    subscribers_who_viewed = views_qs.filter(user__subscription__is_active=True).values("user").distinct().count()
 
     by_topic: list[dict[str, object]] = []
     for slug, label in PostTopic.choices:
@@ -44,12 +39,9 @@ def get_author_dashboard_stats(author: AbstractBaseUser) -> dict[str, object]:
             },
         )
 
-    top_posts = (
-        posts.annotate(
-            annotated_comments=Count("comments"),
-        )
-        .order_by("-view_count", "-annotated_comments", "-created_at")[:5]
-    )
+    top_posts = posts.annotate(
+        annotated_comments=Count("comments"),
+    ).order_by("-view_count", "-annotated_comments", "-created_at")[:5]
     top_posts_payload = [
         {
             "id": post.pk,
@@ -62,10 +54,7 @@ def get_author_dashboard_stats(author: AbstractBaseUser) -> dict[str, object]:
         for post in top_posts
     ]
 
-    post_stats = (
-        posts.annotate(annotated_comments=Count("comments"))
-        .order_by("-created_at")[:50]
-    )
+    post_stats = posts.annotate(annotated_comments=Count("comments")).order_by("-created_at")[:50]
     post_stats_payload = [
         {
             "id": post.pk,
@@ -79,10 +68,7 @@ def get_author_dashboard_stats(author: AbstractBaseUser) -> dict[str, object]:
         for post in post_stats
     ]
 
-    recent_views_qs = (
-        views_qs.select_related("post", "user", "user__subscription")
-        .order_by("-viewed_at")[:8]
-    )
+    recent_views_qs = views_qs.select_related("post", "user", "user__subscription").order_by("-viewed_at")[:8]
     recent_views = [
         {
             "post_id": view.post_id,

@@ -1,5 +1,8 @@
 """API статистики автора."""
 
+from typing import cast
+
+from django.contrib.auth.models import AbstractBaseUser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -16,6 +19,6 @@ class AuthorStatsView(APIView):
 
     def get(self, request: Request) -> Response:
         """Возвращает агрегаты просмотров, комментариев и публикаций."""
-        stats = get_author_dashboard_stats(request.user)
+        stats = get_author_dashboard_stats(cast(AbstractBaseUser, request.user))
         serializer = AuthorDashboardStatsSerializer(stats)
         return Response(serializer.data)

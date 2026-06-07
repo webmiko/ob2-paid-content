@@ -61,7 +61,7 @@ class PostSerializer(serializers.ModelSerializer):
         user = request.user if request else None
         subscription_active = self.context.get("user_has_active_subscription")
         result = can_view_post_body(user, obj, subscription_active=subscription_active)
-        obj._can_view_body_cached = result  # noqa: SLF001
+        obj._can_view_body_cached = result  # type: ignore[attr-defined]
         return result
 
     def get_body(self, obj: Post) -> str | None:

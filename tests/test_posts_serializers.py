@@ -1,7 +1,5 @@
 """Unit-тесты сериализаторов posts."""
 
-import pytest
-
 from posts.comment_serializers import CommentWriteSerializer
 from posts.serializers import PostWriteSerializer
 

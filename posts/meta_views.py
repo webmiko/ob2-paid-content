@@ -88,8 +88,7 @@ class TopicListView(APIView):
             Response со списком тем; пустые темы включены с post_count=0.
         """
         counts = {
-            row["topic"]: row["post_count"]
-            for row in Post.objects.values("topic").annotate(post_count=Count("id"))
+            row["topic"]: row["post_count"] for row in Post.objects.values("topic").annotate(post_count=Count("id"))
         }
         payload = TopicListSerializer.from_counts(counts)
         serializer = TopicListSerializer(payload, many=True)

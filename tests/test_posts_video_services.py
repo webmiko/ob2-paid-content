@@ -4,7 +4,7 @@ import pytest
 from django.contrib.auth.models import AnonymousUser
 
 from posts.models import Post
-from posts.services.recommendations import DEFAULT_RECOMMENDED_LIMIT, get_recommended_posts, get_similar_posts
+from posts.services.recommendations import get_recommended_posts, get_similar_posts
 from posts.services.video import youtube_embed_url
 
 

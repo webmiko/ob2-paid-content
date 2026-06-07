@@ -15,7 +15,7 @@ def blacklist_user_tokens(user: AbstractBaseUser, *, refresh: str | None = None)
     """
     if refresh:
         try:
-            RefreshToken(refresh).blacklist()
+            RefreshToken(refresh).blacklist()  # type: ignore[arg-type]
         except TokenError:
             pass
 

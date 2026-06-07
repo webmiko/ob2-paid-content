@@ -1,5 +1,8 @@
 """API-представления приложения users."""
 
+from typing import cast
+
+from django.contrib.auth.models import AbstractBaseUser
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
@@ -71,7 +74,7 @@ class UserMeView(APIView):
             context={"user": request.user},
         )
         serializer.is_valid(raise_exception=True)
-        user = request.user
+        user = cast(AbstractBaseUser, request.user)
         refresh = serializer.validated_data.get("refresh") or None
         blacklist_user_tokens(user, refresh=refresh)
         user.delete()

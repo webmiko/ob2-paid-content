@@ -10,7 +10,7 @@ def can_delete_comment(user: AbstractBaseUser, comment: Comment, post: Post) -> 
 
     Разрешено автору комментария, автору публикации и staff.
     """
-    if user.is_staff:
+    if getattr(user, "is_staff", False):
         return True
     if comment.author_id == user.pk:
         return True

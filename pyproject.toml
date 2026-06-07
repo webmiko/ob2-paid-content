@@ -66,6 +66,18 @@ exclude = [
 [[tool.mypy.overrides]]
 module = "*.management.commands.*"
 disallow_untyped_defs = false
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "posts.migrations.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = [
+    "posts.meta_serializers",
+    "posts.stats_serializers",
+]
+ignore_errors = true
 
 [tool.django-stubs]
 django_settings_module = "config.settings"

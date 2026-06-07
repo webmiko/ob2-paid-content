@@ -28,7 +28,7 @@ def _free_posts_queryset(
         .order_by("-has_video_rank", "-created_at")
     )
     if user is not None and user.is_authenticated:
-        queryset = queryset.exclude(author=user)
+        queryset = queryset.exclude(author_id=user.pk)
     if exclude_ids:
         queryset = queryset.exclude(pk__in=exclude_ids)
     return queryset
@@ -111,5 +111,5 @@ def get_similar_posts(
         .order_by("paid_rank", "-has_video_rank", "-created_at")
     )
     if user is not None and user.is_authenticated:
-        queryset = queryset.exclude(author=user)
+        queryset = queryset.exclude(author_id=user.pk)
     return list(queryset[:limit])
