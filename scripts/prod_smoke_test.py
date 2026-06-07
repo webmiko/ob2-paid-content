@@ -67,7 +67,7 @@ def main() -> int:
         ("robots", f"{BASE}/robots.txt", "Sitemap"),
         ("sitemap", f"{BASE}/sitemap.xml", "urlset"),
         ("manifest", f"{BASE}/manifest.webmanifest", "Creavity"),
-        ("sw.js", f"{BASE}/sw.js", "precache"),
+        ("sw.js", f"{BASE}/sw.js", "define"),
         ("admin", f"{BASE}/admin/", "admin"),
     ):
         code, body = get(url)
