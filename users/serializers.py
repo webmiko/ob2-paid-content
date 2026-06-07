@@ -52,6 +52,30 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
         return nickname
 
 
+class UserDeleteAccountSerializer(serializers.Serializer):
+    """Удаление аккаунта с подтверждением пароля."""
+
+    password = serializers.CharField(write_only=True, style={"input_type": "password"})
+    confirm = serializers.BooleanField()
+    refresh = serializers.CharField(required=False, write_only=True, allow_blank=True)
+
+    def validate_confirm(self, value: bool) -> bool:
+        """Требует явного подтверждения удаления."""
+        if not value:
+            raise serializers.ValidationError("Подтвердите, что понимаете последствия удаления.")
+        return value
+
+    def validate(self, attrs: dict[str, object]) -> dict[str, object]:
+        """Проверяет пароль текущего пользователя."""
+        user = self.context.get("user")
+        password = attrs.get("password")
+        if user is None or not isinstance(password, str):
+            raise serializers.ValidationError("Не удалось проверить пароль.")
+        if not user.check_password(password):
+            raise serializers.ValidationError({"password": "Неверный пароль."})
+        return attrs
+
+
 class RegisterSerializer(serializers.ModelSerializer):
     """Регистрация пользователя по телефону, никнейму и паролю."""
 

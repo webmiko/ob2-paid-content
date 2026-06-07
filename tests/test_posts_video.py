@@ -57,8 +57,8 @@ def test_is_valid_video_url_rejects_unknown_host() -> None:
 
 
 @pytest.mark.django_db
-def test_guest_sees_has_video_but_not_embed_on_paid(api_client, author) -> None:
-    """Guest видит флаг has_video, но не embed URL у платного поста."""
+def test_guest_does_not_see_paid_video_metadata(api_client, author) -> None:
+    """Guest не видит has_video и video_provider у платного поста."""
     from posts.models import Post
 
     post = Post.objects.create(
@@ -70,8 +70,8 @@ def test_guest_sees_has_video_but_not_embed_on_paid(api_client, author) -> None:
     )
     response = api_client.get(post_detail_url(post.pk))
     assert response.status_code == status.HTTP_200_OK
-    assert response.data["has_video"] is True
-    assert response.data["video_provider"] == PROVIDER_YOUTUBE
+    assert response.data["has_video"] is False
+    assert response.data["video_provider"] is None
     assert response.data["video_url"] is None
     assert response.data["video_embed_url"] is None
 

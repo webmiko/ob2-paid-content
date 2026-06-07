@@ -89,7 +89,7 @@ def test_register_sqli_string_in_phone_returns_400(api_client: APIClient) -> Non
 
 @pytest.mark.django_db
 def test_jwt_obtain_and_refresh(api_client: APIClient, user_password: str) -> None:
-    """JWT obtain по phone и refresh возвращают новую пару токенов."""
+    """JWT obtain по phone; refresh ротирует refresh-токен."""
     User.objects.create_user(phone="79002223344", password=user_password)
     token_response = api_client.post(
         TOKEN_URL,
@@ -98,15 +98,20 @@ def test_jwt_obtain_and_refresh(api_client: APIClient, user_password: str) -> No
     )
     assert token_response.status_code == status.HTTP_200_OK
     assert "access" in token_response.data
-    assert "refresh" in token_response.data
+    old_refresh = token_response.data["refresh"]
 
     refresh_response = api_client.post(
         REFRESH_URL,
-        {"refresh": token_response.data["refresh"]},
+        {"refresh": old_refresh},
         format="json",
     )
     assert refresh_response.status_code == status.HTTP_200_OK
     assert "access" in refresh_response.data
+    assert "refresh" in refresh_response.data
+    assert refresh_response.data["refresh"] != old_refresh
+
+    reused = api_client.post(REFRESH_URL, {"refresh": old_refresh}, format="json")
+    assert reused.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 @pytest.mark.django_db

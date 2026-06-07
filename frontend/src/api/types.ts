@@ -49,6 +49,56 @@ export interface TopicSummary {
   post_count: number;
 }
 
+export interface AuthorDashboardStats {
+  post_count: number;
+  free_count: number;
+  paid_count: number;
+  total_views: number;
+  unique_readers: number;
+  total_comments: number;
+  platform_subscribers: number;
+  subscribers_who_viewed: number;
+  posts_with_video: number;
+  by_topic: AuthorTopicStat[];
+  top_posts: AuthorTopPost[];
+  post_stats: AuthorPostStat[];
+  recent_views: AuthorRecentView[];
+}
+
+export interface AuthorTopicStat {
+  slug: string;
+  label: string;
+  post_count: number;
+  views: number;
+  comments: number;
+}
+
+export interface AuthorTopPost {
+  id: number;
+  title: string;
+  is_paid: boolean;
+  view_count: number;
+  comment_count: number;
+  created_at: string;
+}
+
+export interface AuthorPostStat {
+  id: number;
+  title: string;
+  is_paid: boolean;
+  topic_label: string;
+  view_count: number;
+  comment_count: number;
+  created_at: string;
+}
+
+export interface AuthorRecentView {
+  post_id: number;
+  post_title: string;
+  viewed_at: string;
+  reader_type: "guest" | "reader" | "subscriber";
+}
+
 export interface UserProfile {
   id: number;
   phone: string;

@@ -18,6 +18,12 @@ PHONE_COUNTRY_DIGIT = "7"
 # Пагинация списка публикаций
 DEFAULT_PAGE_SIZE = 10
 
+# Рекомендации: максимум ID в query exclude=
+MAX_RECOMMENDED_EXCLUDE_IDS = 50
+
+# Каталог авторов: верхняя граница списка без пагинации
+MAX_AUTHORS_LIST = 100
+
 # PostgreSQL
 DEFAULT_DB_PORT = "5432"
 DEFAULT_DB_USER = "postgres"

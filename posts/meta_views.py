@@ -8,6 +8,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from config.constants import MAX_AUTHORS_LIST
 from posts.meta_serializers import AuthorListSerializer, TopicListSerializer
 from posts.models import Post
 
@@ -39,10 +40,8 @@ class AuthorListView(APIView):
             .distinct()
         )
         if search:
-            queryset = queryset.filter(
-                Q(display_name__icontains=search) | Q(phone__icontains=search),
-            )
-        authors = queryset.order_by("-post_count", "id")
+            queryset = queryset.filter(display_name__icontains=search)
+        authors = queryset.order_by("-post_count", "id")[:MAX_AUTHORS_LIST]
         serializer = AuthorListSerializer(authors, many=True)
         return Response(serializer.data)
 

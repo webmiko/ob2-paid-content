@@ -32,8 +32,12 @@ export function clearTokens(): void {
   localStorage.removeItem(REFRESH_STORAGE_KEY);
 }
 
+export function getRefreshToken(): string | null {
+  return localStorage.getItem(REFRESH_STORAGE_KEY);
+}
+
 export function hasRefreshToken(): boolean {
-  return Boolean(localStorage.getItem(REFRESH_STORAGE_KEY));
+  return Boolean(getRefreshToken());
 }
 
 async function refreshAccessToken(): Promise<string | null> {
@@ -55,8 +59,11 @@ async function refreshAccessToken(): Promise<string | null> {
       clearTokens();
       return null;
     }
-    const data = (await response.json()) as { access: string };
+    const data = (await response.json()) as { access: string; refresh?: string };
     accessToken = data.access;
+    if (data.refresh) {
+      localStorage.setItem(REFRESH_STORAGE_KEY, data.refresh);
+    }
     return accessToken;
   })();
 

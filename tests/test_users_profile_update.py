@@ -7,8 +7,8 @@ ME_URL = "/api/users/me/"
 
 
 @pytest.mark.django_db
-def test_patch_display_name(auth_client, author) -> None:
-    """PATCH /me/ обновляет display_name."""
+def test_patch_display_name_too_short(auth_client) -> None:
+    """PATCH /me/ отклоняет слишком короткий display_name."""
     response = auth_client.patch(ME_URL, {"display_name": "A"}, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 

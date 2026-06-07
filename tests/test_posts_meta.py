@@ -23,6 +23,27 @@ def test_authors_list(api_client, author, free_post, paid_post) -> None:
 
 
 @pytest.mark.django_db
+def test_author_search_by_display_name(api_client, author, free_post) -> None:
+    """Поиск авторов работает по display_name."""
+    author.display_name = "UniqueCatalogAuthor"
+    author.save(update_fields=["display_name"])
+    response = api_client.get(AUTHORS_URL, {"search": "CatalogAuthor"})
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.data) == 1
+    assert response.data[0]["id"] == author.pk
+
+
+@pytest.mark.django_db
+def test_author_search_does_not_match_phone(api_client, author, free_post) -> None:
+    """Поиск авторов не использует телефон (нет enumeration)."""
+    author.display_name = "NoPhoneMatchName"
+    author.save(update_fields=["display_name"])
+    response = api_client.get(AUTHORS_URL, {"search": author.phone[:6]})
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data == []
+
+
+@pytest.mark.django_db
 def test_author_detail(api_client, author, free_post) -> None:
     """Детальная карточка автора доступна гостю."""
     response = api_client.get(f"{AUTHORS_URL}{author.pk}/")

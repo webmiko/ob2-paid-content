@@ -20,7 +20,7 @@ function apiPathFromPaginatedUrl(next: string | null): string | null {
     const url = new URL(next, window.location.origin);
     return `${url.pathname}${url.search}`;
   } catch {
-    return next;
+    return next.startsWith("/") ? next : null;
   }
 }
 

@@ -31,6 +31,7 @@ class Post(models.Model):
         verbose_name="Ссылка на видео",
         help_text="YouTube, Vimeo, Rutube, VK Video или Дзен — показывается при доступе к публикации.",
     )
+    view_count = models.PositiveIntegerField(default=0, verbose_name="Просмотры")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
 
@@ -68,3 +69,48 @@ class Comment(models.Model):
 
     def __str__(self) -> str:
         return f"Comment #{self.pk} on post {self.post_id}"
+
+
+class PostView(models.Model):
+    """Уникальный просмотр публикации (авторизованный или гость по IP)."""
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="views",
+        verbose_name="Публикация",
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="post_views",
+        verbose_name="Читатель",
+    )
+    ip_hash = models.CharField(max_length=64, blank=True, default="", verbose_name="Хеш IP")
+    viewed_at = models.DateTimeField(auto_now_add=True, verbose_name="Когда")
+
+    class Meta:
+        verbose_name = "Просмотр публикации"
+        verbose_name_plural = "Просмотры публикаций"
+        ordering = ("-viewed_at",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=("post", "user"),
+                condition=models.Q(user__isnull=False),
+                name="unique_post_view_user",
+            ),
+            models.UniqueConstraint(
+                fields=("post", "ip_hash"),
+                condition=models.Q(user__isnull=True) & ~models.Q(ip_hash=""),
+                name="unique_post_view_ip",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("post", "-viewed_at")),
+        ]
+
+    def __str__(self) -> str:
+        reader = self.user_id or "guest"
+        return f"View post {self.post_id} by {reader}"

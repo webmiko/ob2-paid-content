@@ -27,6 +27,7 @@ export default function PostDetailPage() {
         const data = await apiJson<Post>(`/api/posts/${id}/`);
         setPost(data);
         markPostViewed(data.id);
+        void apiJson(`/api/posts/${id}/view/`, { method: "POST" }).catch(() => undefined);
         const similarData = await apiJson<Post[]>(`/api/posts/${id}/similar/`);
         setSimilar(similarData);
       } catch (err) {

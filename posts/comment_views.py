@@ -8,6 +8,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from config.constants import MAX_RECOMMENDED_EXCLUDE_IDS
+from config.throttling import CommentCreateThrottle, CommentDeleteThrottle
 from posts.comment_serializers import CommentSerializer, CommentWriteSerializer
 from posts.models import Comment, Post
 from posts.serializers import PostSerializer
@@ -27,10 +29,12 @@ class CommentPagination(PageNumberPagination):
     max_page_size = 50
 
 
-def _parse_exclude_ids(raw: str) -> list[int]:
-    """Разбирает query exclude=1,2,3 в список ID."""
+def _parse_exclude_ids(raw: str, *, limit: int = MAX_RECOMMENDED_EXCLUDE_IDS) -> list[int]:
+    """Разбирает query exclude=1,2,3 в список ID (не больше limit)."""
     result: list[int] = []
     for part in raw.split(","):
+        if len(result) >= limit:
+            break
         cleaned = part.strip()
         if cleaned.isdigit():
             result.append(int(cleaned))
@@ -93,6 +97,12 @@ class PostCommentListCreateView(APIView):
             return [IsAuthenticated()]
         return [AllowAny()]
 
+    def get_throttles(self) -> list:
+        """Throttling на создание комментариев."""
+        if self.request.method == "POST":
+            return [CommentCreateThrottle()]
+        return []
+
     def get(self, request: Request, post_id: int) -> Response:
         """Возвращает страницу комментариев при доступе к публикации."""
         post = get_object_or_404(Post.objects.select_related("author"), pk=post_id)
@@ -147,6 +157,7 @@ class PostCommentDetailView(APIView):
     """Удаление комментария."""
 
     permission_classes = (IsAuthenticated,)
+    throttle_classes = (CommentDeleteThrottle,)
 
     def delete(self, request: Request, post_id: int, comment_id: int) -> Response:
         """Удаляет комментарий автором, автором поста или staff."""

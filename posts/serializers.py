@@ -69,11 +69,15 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.body if cached else None
 
     def get_has_video(self, obj: Post) -> bool:
-        """Есть ли у публикации прикреплённое видео."""
+        """Есть ли у публикации прикреплённое видео (без утечки для paid без доступа)."""
+        if obj.is_paid and not self.get_can_view_body(obj):
+            return False
         return bool(obj.video_url)
 
     def get_video_provider(self, obj: Post) -> str | None:
-        """Провайдер видео (youtube, vimeo, rutube, vk, dzen) или None."""
+        """Провайдер видео или None без доступа к paid."""
+        if obj.is_paid and not self.get_can_view_body(obj):
+            return None
         if not obj.video_url:
             return None
         return detect_video_provider(obj.video_url)
@@ -91,7 +95,9 @@ class PostSerializer(serializers.ModelSerializer):
         return video_embed_url(obj.video_url)
 
     def get_comment_count(self, obj: Post) -> int:
-        """Число комментариев (аннотация queryset или count)."""
+        """Число комментариев (скрыто для paid без доступа)."""
+        if obj.is_paid and not self.get_can_view_body(obj):
+            return 0
         annotated = getattr(obj, "comment_count", None)
         if annotated is not None:
             return int(annotated)

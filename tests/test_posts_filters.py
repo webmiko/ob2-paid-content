@@ -51,6 +51,48 @@ def test_search_in_title(api_client, free_post) -> None:
 
 
 @pytest.mark.django_db
+def test_search_does_not_match_paid_body_for_guest(api_client, author) -> None:
+    """Гость не находит paid-пост по секретному слову только в body."""
+    paid = Post.objects.create(
+        title="Public paid title",
+        body="UniquePaidBodySecretXYZ",
+        is_paid=True,
+        author=author,
+    )
+    response = api_client.get(POSTS_URL, {"search": "UniquePaidBodySecretXYZ"})
+    ids = {item["id"] for item in response.data["results"]}
+    assert paid.pk not in ids
+
+
+@pytest.mark.django_db
+def test_search_matches_paid_body_for_subscriber(subscriber_client, author) -> None:
+    """Подписчик находит paid-пост по слову в body."""
+    paid = Post.objects.create(
+        title="Subscriber search",
+        body="SubscriberBodyTokenABC",
+        is_paid=True,
+        author=author,
+    )
+    response = subscriber_client.get(POSTS_URL, {"search": "SubscriberBodyTokenABC"})
+    ids = {item["id"] for item in response.data["results"]}
+    assert paid.pk in ids
+
+
+@pytest.mark.django_db
+def test_search_matches_own_paid_body_for_author(auth_client, author) -> None:
+    """Автор без подписки находит свой paid-пост по body."""
+    paid = Post.objects.create(
+        title="My paid",
+        body="AuthorOwnBodyTokenDEF",
+        is_paid=True,
+        author=author,
+    )
+    response = auth_client.get(POSTS_URL, {"search": "AuthorOwnBodyTokenDEF"})
+    ids = {item["id"] for item in response.data["results"]}
+    assert paid.pk in ids
+
+
+@pytest.mark.django_db
 def test_access_available_guest(api_client, free_post, paid_post) -> None:
     """Гость с ?access=available видит только бесплатные."""
     response = api_client.get(POSTS_URL, {"access": "available"})

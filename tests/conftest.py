@@ -10,6 +10,7 @@ from users.models import Subscription
 User = get_user_model()
 
 POSTS_URL = "/api/posts/"
+ME_URL = "/api/users/me/"
 PASSWORD = "SecurePass123"
 
 

@@ -14,7 +14,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from config.throttling import PaymentRateThrottle
+from config.throttling import PaymentRateThrottle, WebhookRateThrottle
 from users.models import Payment, PaymentStatus, User
 from users.payment_serializers import PaymentSerializer, PaymentSuccessSerializer
 from users.services.access import user_has_active_subscription
@@ -215,6 +215,7 @@ class StripeWebhookView(APIView):
 
     permission_classes = (AllowAny,)
     authentication_classes: list = []
+    throttle_classes = (WebhookRateThrottle,)
 
     def post(self, request: Request) -> Response:
         """Активирует подписку по событию Stripe без участия клиента."""

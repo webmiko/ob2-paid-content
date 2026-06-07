@@ -3,7 +3,15 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 
 import { apiJson } from "../api/client";
-import type { Paginated, PaymentCreateResponse, PaymentSuccessResponse, Post } from "../api/types";
+import type {
+  AuthorDashboardStats,
+  Paginated,
+  PaymentCreateResponse,
+  PaymentSuccessResponse,
+  Post,
+} from "../api/types";
+import AuthorDashboard from "../components/AuthorDashboard";
+import DeleteAccountSection from "../components/DeleteAccountSection";
 import PostBadge from "../components/PostBadge";
 import PostEditForm from "../components/PostEditForm";
 import { TOPICS } from "../constants/topics";
@@ -25,6 +33,8 @@ export default function ProfilePage() {
   const [postMessage, setPostMessage] = useState<string | null>(null);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [editingPostId, setEditingPostId] = useState<number | null>(null);
+  const [dashboardStats, setDashboardStats] = useState<AuthorDashboardStats | null>(null);
+  const [dashboardError, setDashboardError] = useState<string | null>(null);
 
   const myPostsPath = useMemo(
     () => (user ? `/api/posts/?author=${user.id}` : null),
@@ -36,6 +46,23 @@ export default function ProfilePage() {
       setDisplayName(user.display_name);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+    const loadStats = async () => {
+      try {
+        const data = await apiJson<AuthorDashboardStats>("/api/users/me/stats/");
+        setDashboardStats(data);
+        setDashboardError(null);
+      } catch {
+        setDashboardStats(null);
+        setDashboardError("Не удалось загрузить статистику.");
+      }
+    };
+    void loadStats();
+  }, [isAuthenticated, postMessage]);
 
   useEffect(() => {
     if (!myPostsPath) {
@@ -197,6 +224,9 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {dashboardError && <div className="alert-custom alert-warning-custom">{dashboardError}</div>}
+      {dashboardStats && <AuthorDashboard stats={dashboardStats} />}
+
       <h2 className="section-title">
         <i className="fa-solid fa-feather" aria-hidden="true" /> Новая публикация
       </h2>
@@ -326,6 +356,8 @@ export default function ProfilePage() {
           </button>
         )}
       </div>
+
+      <DeleteAccountSection phone={user.phone} />
     </section>
   );
 }

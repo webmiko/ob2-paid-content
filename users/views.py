@@ -6,19 +6,27 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from config.throttling import AuthRateThrottle
+from config.throttling import AccountDeleteThrottle, AuthRateThrottle
 from users.serializers import (
     RegisterSerializer,
+    UserDeleteAccountSerializer,
     UserProfileSerializer,
     UserProfileUpdateSerializer,
     UserPublicSerializer,
 )
+from users.services.tokens import blacklist_user_tokens
 
 
 class UserMeView(APIView):
     """Профиль текущего авторизованного пользователя."""
 
     permission_classes = (IsAuthenticated,)
+
+    def get_throttles(self) -> list:
+        """Throttling только для удаления аккаунта."""
+        if self.request.method == "DELETE":
+            return [AccountDeleteThrottle()]
+        return []
 
     def get(self, request: Request) -> Response:
         """Возвращает профиль текущего пользователя.
@@ -48,6 +56,26 @@ class UserMeView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(UserProfileSerializer(request.user).data)
+
+    def delete(self, request: Request) -> Response:
+        """Удаляет аккаунт текущего пользователя после подтверждения пароля.
+
+        Args:
+            request: HTTP-DELETE с JSON {password, confirm: true}.
+
+        Returns:
+            Response 204 без тела.
+        """
+        serializer = UserDeleteAccountSerializer(
+            data=request.data,
+            context={"user": request.user},
+        )
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        refresh = serializer.validated_data.get("refresh") or None
+        blacklist_user_tokens(user, refresh=refresh)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class RegisterView(APIView):

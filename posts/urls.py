@@ -10,6 +10,7 @@ from posts.comment_views import (
     SimilarPostsView,
 )
 from posts.meta_views import AuthorDetailView, AuthorListView, TopicListView
+from posts.view_views import PostRecordViewView
 from posts.views import PostViewSet
 
 router = DefaultRouter()
@@ -23,6 +24,7 @@ urlpatterns = [
     path("authors/<int:author_id>/", AuthorDetailView.as_view(), name="author-detail"),
     path("topics/", TopicListView.as_view(), name="topic-list"),
     path("<int:post_id>/similar/", SimilarPostsView.as_view(), name="post-similar"),
+    path("<int:post_id>/view/", PostRecordViewView.as_view(), name="post-view"),
     path("<int:post_id>/comments/", PostCommentListCreateView.as_view(), name="post-comments"),
     path(
         "<int:post_id>/comments/<int:comment_id>/",

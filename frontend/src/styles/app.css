@@ -454,6 +454,77 @@ main {
   padding: 0.42rem 1.05rem;
 }
 
+.btn-pill-danger {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: #fff;
+  opacity: 1;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(220, 38, 38, 0.22);
+}
+
+.btn-pill-danger:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.btn-pill-danger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.profile-danger-zone {
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-md);
+  scroll-margin-bottom: 6rem;
+  border-color: rgba(220, 38, 38, 0.25);
+  position: relative;
+  z-index: 1;
+}
+
+.delete-modal-hint {
+  margin-top: 0;
+  margin-bottom: var(--space-sm);
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 100vh;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(var(--space-md), env(safe-area-inset-top, 0px))
+    max(var(--space-md), env(safe-area-inset-right, 0px))
+    max(var(--space-md), env(safe-area-inset-bottom, 0px))
+    max(var(--space-md), env(safe-area-inset-left, 0px));
+  overflow-y: auto;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.modal-dialog {
+  width: min(100%, 440px);
+  margin: auto;
+  max-height: min(90dvh, 640px);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
 .form-group {
   margin-bottom: var(--space-md);
 }
@@ -860,6 +931,142 @@ main {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-md);
   margin-bottom: var(--space-lg);
+}
+
+.author-dashboard {
+  margin-bottom: var(--space-xl);
+}
+
+.dashboard-hint {
+  margin-top: 0;
+  margin-bottom: var(--space-md);
+}
+
+.dashboard-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.dashboard-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: var(--shadow-soft);
+}
+
+.dashboard-stat-value {
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+.dashboard-stat-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.dashboard-panel {
+  margin-bottom: var(--space-md);
+}
+
+.dashboard-panel-title {
+  margin: 0 0 var(--space-sm);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.dashboard-table-wrap {
+  overflow-x: auto;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+  padding: 0.55rem 0.65rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.dashboard-table th {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.dashboard-top-list,
+.dashboard-activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-top-list li,
+.dashboard-activity-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.dashboard-top-list li:last-child,
+.dashboard-activity-list li:last-child {
+  border-bottom: 0;
+}
+
+.dashboard-rank {
+  width: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.dashboard-top-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.dashboard-top-meta,
+.dashboard-activity-time {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.reader-chip {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.reader-chip-guest {
+  background: rgba(100, 116, 139, 0.15);
+}
+
+.reader-chip-reader {
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.reader-chip-subscriber {
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.dashboard-activity-list .text-link {
+  flex: 1;
+  min-width: 0;
 }
 
 .hint-text {
