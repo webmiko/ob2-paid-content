@@ -200,6 +200,6 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-          DOCKER_IMAGE: ${{ needs.build.outputs.docker_image }}
+          DOCKER_IMAGE: ${{ secrets.DOCKER_HUB_USERNAME }}/ob2-paid-content:${{ github.sha }}
           FRONTEND_DIST_SOURCE: frontend-dist
         run: ./scripts/deploy-remote.sh
