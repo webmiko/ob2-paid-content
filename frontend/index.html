@@ -35,8 +35,6 @@
     <meta name="apple-mobile-web-app-title" content="Creavity" />
     <meta name="mobile-web-app-capable" content="yes" />
     <link rel="canonical" href="/" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <style>
       html {
         background: #eef1f8;
@@ -129,18 +127,24 @@
         document.documentElement.style.colorScheme = theme;
       })();
     </script>
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'"
-    />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
-      />
-    </noscript>
+    <script>
+      (function () {
+        "use strict";
+        var path = location.pathname;
+        if (path !== "/" && path !== "") {
+          return;
+        }
+        window.__CREAVITY_FEED_PREFETCH__ = fetch("/api/posts/", {
+          credentials: "same-origin",
+          headers: { Accept: "application/json" },
+        }).then(function (response) {
+          if (!response.ok) {
+            throw new Error(String(response.status));
+          }
+          return response.json();
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

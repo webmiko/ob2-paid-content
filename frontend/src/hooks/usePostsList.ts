@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { apiJson } from "../api/client";
 import type { Paginated, Post } from "../api/types";
+import { takeEarlyFeedPrefetch } from "../utils/earlyFeedPrefetch";
 
 export type ContentFilter = "all" | "free" | "paid" | "available";
 
@@ -63,8 +64,16 @@ export function usePostsList(filters: PostListFilters) {
     const load = async () => {
       setLoading(true);
       setError(null);
+      const path = buildPostsPath(filters);
       try {
-        await loadPage(buildPostsPath(filters), false);
+        const early = takeEarlyFeedPrefetch(path);
+        if (early) {
+          const data = await early;
+          setPosts(data.results);
+          setNextPath(apiPathFromPaginatedUrl(data.next));
+        } else {
+          await loadPage(path, false);
+        }
       } catch {
         setError("Не удалось загрузить публикации.");
         setPosts([]);
