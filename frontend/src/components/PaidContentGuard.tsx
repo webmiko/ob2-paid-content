@@ -8,7 +8,7 @@ interface PaidContentGuardProps {
   children: ReactNode;
 }
 
-/** Ограничивает копирование и сохранение платного контента в браузере."""
+/** Ограничивает копирование и сохранение платного контента в браузере. */
 export default function PaidContentGuard({ enabled, watermark, children }: PaidContentGuardProps) {
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -30,7 +30,7 @@ export default function PaidContentGuard({ enabled, watermark, children }: PaidC
         return;
       }
       const target = event.target;
-      if (target instanceof HTMLElement && target.closest("input, textarea, select, [contenteditable='true']")) {
+      if (target instanceof HTMLElement && target.closest('input, textarea, select, [contenteditable="true"]')) {
         return;
       }
       if (!root.contains(target as Node)) {
