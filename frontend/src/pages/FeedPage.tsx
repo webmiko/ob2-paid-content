@@ -1,10 +1,13 @@
 import { useMemo, useState } from "react";
 
 import ContentTypeTabs from "../components/ContentTypeTabs";
+import JsonLd from "../components/JsonLd";
+import PageMeta from "../components/PageMeta";
 import PostFilters from "../components/PostFilters";
 import PostListSection from "../components/PostListSection";
 import { useAuth } from "../context/AuthContext";
 import { usePostsList } from "../hooks/usePostsList";
+import { DEFAULT_DESCRIPTION, getSiteUrl, SITE_NAME } from "../seo/site";
 
 export default function FeedPage() {
   const { isAuthenticated } = useAuth();
@@ -24,7 +27,24 @@ export default function FeedPage() {
   };
 
   return (
-    <section>
+    <>
+      <PageMeta title={SITE_NAME} description={DEFAULT_DESCRIPTION} path="/" />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: SITE_NAME,
+          url: getSiteUrl(),
+          description: DEFAULT_DESCRIPTION,
+          inLanguage: "ru-RU",
+          publisher: {
+            "@type": "Organization",
+            name: SITE_NAME,
+            url: getSiteUrl(),
+          },
+        }}
+      />
+      <section>
       <div className="page-header-row">
         <h1 className="page-title">
           <i className="fa-solid fa-stream" aria-hidden="true" /> Лента
@@ -55,5 +75,6 @@ export default function FeedPage() {
         emptyText="Смените фильтры или создайте первую публикацию в профиле"
       />
     </section>
+    </>
   );
 }

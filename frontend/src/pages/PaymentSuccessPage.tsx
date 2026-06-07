@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 
 import { apiJson, hasRefreshToken } from "../api/client";
 import type { PaymentSuccessResponse } from "../api/types";
+import PageMeta from "../components/PageMeta";
 import { useAuth } from "../context/AuthContext";
 
 export default function PaymentSuccessPage() {
@@ -60,7 +61,14 @@ export default function PaymentSuccessPage() {
         : "alert-info-custom";
 
   return (
-    <section className="auth-wrap text-center">
+    <>
+      <PageMeta
+        title="Оплата"
+        description="Подтверждение оплаты подписки Creavity."
+        path="/payment/success"
+        noIndex
+      />
+      <section className="auth-wrap text-center">
       <h1 className="page-title">Оплата</h1>
       <div className={`card alert-custom ${alertClass}`}>
         {loading ? "Загрузка…" : message}
@@ -77,5 +85,6 @@ export default function PaymentSuccessPage() {
         </p>
       )}
     </section>
+    </>
   );
 }

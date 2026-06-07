@@ -12,6 +12,7 @@ import type {
 } from "../api/types";
 import AuthorDashboard from "../components/AuthorDashboard";
 import DeleteAccountSection from "../components/DeleteAccountSection";
+import PageMeta from "../components/PageMeta";
 import PostBadge from "../components/PostBadge";
 import PostEditForm from "../components/PostEditForm";
 import { TOPICS } from "../constants/topics";
@@ -164,7 +165,14 @@ export default function ProfilePage() {
   };
 
   return (
-    <section>
+    <>
+      <PageMeta
+        title="Мой профиль"
+        description="Личный кабинет автора Creavity."
+        path="/profile"
+        noIndex
+      />
+      <section>
       <h1 className="page-title">
         <i className="fa-solid fa-user-circle" aria-hidden="true" /> Мой профиль
       </h1>
@@ -359,5 +367,6 @@ export default function ProfilePage() {
 
       <DeleteAccountSection phone={user.phone} />
     </section>
+    </>
   );
 }

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { ApiError } from "../api/client";
+import PageMeta from "../components/PageMeta";
 import { useAuth } from "../context/AuthContext";
 
 export default function RegisterPage() {
@@ -45,7 +46,14 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="auth-wrap">
+    <>
+      <PageMeta
+        title="Регистрация"
+        description="Создайте аккаунт Creavity и получите доступ к платному контенту по подписке платформы."
+        path="/register"
+        noIndex
+      />
+      <div className="auth-wrap">
       <h1 className="page-title">
         <i className="fa-solid fa-user-plus" aria-hidden="true" /> Регистрация
       </h1>
@@ -95,5 +103,6 @@ export default function RegisterPage() {
         Уже есть аккаунт? <Link className="text-link" to="/login">Вход</Link>
       </p>
     </div>
+    </>
   );
 }

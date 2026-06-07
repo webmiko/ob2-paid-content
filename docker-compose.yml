@@ -46,6 +46,7 @@ services:
       context: ./frontend
       args:
         VITE_API_URL: ""
+        VITE_SITE_URL: ${SITE_URL:-http://localhost}
     restart: "no"
     volumes:
       - ./frontend/dist:/dist

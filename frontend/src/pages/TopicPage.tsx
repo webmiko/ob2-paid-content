@@ -2,9 +2,12 @@ import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import ContentTypeTabs from "../components/ContentTypeTabs";
+import JsonLd from "../components/JsonLd";
+import PageMeta from "../components/PageMeta";
 import PostListSection from "../components/PostListSection";
 import { topicLabel } from "../constants/topics";
 import { usePostsList } from "../hooks/usePostsList";
+import { absoluteUrl } from "../seo/site";
 
 export default function TopicPage() {
   const { slug } = useParams();
@@ -20,9 +23,28 @@ export default function TopicPage() {
   const { posts, error, loading, loadingMore, nextPath, loadMore } = usePostsList(filters);
 
   const label = slug ? topicLabel(slug) : "Тема";
+  const topicPath = slug ? `/topics/${slug}` : "/explore";
 
   return (
-    <section>
+    <>
+      <PageMeta
+        title={`Тема: ${label}`}
+        description={`Публикации Creavity по теме «${label}»: бесплатные и платные материалы авторов.`}
+        path={topicPath}
+      />
+      {slug && (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: label,
+            url: absoluteUrl(topicPath),
+            description: `Публикации Creavity по теме «${label}».`,
+            inLanguage: "ru-RU",
+          }}
+        />
+      )}
+      <section>
       <Link className="back-link" to="/explore">
         ← К каталогу
       </Link>
@@ -48,5 +70,6 @@ export default function TopicPage() {
         emptyTitle="В этой теме пока нет публикаций"
       />
     </section>
+    </>
   );
 }

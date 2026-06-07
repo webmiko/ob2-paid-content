@@ -128,7 +128,7 @@ body::after {
   text-decoration: none;
 }
 
-.logo-link h1 {
+.logo-link .logo-title {
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 3vw, 1.95rem);
   font-weight: 700;
@@ -1284,7 +1284,8 @@ body.modal-open {
     padding: 0.65rem 0.85rem;
   }
 
-  .logo-link h1 {
+  .logo-link .logo-title {
+    margin: 0;
     font-size: 1.35rem;
   }
 

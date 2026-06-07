@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Layout from "./components/Layout";
 import { AuthProvider } from "./context/AuthContext";
@@ -11,6 +11,7 @@ import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import PostDetailPage from "./pages/PostDetailPage";
 import ProfilePage from "./pages/ProfilePage";
 import RegisterPage from "./pages/RegisterPage";
+import NotFoundPage from "./pages/NotFoundPage";
 import TopicPage from "./pages/TopicPage";
 
 export default function App() {
@@ -29,7 +30,7 @@ export default function App() {
             <Route path="profile" element={<ProfilePage />} />
             <Route path="payment/success" element={<PaymentSuccessPage />} />
             <Route path="payment/cancel" element={<PaymentCancelPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -4,8 +4,11 @@ import { Link, useParams } from "react-router-dom";
 import { apiJson } from "../api/client";
 import type { AuthorSummary } from "../api/types";
 import ContentTypeTabs from "../components/ContentTypeTabs";
+import JsonLd from "../components/JsonLd";
+import PageMeta from "../components/PageMeta";
 import PostListSection from "../components/PostListSection";
 import { usePostsList } from "../hooks/usePostsList";
+import { absoluteUrl, truncateDescription } from "../seo/site";
 
 export default function AuthorPage() {
   const { id } = useParams();
@@ -39,18 +42,52 @@ export default function AuthorPage() {
   }, [authorId]);
 
   if (pageError) {
+    const authorPath = Number.isFinite(authorId) ? `/authors/${authorId}` : "/explore";
     return (
-      <div className="alert-custom alert-danger-custom">
-        {pageError}{" "}
-        <Link className="text-link" to="/explore">
-          К каталогу
-        </Link>
-      </div>
+      <>
+        <PageMeta
+          title="Автор не найден"
+          description="Запрошенный автор не существует на Creavity."
+          path={authorPath}
+          noIndex
+        />
+        <div className="alert-custom alert-danger-custom">
+          {pageError}{" "}
+          <Link className="text-link" to="/explore">
+            К каталогу
+          </Link>
+        </div>
+      </>
     );
   }
 
+  const authorPath = Number.isFinite(authorId) ? `/authors/${authorId}` : "/explore";
+  const authorTitle = author?.label ?? "Автор";
+  const authorDescription = author
+    ? `Публикации автора ${author.label}: ${author.post_count} материалов на Creavity.`
+    : "Профиль автора на Creavity.";
+
   return (
-    <section>
+    <>
+      <PageMeta
+        title={authorTitle}
+        description={authorDescription}
+        path={authorPath}
+      />
+      {author && (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            mainEntity: {
+              "@type": "Person",
+              name: author.label,
+              url: absoluteUrl(`/authors/${authorId}`),
+            },
+          }}
+        />
+      )}
+      <section>
       <Link className="back-link" to="/explore">
         ← К каталогу
       </Link>
@@ -80,5 +117,6 @@ export default function AuthorPage() {
         emptyTitle="У автора пока нет публикаций в этой категории"
       />
     </section>
+    </>
   );
 }

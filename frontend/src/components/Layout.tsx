@@ -12,9 +12,9 @@ export default function Layout() {
       <div className="ambient-glow" aria-hidden="true" />
       <header className="top-bar">
         <Link className="logo-link" to="/">
-          <h1>
+          <p className="logo-title">
             <i className="fa-solid fa-pen-fancy" aria-hidden="true" /> Creavity
-          </h1>
+          </p>
           <span className="logo-tagline">Платформа авторов и платного контента</span>
         </Link>
 

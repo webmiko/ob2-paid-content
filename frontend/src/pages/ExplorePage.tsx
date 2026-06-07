@@ -4,8 +4,11 @@ import { Link } from "react-router-dom";
 import { apiJson } from "../api/client";
 import type { AuthorSummary, Post, TopicSummary } from "../api/types";
 import PostCard from "../components/PostCard";
+import JsonLd from "../components/JsonLd";
+import PageMeta from "../components/PageMeta";
 import { useAuth } from "../context/AuthContext";
 import { buildExcludeQuery, getViewedPostIds } from "../utils/viewedPosts";
+import { absoluteUrl } from "../seo/site";
 
 export default function ExplorePage() {
   const { isAuthenticated } = useAuth();
@@ -55,11 +58,36 @@ export default function ExplorePage() {
   }, [authorSearch]);
 
   if (loading) {
-    return <p className="loading-text">Загрузка каталога…</p>;
+    return (
+      <>
+        <PageMeta
+          title="Каталог авторов и тем"
+          description="Авторы, тематики и рекомендуемые публикации Creavity."
+          path="/explore"
+        />
+        <p className="loading-text">Загрузка каталога…</p>
+      </>
+    );
   }
 
   return (
-    <section>
+    <>
+      <PageMeta
+        title="Каталог авторов и тем"
+        description="Авторы, тематики и рекомендуемые публикации Creavity. Одна подписка открывает весь платный контент платформы."
+        path="/explore"
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Каталог авторов и тем",
+          url: absoluteUrl("/explore"),
+          description: "Авторы, тематики и рекомендуемые публикации Creavity.",
+          inLanguage: "ru-RU",
+        }}
+      />
+      <section>
       <h1 className="page-title">
         <i className="fa-solid fa-table-cells-large" aria-hidden="true" /> Каталог авторов и тем
       </h1>
@@ -138,5 +166,6 @@ export default function ExplorePage() {
         </div>
       )}
     </section>
+    </>
   );
 }
