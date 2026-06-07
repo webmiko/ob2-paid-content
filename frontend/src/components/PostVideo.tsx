@@ -1,4 +1,5 @@
 import type { Post } from "../api/types";
+import ProtectedPaidPost from "./ProtectedPaidPost";
 import { videoProviderLabel } from "../utils/videoProviders";
 
 interface PostVideoProps {
@@ -9,18 +10,25 @@ export default function PostVideo({ post }: PostVideoProps) {
   const providerLabel = videoProviderLabel(post.video_provider);
 
   if (post.video_embed_url) {
-    return (
-      <div className="post-video-block">
-        {providerLabel && <p className="post-video-label">Видео · {providerLabel}</p>}
-        <div className="post-video-wrap">
-          <iframe
-            title={`Видео: ${post.title}`}
-            src={post.video_embed_url}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        </div>
+    const iframe = (
+      <div className="post-video-wrap">
+        <iframe
+          title={`Видео: ${post.title}`}
+          src={post.video_embed_url}
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen={!post.is_paid}
+          referrerPolicy="strict-origin-when-cross-origin"
+        />
       </div>
+    );
+
+    return (
+      <ProtectedPaidPost post={post}>
+        <div className="post-video-block">
+          {providerLabel && <p className="post-video-label">Видео · {providerLabel}</p>}
+          {iframe}
+        </div>
+      </ProtectedPaidPost>
     );
   }
 

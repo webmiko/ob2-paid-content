@@ -10,6 +10,7 @@ import PostBadge from "../components/PostBadge";
 import PostCard from "../components/PostCard";
 import PostComments from "../components/PostComments";
 import PostVideo from "../components/PostVideo";
+import ProtectedPaidPost from "../components/ProtectedPaidPost";
 import { formatPostDate } from "../utils/avatar";
 import { markPostViewed } from "../utils/viewedPosts";
 import { postJsonLdData, postPageMetaOptions } from "../seo/postSeo";
@@ -97,9 +98,11 @@ export default function PostDetailPage() {
         <h1 className="post-title">{post.title}</h1>
         <PostVideo post={post} />
         {post.can_view_body && post.body ? (
-          <p className="post-content" style={{ whiteSpace: "pre-wrap" }}>
-            {post.body}
-          </p>
+          <ProtectedPaidPost post={post}>
+            <p className="post-content post-content--full" style={{ whiteSpace: "pre-wrap" }}>
+              {post.body}
+            </p>
+          </ProtectedPaidPost>
         ) : (
           <PaywallBanner />
         )}

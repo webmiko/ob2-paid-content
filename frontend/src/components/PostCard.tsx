@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import type { Post } from "../api/types";
 import { videoProviderLabel } from "../utils/videoProviders";
 import PostBadge from "./PostBadge";
+import ProtectedPaidPost from "./ProtectedPaidPost";
 import { formatPostDate } from "../utils/avatar";
 import { topicCardClassName } from "../utils/topicStyles";
 
@@ -39,7 +40,9 @@ export default function PostCard({ post }: PostCardProps) {
       <Link to={`/posts/${post.id}`} className="post-card-body-link">
         <h2 className="post-title">{post.title}</h2>
         {post.can_view_body && post.body ? (
-          <p className="post-content">{post.body}</p>
+          <ProtectedPaidPost post={post}>
+            <p className="post-content">{post.body}</p>
+          </ProtectedPaidPost>
         ) : (
           <p className="post-preview-muted">
             <i className="fa-solid fa-lock" aria-hidden="true" /> Текст скрыт — нужна подписка платформы
