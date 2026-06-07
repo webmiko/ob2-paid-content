@@ -13,6 +13,8 @@ export default defineConfig(({ mode }) => {
         "/api": { target: apiTarget, changeOrigin: true },
         "/admin": { target: apiTarget, changeOrigin: true },
         "/payments": { target: apiTarget, changeOrigin: true },
+        "/robots.txt": { target: apiTarget, changeOrigin: true },
+        "/sitemap.xml": { target: apiTarget, changeOrigin: true },
       },
     },
   };

@@ -11,6 +11,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenBlacklistView, TokenObtainPairView, TokenRefreshView
 
 from config.throttling import AuthRateThrottle
+from posts.seo_views import robots_txt_view, sitemap_xml_view
 from users.payment_views import payment_success_page
 from users.serializers import PhoneTokenObtainPairSerializer
 
@@ -48,6 +49,8 @@ class PhoneTokenBlacklistView(TokenBlacklistView):
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("robots.txt", robots_txt_view, name="robots-txt"),
+    path("sitemap.xml", sitemap_xml_view, name="sitemap-xml"),
     path("payments/success/", payment_success_page, name="payment-success-page"),
     path("api/health/", health_view, name="health"),
     path("api/token/", PhoneTokenObtainPairView.as_view(), name="token_obtain_pair"),

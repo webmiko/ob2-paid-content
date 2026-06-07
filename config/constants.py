@@ -10,6 +10,7 @@ DEFAULT_STRIPE_CURRENCY = "rub"
 DEFAULT_STRIPE_SUBSCRIPTION_AMOUNT_RUB = 990
 DEFAULT_STRIPE_SUCCESS_URL = "http://localhost/payment/success"
 DEFAULT_STRIPE_CANCEL_URL = "http://localhost/payment/cancel"
+DEFAULT_SITE_URL = "http://localhost"
 
 # Телефон (validators/users)
 PHONE_DIGITS_LENGTH = 11
