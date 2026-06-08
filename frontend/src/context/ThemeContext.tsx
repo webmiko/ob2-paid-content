@@ -4,30 +4,22 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactNode,
 } from "react";
 
 import {
-  coordsFromTimezone,
-  msUntilNextTransition,
-  readStoredCoords,
   readThemePreference,
-  requestBrowserCoords,
-  resolveCoords,
   resolveThemeFromPreference,
-  storeCoords,
+  subscribeSystemTheme,
   THEME_STORAGE_KEY,
-  type GeoCoords,
   type ResolvedTheme,
   type ThemePreference,
-} from "../theme/solar";
+} from "../theme/theme";
 
 interface ThemeContextValue {
   preference: ThemePreference;
   resolvedTheme: ResolvedTheme;
-  coords: GeoCoords;
   setPreference: (next: ThemePreference) => void;
   cyclePreference: () => void;
 }
@@ -62,47 +54,23 @@ function nextPreference(current: ThemePreference): ThemePreference {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [preference, setPreferenceState] = useState<ThemePreference>(() => readThemePreference());
-  const [coords, setCoords] = useState<GeoCoords>(() => resolveCoords());
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() =>
-    resolveThemeFromPreference(readThemePreference(), resolveCoords()),
-  );
-  const timerRef = useRef<number | null>(null);
-
-  const syncResolved = useCallback(
-    (pref: ThemePreference, geo: GeoCoords) => {
-      const resolved = resolveThemeFromPreference(pref, geo);
-      setResolvedTheme(resolved);
-      applyDomTheme(resolved);
-    },
-    [],
+    resolveThemeFromPreference(readThemePreference()),
   );
 
-  const scheduleAutoCheck = useCallback(
-    (pref: ThemePreference, geo: GeoCoords) => {
-      if (timerRef.current !== null) {
-        window.clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-      if (pref !== "auto") {
-        return;
-      }
-      const delay = Math.max(msUntilNextTransition(new Date(), geo), 30_000);
-      timerRef.current = window.setTimeout(() => {
-        syncResolved("auto", geo);
-        scheduleAutoCheck("auto", geo);
-      }, delay);
-    },
-    [syncResolved],
-  );
+  const syncResolved = useCallback((pref: ThemePreference) => {
+    const resolved = resolveThemeFromPreference(pref);
+    setResolvedTheme(resolved);
+    applyDomTheme(resolved);
+  }, []);
 
   const setPreference = useCallback(
     (next: ThemePreference) => {
       localStorage.setItem(THEME_STORAGE_KEY, next);
       setPreferenceState(next);
-      syncResolved(next, coords);
-      scheduleAutoCheck(next, coords);
+      syncResolved(next);
     },
-    [coords, scheduleAutoCheck, syncResolved],
+    [syncResolved],
   );
 
   const cyclePreference = useCallback(() => {
@@ -110,63 +78,24 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [preference, setPreference]);
 
   useEffect(() => {
-    syncResolved(preference, coords);
-    scheduleAutoCheck(preference, coords);
-    return () => {
-      if (timerRef.current !== null) {
-        window.clearTimeout(timerRef.current);
-      }
-    };
-  }, [coords, preference, scheduleAutoCheck, syncResolved]);
+    syncResolved(preference);
+  }, [preference, syncResolved]);
 
   useEffect(() => {
     if (preference !== "auto") {
       return;
     }
-    const interval = window.setInterval(() => {
-      syncResolved("auto", coords);
-    }, 60_000);
-    return () => window.clearInterval(interval);
-  }, [coords, preference, syncResolved]);
-
-  useEffect(() => {
-    if (readStoredCoords()) {
-      return;
-    }
-    void requestBrowserCoords().then((geo) => {
-      const next = geo ?? coordsFromTimezone();
-      storeCoords(next);
-      setCoords(next);
-    });
-  }, []);
-
-  useEffect(() => {
-    const resync = () => {
-      if (document.visibilityState !== "visible") {
-        return;
-      }
-      syncResolved(preference, coords);
-      scheduleAutoCheck(preference, coords);
-    };
-    document.addEventListener("visibilitychange", resync);
-    window.addEventListener("focus", resync);
-    window.addEventListener("pageshow", resync);
-    return () => {
-      document.removeEventListener("visibilitychange", resync);
-      window.removeEventListener("focus", resync);
-      window.removeEventListener("pageshow", resync);
-    };
-  }, [coords, preference, scheduleAutoCheck, syncResolved]);
+    return subscribeSystemTheme(() => syncResolved("auto"));
+  }, [preference, syncResolved]);
 
   const value = useMemo(
     () => ({
       preference,
       resolvedTheme,
-      coords,
       setPreference,
       cyclePreference,
     }),
-    [coords, cyclePreference, preference, resolvedTheme, setPreference],
+    [cyclePreference, preference, resolvedTheme, setPreference],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

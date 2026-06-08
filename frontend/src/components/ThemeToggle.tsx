@@ -1,8 +1,8 @@
 import { useTheme } from "../context/ThemeContext";
-import type { ThemePreference } from "../theme/solar";
+import type { ThemePreference } from "../theme/theme";
 
 const LABELS: Record<ThemePreference, string> = {
-  auto: "Авто: день и ночь по рассвету и закату",
+  auto: "Авто: как в системе устройства",
   light: "Светлая тема",
   dark: "Тёмная тема",
 };
