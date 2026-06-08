@@ -10,12 +10,14 @@ import {
 } from "react";
 
 import {
+  coordsFromTimezone,
   msUntilNextTransition,
   readStoredCoords,
   readThemePreference,
   requestBrowserCoords,
   resolveCoords,
   resolveThemeFromPreference,
+  storeCoords,
   THEME_STORAGE_KEY,
   type GeoCoords,
   type ResolvedTheme,
@@ -132,12 +134,29 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       return;
     }
     void requestBrowserCoords().then((geo) => {
-      if (!geo) {
-        return;
-      }
-      setCoords(geo);
+      const next = geo ?? coordsFromTimezone();
+      storeCoords(next);
+      setCoords(next);
     });
   }, []);
+
+  useEffect(() => {
+    const resync = () => {
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+      syncResolved(preference, coords);
+      scheduleAutoCheck(preference, coords);
+    };
+    document.addEventListener("visibilitychange", resync);
+    window.addEventListener("focus", resync);
+    window.addEventListener("pageshow", resync);
+    return () => {
+      document.removeEventListener("visibilitychange", resync);
+      window.removeEventListener("focus", resync);
+      window.removeEventListener("pageshow", resync);
+    };
+  }, [coords, preference, scheduleAutoCheck, syncResolved]);
 
   const value = useMemo(
     () => ({

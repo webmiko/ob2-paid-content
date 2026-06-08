@@ -46,7 +46,7 @@ export default defineConfig(({ mode }) => {
       preloadFaFontPlugin(),
       VitePWA({
         registerType: "autoUpdate",
-        includeAssets: ["favicon.svg", "og-default.svg", "pwa-192.png", "pwa-512.png"],
+        includeAssets: ["favicon.svg", "og-default.svg", "pwa-192.png", "pwa-512.png", "theme-init.js", "feed-prefetch.js"],
         manifest: {
           id: `${siteUrl}/`,
           name: PWA_NAME,

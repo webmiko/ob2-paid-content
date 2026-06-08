@@ -12,6 +12,22 @@ export interface SunTimes {
 
 export const DEFAULT_COORDS: GeoCoords = { lat: 55.7558, lng: 37.6174 };
 
+/** Часовой пояс → координаты (HTTP без geolocation). */
+const TIMEZONE_COORDS: Record<string, GeoCoords> = {
+  "Europe/Kaliningrad": { lat: 54.71, lng: 20.51 },
+  "Europe/Moscow": { lat: 55.76, lng: 37.62 },
+  "Europe/Samara": { lat: 53.2, lng: 50.15 },
+  "Asia/Yekaterinburg": { lat: 56.84, lng: 60.6 },
+  "Asia/Omsk": { lat: 54.99, lng: 73.37 },
+  "Asia/Krasnoyarsk": { lat: 56.01, lng: 92.87 },
+  "Asia/Irkutsk": { lat: 52.29, lng: 104.28 },
+  "Asia/Yakutsk": { lat: 62.03, lng: 129.73 },
+  "Asia/Vladivostok": { lat: 43.12, lng: 131.89 },
+  "Europe/Minsk": { lat: 53.9, lng: 27.57 },
+  "Asia/Almaty": { lat: 43.24, lng: 76.95 },
+  "Asia/Qyzylorda": { lat: 44.85, lng: 65.52 },
+};
+
 export type ThemePreference = "light" | "dark" | "auto";
 export type ResolvedTheme = "light" | "dark";
 
@@ -43,8 +59,14 @@ function declination(l: number): number {
   return Math.asin(Math.sin(l) * Math.sin(ECLIPTIC_OBLIQUITY));
 }
 
+function clampAcosInput(value: number): number {
+  return Math.max(-1, Math.min(1, value));
+}
+
 function hourAngle(h: number, phi: number, d: number): number {
-  return Math.acos((Math.sin(h) - Math.sin(phi) * Math.sin(d)) / (Math.cos(phi) * Math.cos(d)));
+  return Math.acos(
+    clampAcosInput((Math.sin(h) - Math.sin(phi) * Math.sin(d)) / (Math.cos(phi) * Math.cos(d))),
+  );
 }
 
 function siderealTime(d: number, lw: number): number {
@@ -124,8 +146,32 @@ export function storeCoords(coords: GeoCoords): void {
   localStorage.setItem(COORDS_STORAGE_KEY, JSON.stringify(coords));
 }
 
+export function coordsFromTimezone(): GeoCoords {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const mapped = TIMEZONE_COORDS[tz];
+    if (mapped) {
+      return mapped;
+    }
+  } catch {
+    /* ignore */
+  }
+  const offsetHours = -new Date().getTimezoneOffset() / 60;
+  const lng = Math.max(-180, Math.min(180, offsetHours * 15));
+  return { lat: 55.75, lng };
+}
+
 export function resolveCoords(): GeoCoords {
-  return readStoredCoords() ?? DEFAULT_COORDS;
+  const stored = readStoredCoords();
+  if (stored) {
+    const isDefaultMoscow =
+      stored.lat === DEFAULT_COORDS.lat && stored.lng === DEFAULT_COORDS.lng;
+    if (!canUseGeolocation() && isDefaultMoscow) {
+      return coordsFromTimezone();
+    }
+    return stored;
+  }
+  return coordsFromTimezone();
 }
 
 /** Geolocation доступна только в secure context (HTTPS, localhost). */
