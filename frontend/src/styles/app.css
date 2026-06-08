@@ -313,19 +313,23 @@
 }
 
 .theme-toggle {
-  min-width: 2.5rem;
-  padding-inline: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: auto;
+  padding-inline: 0.85rem;
 }
 
-.theme-toggle-label {
-  font-size: 0.72rem;
+.theme-toggle-text {
+  font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 @media (min-width: 641px) {
-  .theme-toggle-label {
-    display: none;
+  .theme-toggle-text {
+    font-size: 0.82rem;
   }
 }
 

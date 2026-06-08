@@ -24,8 +24,8 @@ export default function ThemeToggle() {
       aria-label={LABELS[preference]}
       title={LABELS[preference]}
     >
+      <span className="theme-toggle-text">Тема:</span>
       <i className={`fa-solid ${ICONS[preference]}`} aria-hidden="true" />
-      <span className="theme-toggle-label">{preference === "auto" ? "Авто" : null}</span>
     </button>
   );
 }
