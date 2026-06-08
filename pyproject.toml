@@ -3,6 +3,7 @@ name = "ob2-paid-content"
 version = "0.1.0"
 description = "Платформа публикации платного контента: Django, JWT, Stripe, Bootstrap"
 authors = [{ name = "niko" }]
+license = "MIT"
 requires-python = ">=3.12,<4"
 dependencies = [
     "django (>=6.0,<7)",
