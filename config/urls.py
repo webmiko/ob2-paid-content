@@ -10,6 +10,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenBlacklistView, TokenObtainPairView, TokenRefreshView
 
+from config.cache import cache_backend_label
 from config.throttling import AuthRateThrottle
 from posts.seo_views import robots_txt_view, sitemap_xml_view
 from users.payment_views import payment_success_page
@@ -17,12 +18,17 @@ from users.serializers import PhoneTokenObtainPairSerializer
 
 
 def health_view(_request: HttpRequest) -> JsonResponse:
-    """Проверяет доступность backend-сервиса и подключение к БД."""
+    """Проверяет доступность backend-сервиса, БД и тип общего кэша."""
     try:
         connection.ensure_connection()
     except Exception:
         return JsonResponse({"status": "error", "database": "unavailable"}, status=503)
-    return JsonResponse({"status": "ok"})
+    return JsonResponse(
+        {
+            "status": "ok",
+            "cache": cache_backend_label(settings.CACHES),
+        },
+    )
 
 
 class PhoneTokenObtainPairView(TokenObtainPairView):

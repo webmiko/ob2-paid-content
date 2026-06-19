@@ -7,6 +7,7 @@ from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
+from config.cache import build_caches
 from config.constants import (
     DEFAULT_DB_HOST,
     DEFAULT_DB_PORT,
@@ -175,12 +176,8 @@ SITE_URL = os.getenv("SITE_URL", DEFAULT_SITE_URL).rstrip("/")
 
 USE_HTTPS = os.getenv("USE_HTTPS", "false").lower() in ("1", "true", "yes")
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "ob2-default-cache",
-    },
-}
+_redis_url = os.getenv("REDIS_URL", "").strip()
+CACHES = build_caches(db_name=_db_name, redis_url=_redis_url)
 
 SMS_VERIFICATION_REQUIRED = os.getenv("SMS_VERIFICATION_REQUIRED", "true").lower() in (
     "1",

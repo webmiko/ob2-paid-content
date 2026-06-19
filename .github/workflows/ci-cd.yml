@@ -83,7 +83,9 @@ jobs:
         run: poetry install --no-interaction
 
       - name: Migrate
-        run: poetry run python manage.py migrate --noinput
+        run: |
+          poetry run python manage.py migrate --noinput
+          poetry run python manage.py shell -c "from config.cache import ensure_database_cache_table; ensure_database_cache_table()"
 
       - name: Pytest
         run: poetry run pytest
