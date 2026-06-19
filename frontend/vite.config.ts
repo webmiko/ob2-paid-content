@@ -3,6 +3,34 @@ import type { IndexHtmlTransformContext, Plugin } from "vite";
 import { defineConfig, loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+/** CSS не блокирует первую отрисовку: media=print + async-css.js (CSP-safe, без inline onload). */
+function asyncCssPlugin(): Plugin {
+  return {
+    name: "async-css",
+    apply: "build",
+    transformIndexHtml: {
+      order: "post",
+      handler(html: string) {
+        let hasAsyncCss = false;
+        const withLinks = html.replace(
+          /<link rel="stylesheet"(?: crossorigin)? href="(\/assets\/[^"]+\.css)">/g,
+          (_match, href: string) => {
+            hasAsyncCss = true;
+            return `<link rel="stylesheet" href="${href}" media="print" data-async-css>`;
+          },
+        );
+        if (!hasAsyncCss) {
+          return withLinks;
+        }
+        return withLinks.replace(
+          "</head>",
+          '    <script src="/async-css.js" defer></script>\n  </head>',
+        );
+      },
+    },
+  };
+}
+
 /** Preload Font Awesome woff2 — меньше сдвига иконок при первой отрисовке. */
 function preloadFaFontPlugin(): Plugin {
   return {
@@ -43,10 +71,11 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
+      asyncCssPlugin(),
       preloadFaFontPlugin(),
       VitePWA({
         registerType: "autoUpdate",
-        includeAssets: ["favicon.svg", "og-default.svg", "pwa-192.png", "pwa-512.png", "theme-init.js", "feed-prefetch.js"],
+        includeAssets: ["favicon.svg", "og-default.svg", "pwa-192.png", "pwa-512.png", "async-css.js"],
         manifest: {
           id: `${siteUrl}/`,
           name: PWA_NAME,
