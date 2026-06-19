@@ -36,6 +36,20 @@ def test_robots_txt_disallows_private_paths(api_client) -> None:
 
 @pytest.mark.django_db
 @override_settings(SITE_URL="https://creavity.example")
+def test_llms_txt_has_h1_and_links(api_client) -> None:
+    """llms.txt в Markdown: заголовок H1 и ссылки на разделы сайта."""
+    response = api_client.get("/llms.txt")
+    assert response.status_code == status.HTTP_200_OK
+    assert response["Content-Type"].startswith("text/plain")
+    body = response.content.decode()
+    assert body.startswith("# Creavity")
+    assert f"[Лента](https://creavity.example/)" in body
+    assert f"[Sitemap](https://creavity.example/sitemap.xml)" in body
+    assert "github.com/webmiko/ob2-paid-content" in body
+
+
+@pytest.mark.django_db
+@override_settings(SITE_URL="https://creavity.example")
 def test_sitemap_respects_post_limit(api_client, author) -> None:
     """Sitemap не раздувается сверх лимита постов."""
     for index in range(3):

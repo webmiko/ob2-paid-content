@@ -65,6 +65,7 @@ def main() -> int:
     for name, url, needle in (
         ("health", f"{API}/health/", '"status"'),
         ("robots", f"{BASE}/robots.txt", "Sitemap"),
+        ("llms", f"{BASE}/llms.txt", "# Creavity"),
         ("sitemap", f"{BASE}/sitemap.xml", "urlset"),
         ("manifest", f"{BASE}/manifest.webmanifest", "Creavity"),
         ("sw.js", f"{BASE}/sw.js", "define"),

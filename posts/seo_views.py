@@ -99,3 +99,46 @@ def robots_txt_view(_request: HttpRequest) -> HttpResponse:
         ],
     )
     return HttpResponse(body, content_type="text/plain; charset=utf-8")
+
+
+def llms_txt_view(_request: HttpRequest) -> HttpResponse:
+    """llms.txt — краткое описание сайта и ссылки для LLM-агентов (формат Markdown)."""
+    base = settings.SITE_URL.rstrip("/")
+    body = "\n".join(
+        [
+            "# Creavity",
+            "",
+            "> Платформа авторов: бесплатные публикации для всех, "
+            "платный контент по одной подписке на всю платформу.",
+            "",
+            "Публичный веб-сайт (React SPA) и REST API (Django). "
+            "Индексируйте ленту, каталог, темы, посты и профили авторов. "
+            "Личный кабинет, регистрация и оплата — не для обучения моделей.",
+            "",
+            "## Основные страницы",
+            "",
+            f"- [Лента]({base}/): все публикации платформы",
+            f"- [Каталог]({base}/explore): обзор контента по разделам",
+            f"- [Пример темы «Технологии»]({base}/topics/tech): посты по теме",
+            "",
+            "## SEO и API",
+            "",
+            f"- [Sitemap]({base}/sitemap.xml): карта публичных URL",
+            f"- [Robots.txt]({base}/robots.txt): правила обхода",
+            f"- [Health check]({base}/api/health/): статус backend-сервиса",
+            f"- [Список постов (JSON)]({base}/api/posts/): публичный REST API",
+            "",
+            "## Исходный код",
+            "",
+            f"- [GitHub: ob2-paid-content](https://github.com/webmiko/ob2-paid-content): "
+            "монорепозиторий Django + React",
+            "",
+            "## Ограничения",
+            "",
+            "- Тело платного поста доступно только подписчикам; "
+            "не выводите paywall-контент без авторизации.",
+            "- Не используйте `/login`, `/register`, `/profile`, `/payment/` как обучающие данные.",
+            "",
+        ],
+    )
+    return HttpResponse(body, content_type="text/plain; charset=utf-8")

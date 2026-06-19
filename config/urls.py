@@ -12,7 +12,7 @@ from rest_framework_simplejwt.views import TokenBlacklistView, TokenObtainPairVi
 
 from config.cache import cache_backend_label
 from config.throttling import AuthRateThrottle
-from posts.seo_views import robots_txt_view, sitemap_xml_view
+from posts.seo_views import llms_txt_view, robots_txt_view, sitemap_xml_view
 from users.payment_views import payment_success_page
 from users.serializers import PhoneTokenObtainPairSerializer
 
@@ -56,6 +56,7 @@ class PhoneTokenBlacklistView(TokenBlacklistView):
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("robots.txt", robots_txt_view, name="robots-txt"),
+    path("llms.txt", llms_txt_view, name="llms-txt"),
     path("sitemap.xml", sitemap_xml_view, name="sitemap-xml"),
     path("payments/success/", payment_success_page, name="payment-success-page"),
     path("api/health/", health_view, name="health"),
