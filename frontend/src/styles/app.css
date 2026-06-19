@@ -406,26 +406,32 @@ body::after {
 }
 
 @media (min-width: 681px) {
-  .app-header-chrome--scroll-aware {
-    position: sticky;
-    top: 0;
+  .nav-desktop--floating {
+    position: fixed;
+    top: var(--space-sm);
+    left: 50%;
     z-index: 100;
-    margin-bottom: var(--space-xl);
-    transition: transform 0.28s var(--ease-out);
-    will-change: transform;
-  }
-
-  .app-header-chrome--scroll-aware .top-bar {
-    margin-bottom: var(--space-md);
-  }
-
-  .app-header-chrome--scroll-aware .nav-tabs {
+    width: min(920px, calc(100vw - 2 * var(--space-md)));
     margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, calc(-100% - 0.75rem));
+    transition:
+      transform 0.28s var(--ease-out),
+      opacity 0.22s var(--ease-out);
+    will-change: transform, opacity;
   }
 
-  .app-header-chrome--scroll-aware.app-header-chrome--hidden {
-    transform: translateY(calc(-100% - 0.35rem));
+  .nav-desktop--floating.nav-desktop--floating-active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, 0);
+  }
+
+  .nav-desktop--floating.nav-desktop--floating-active.nav-desktop--floating-hidden {
+    opacity: 0;
     pointer-events: none;
+    transform: translate(-50%, calc(-100% - 0.75rem));
   }
 }
 
