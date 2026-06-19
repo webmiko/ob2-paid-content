@@ -405,6 +405,30 @@ body::after {
   padding: var(--space-lg) var(--space-md) var(--space-xl);
 }
 
+@media (min-width: 681px) {
+  .app-header-chrome--scroll-aware {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    margin-bottom: var(--space-xl);
+    transition: transform 0.28s var(--ease-out);
+    will-change: transform;
+  }
+
+  .app-header-chrome--scroll-aware .top-bar {
+    margin-bottom: var(--space-md);
+  }
+
+  .app-header-chrome--scroll-aware .nav-tabs {
+    margin-bottom: 0;
+  }
+
+  .app-header-chrome--scroll-aware.app-header-chrome--hidden {
+    transform: translateY(calc(-100% - 0.35rem));
+    pointer-events: none;
+  }
+}
+
 .top-bar {
   display: flex;
   justify-content: space-between;
