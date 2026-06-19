@@ -9,6 +9,7 @@ import PageMeta from "../components/PageMeta";
 import { useAuth } from "../context/AuthContext";
 import { buildExcludeQuery, getViewedPostIds } from "../utils/viewedPosts";
 import { absoluteUrl } from "../seo/site";
+import "../styles/deferred/explore.css";
 
 export default function ExplorePage() {
   const { isAuthenticated } = useAuth();

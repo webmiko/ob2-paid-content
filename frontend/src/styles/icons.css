@@ -1,0 +1,153 @@
+@font-face {
+  font-family: "Font Awesome 6 Free";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2") format("woff2");
+}
+
+.fa-solid,
+.fas {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  display: inline-block;
+  font-style: normal;
+  line-height: 1;
+  text-align: center;
+  width: 1.25em;
+}
+
+.fa-solid::before,
+.fas::before {
+  display: inline-block;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+.fa-2x {
+  font-size: 2em;
+}
+
+.fa-stream::before {
+  content: "\f550";
+}
+
+.fa-lock::before {
+  content: "\f023";
+}
+
+.fa-hashtag::before {
+  content: "\f292";
+}
+
+.fa-chart-line::before {
+  content: "\f201";
+}
+
+.fa-table-cells-large::before {
+  content: "\e067";
+}
+
+.fa-wand-magic-sparkles::before {
+  content: "\e2ca";
+}
+
+.fa-users::before {
+  content: "\f0c0";
+}
+
+.fa-magnifying-glass::before {
+  content: "\f002";
+}
+
+.fa-user-pen::before {
+  content: "\f4ff";
+}
+
+.fa-tags::before {
+  content: "\f02c";
+}
+
+.fa-video::before {
+  content: "\f03d";
+}
+
+.fa-comments::before {
+  content: "\f086";
+}
+
+.fa-user::before {
+  content: "\f007";
+}
+
+.fa-right-to-bracket::before {
+  content: "\f2f6";
+}
+
+.fa-user-plus::before {
+  content: "\f234";
+}
+
+.fa-pen-fancy::before {
+  content: "\f5ac";
+}
+
+.fa-right-from-bracket::before {
+  content: "\f2f5";
+}
+
+.fa-user-circle::before {
+  content: "\f2bd";
+}
+
+.fa-id-card::before {
+  content: "\f2c2";
+}
+
+.fa-signature::before {
+  content: "\f5b7";
+}
+
+.fa-feather::before {
+  content: "\f52d";
+}
+
+.fa-folder-open::before {
+  content: "\f07c";
+}
+
+.fa-layer-group::before {
+  content: "\f5fd";
+}
+
+.fa-unlock::before {
+  content: "\f09c";
+}
+
+.fa-crown::before {
+  content: "\f521";
+}
+
+.fa-eye::before {
+  content: "\f06e";
+}
+
+.fa-circle-half-stroke::before {
+  content: "\f042";
+}
+
+.fa-sun::before {
+  content: "\f185";
+}
+
+.fa-moon::before {
+  content: "\f186";
+}
+
+.fa-triangle-exclamation::before {
+  content: "\f071";
+}
+
+.fa-newspaper::before {
+  content: "\f1ea";
+}

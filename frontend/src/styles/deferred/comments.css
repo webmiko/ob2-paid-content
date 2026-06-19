@@ -1,0 +1,107 @@
+/* Комментарии — подгружаются с PostDetailPage / PostComments. */
+
+.comments-locked .btn-pill {
+  margin-top: var(--space-sm);
+}
+
+.comments-section {
+  margin-top: var(--space-lg);
+}
+
+.comments-section .section-title {
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.comments-count {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.55);
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+}
+
+.comments-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.comment-item {
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid var(--glass-border);
+}
+
+.comment-item p {
+  margin: 0.35rem 0 0;
+  line-height: 1.55;
+}
+
+.comment-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.comment-meta strong {
+  color: var(--text-primary);
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.comment-form textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  font: inherit;
+  background: rgba(255, 255, 255, 0.62);
+  resize: vertical;
+}
+
+.comments-locked {
+  padding: var(--space-md);
+}
+
+.comment-delete-btn {
+  margin-top: 0.5rem;
+}
+
+[data-theme="dark"] .comments-section {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+}
+
+[data-theme="dark"] .comments-count {
+  background: rgba(15, 23, 42, 0.55);
+}
+
+[data-theme="dark"] .comment-item {
+  background: rgba(15, 23, 42, 0.55);
+}
+
+[data-theme="dark"] .comment-form textarea {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: var(--glass-border);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .comment-form textarea:focus {
+  background: rgba(15, 23, 42, 0.82);
+  border-color: rgba(129, 140, 248, 0.45);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
+}

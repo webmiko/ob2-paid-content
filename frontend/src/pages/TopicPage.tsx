@@ -8,6 +8,7 @@ import PostListSection from "../components/PostListSection";
 import { topicLabel } from "../constants/topics";
 import { usePostsList } from "../hooks/usePostsList";
 import { absoluteUrl } from "../seo/site";
+import "../styles/deferred/explore.css";
 
 export default function TopicPage() {
   const { slug } = useParams();

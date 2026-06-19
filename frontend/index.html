@@ -98,15 +98,24 @@
         if (path !== "/" && path !== "") {
           return;
         }
-        window.__CREAVITY_FEED_PREFETCH__ = fetch("/api/posts/", {
-          credentials: "same-origin",
-          headers: { Accept: "application/json" },
-        }).then(function (response) {
-          if (!response.ok) {
-            throw new Error(String(response.status));
-          }
-          return response.json();
-        });
+
+        function startFeedPrefetch() {
+          window.__CREAVITY_FEED_PREFETCH__ = fetch("/api/posts/", {
+            credentials: "same-origin",
+            headers: { Accept: "application/json" },
+          }).then(function (response) {
+            if (!response.ok) {
+              throw new Error(String(response.status));
+            }
+            return response.json();
+          });
+        }
+
+        if (typeof requestIdleCallback === "function") {
+          requestIdleCallback(startFeedPrefetch, { timeout: 2500 });
+        } else {
+          window.addEventListener("load", startFeedPrefetch, { once: true });
+        }
       })();
     </script>
     <script type="module" src="/src/main.tsx"></script>

@@ -6,6 +6,7 @@ import { apiJson } from "../api/client";
 import type { Comment, Paginated } from "../api/types";
 import { useAuth } from "../context/AuthContext";
 import { formatPostDate } from "../utils/avatar";
+import "../styles/deferred/comments.css";
 
 function apiPathFromNext(next: string | null): string | null {
   if (!next) {

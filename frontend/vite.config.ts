@@ -3,6 +3,31 @@ import type { IndexHtmlTransformContext, Plugin } from "vite";
 import { defineConfig, loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+/** modulepreload главного бандла — параллельная загрузка с HTML, короче critical path. */
+function modulePreloadEntryPlugin(): Plugin {
+  return {
+    name: "module-preload-entry",
+    apply: "build",
+    transformIndexHtml: {
+      order: "post",
+      handler(html: string) {
+        const match = html.match(
+          /<script type="module" crossorigin src="(\/assets\/index-[^"]+\.js)"><\/script>/,
+        );
+        if (!match) {
+          return html;
+        }
+        const href = match[1];
+        const tag = `<link rel="modulepreload" crossorigin href="${href}">`;
+        if (html.includes(`href="${href}"`)) {
+          return html;
+        }
+        return html.replace("</head>", `    ${tag}\n  </head>`);
+      },
+    },
+  };
+}
+
 /** CSS не блокирует первую отрисовку: media=print + async-css.js (CSP-safe, без inline onload). */
 function asyncCssPlugin(): Plugin {
   return {
@@ -72,6 +97,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       asyncCssPlugin(),
+      modulePreloadEntryPlugin(),
       preloadFaFontPlugin(),
       VitePWA({
         registerType: "autoUpdate",
@@ -131,8 +157,16 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          manualChunks: {
-            "vendor-router": ["react-router-dom"],
+          manualChunks(id) {
+            if (id.includes("node_modules/react-dom")) {
+              return "vendor-react-dom";
+            }
+            if (id.includes("node_modules/react/")) {
+              return "vendor-react";
+            }
+            if (id.includes("react-router")) {
+              return "vendor-router";
+            }
           },
         },
       },
