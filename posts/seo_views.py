@@ -130,7 +130,7 @@ def llms_txt_view(_request: HttpRequest) -> HttpResponse:
             "",
             "## Исходный код",
             "",
-            f"- [GitHub: ob2-paid-content](https://github.com/webmiko/ob2-paid-content): "
+            "- [GitHub: ob2-paid-content](https://github.com/webmiko/ob2-paid-content): "
             "монорепозиторий Django + React",
             "",
             "## Ограничения",

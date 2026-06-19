@@ -43,8 +43,8 @@ def test_llms_txt_has_h1_and_links(api_client) -> None:
     assert response["Content-Type"].startswith("text/plain")
     body = response.content.decode()
     assert body.startswith("# Creavity")
-    assert f"[Лента](https://creavity.example/)" in body
-    assert f"[Sitemap](https://creavity.example/sitemap.xml)" in body
+    assert "[Лента](https://creavity.example/)" in body
+    assert "[Sitemap](https://creavity.example/sitemap.xml)" in body
     assert "github.com/webmiko/ob2-paid-content" in body
 
 
