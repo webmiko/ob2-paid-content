@@ -36,6 +36,14 @@
       --font-display: "Plus Jakarta Sans", Inter, system-ui, sans-serif;
       --font-body: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       --slide-duration: 0.82s;
+      --slide-pad-y: clamp(0.65rem, 1.6vh, 1.25rem);
+      --slide-pad-x: clamp(0.85rem, 2vw, 1.85rem);
+      --inner-max: 1180px;
+      --inner-fit-max: 1100px;
+      --gap-grid: 0.65rem;
+      --gap-block: 0.55rem;
+      --ui-top-reserve: 2.75rem;
+      --ui-bottom-reserve: 1.25rem;
     }
 
     *,
@@ -85,6 +93,7 @@
       position: fixed;
       inset: 0;
       z-index: 1;
+      overflow: hidden;
     }
 
     .slide {
@@ -92,8 +101,10 @@
       inset: 0;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1.25rem, 5vw, 5rem);
+      justify-content: flex-start;
+      align-items: center;
+      padding: var(--slide-pad-y) var(--slide-pad-x);
+      padding-top: clamp(0.85rem, 2vh, 1.5rem);
       transform: translateY(100%);
       transition: transform var(--slide-duration) var(--ease-out);
       will-change: transform;
@@ -137,23 +148,37 @@
     .slide-inner {
       position: relative;
       z-index: 1;
-      width: min(1120px, 100%);
+      width: min(var(--inner-max), 100%);
       margin: 0 auto;
+      flex-shrink: 0;
+      max-width: 100%;
+    }
+
+    .slide-inner.is-scaled {
+      transform-origin: top center;
+      will-change: transform;
+    }
+
+    /* На мобильных скрываем второстепенные блоки плотных слайдов */
+    @media (max-width: 900px) {
+      .mobile-hide {
+        display: none !important;
+      }
     }
 
     .slide-tag {
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
-      padding: 0.35rem 0.85rem;
+      gap: 0.4rem;
+      padding: 0.28rem 0.7rem;
       border-radius: 999px;
       background: var(--accent-soft);
       color: var(--accent-hover);
-      font-size: 0.78rem;
+      font-size: 0.74rem;
       font-weight: 600;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      margin-bottom: 1rem;
+      margin-bottom: 0.45rem;
     }
 
     .slide-tag::before {
@@ -168,40 +193,40 @@
     h2,
     h3 {
       font-family: var(--font-display);
-      line-height: 1.15;
-      margin: 0 0 1rem;
+      line-height: 1.12;
+      margin: 0 0 0.55rem;
     }
 
     h1 {
-      font-size: clamp(2rem, 5vw, 3.6rem);
+      font-size: clamp(1.85rem, 4.2vw, 3rem);
       font-weight: 700;
       letter-spacing: -0.03em;
     }
 
     h2 {
-      font-size: clamp(1.65rem, 3.5vw, 2.6rem);
+      font-size: clamp(1.4rem, 2.6vw, 2rem);
       font-weight: 700;
       letter-spacing: -0.02em;
     }
 
     h3 {
-      font-size: 1.05rem;
+      font-size: 0.98rem;
       font-weight: 600;
       color: var(--text-muted);
-      margin-bottom: 0.65rem;
+      margin-bottom: 0.45rem;
     }
 
     p {
-      margin: 0 0 1rem;
+      margin: 0 0 0.55rem;
       color: var(--text-muted);
-      font-size: clamp(1rem, 1.6vw, 1.12rem);
-      max-width: 62ch;
+      font-size: clamp(0.92rem, 1.35vw, 1.02rem);
+      max-width: 68ch;
     }
 
     .lead {
-      font-size: clamp(1.05rem, 2vw, 1.35rem);
+      font-size: clamp(0.98rem, 1.6vw, 1.18rem);
       color: #334155;
-      max-width: 48ch;
+      max-width: 52ch;
     }
 
     .gradient-text {
@@ -222,20 +247,20 @@
 
     .grid-2 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1rem;
-      margin-top: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--gap-grid);
+      margin-top: 0.75rem;
     }
 
     .grid-3 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      margin-top: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--gap-grid);
+      margin-top: 0.75rem;
     }
 
     .card {
-      padding: 1.25rem 1.35rem;
+      padding: 0.85rem 1rem;
     }
 
     .card strong {
@@ -260,9 +285,9 @@
     }
 
     li {
-      margin-bottom: 0.55rem;
-      font-size: clamp(0.95rem, 1.5vw, 1.05rem);
-      line-height: 1.5;
+      margin-bottom: 0.35rem;
+      font-size: clamp(0.88rem, 1.25vw, 0.98rem);
+      line-height: 1.45;
     }
 
     li::marker {
@@ -271,7 +296,7 @@
 
     .metric {
       text-align: center;
-      padding: 1.35rem 1rem;
+      padding: 0.85rem 0.7rem;
     }
 
     .metric-value {
@@ -296,6 +321,7 @@
     .title-slide {
       text-align: center;
       align-items: center;
+      justify-content: center;
     }
 
     .title-slide .slide-inner {
@@ -305,12 +331,12 @@
     }
 
     .logo-mark {
-      width: 4.5rem;
-      height: 4.5rem;
-      border-radius: 1.35rem;
+      width: 3.75rem;
+      height: 3.75rem;
+      border-radius: 1.1rem;
       display: grid;
       place-items: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.85rem;
       background: linear-gradient(135deg, var(--accent) 0%, var(--violet) 100%);
       box-shadow: 0 12px 32px var(--accent-glow);
       font-family: var(--font-display);
@@ -322,10 +348,10 @@
     .meta-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.75rem 1.5rem;
+      gap: 0.5rem 1rem;
       justify-content: center;
-      margin-top: 1.5rem;
-      font-size: 0.92rem;
+      margin-top: 0.85rem;
+      font-size: 0.86rem;
       color: var(--text-soft);
     }
 
@@ -341,8 +367,8 @@
     .pill-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 1rem;
+      gap: 0.4rem;
+      margin-top: 0.65rem;
     }
 
     .pill {
@@ -356,15 +382,15 @@
     }
 
     .slide-inner-fit {
-      width: min(980px, 100%);
+      width: min(var(--inner-fit-max), 100%);
     }
 
     .slide-inner-fit h2 {
-      margin-bottom: 0.65rem;
+      margin-bottom: 0.4rem;
     }
 
     .slide-inner-fit p {
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
     }
 
     .slide-part {
@@ -373,8 +399,8 @@
     }
 
     .code-snippet {
-      margin-top: 1rem;
-      padding: 0.85rem 1rem;
+      margin-top: 0.55rem;
+      padding: 0.65rem 0.85rem;
       border-radius: var(--radius-md);
       background: #0f172a;
       color: #cbd5e1;
@@ -397,44 +423,119 @@
       color: #86efac;
     }
 
+    .code-snippet .str {
+      color: #fbbf24;
+    }
+
+    .code-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap-block);
+      margin-top: 0.55rem;
+    }
+
+    .code-grid .code-snippet,
+    .code-grid .code-snippet-compact {
+      margin-top: 0;
+    }
+
+    .code-caption {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin: 0.45rem 0 0.25rem;
+    }
+
     .code-snippet-compact {
-      margin-top: 0.65rem;
-      padding: 0.6rem 0.75rem;
+      margin-top: 0.45rem;
+      padding: 0.5rem 0.65rem;
       font-size: clamp(0.62rem, 1.2vw, 0.72rem);
       line-height: 1.45;
     }
 
     @media (max-height: 720px) {
-      .slide-roles h2 {
-        font-size: 1.35rem;
-        margin-bottom: 0.45rem;
+      :root {
+        --slide-pad-y: clamp(0.4rem, 1vh, 0.75rem);
+        --ui-top-reserve: 2.25rem;
       }
 
-      .slide-roles ul {
+      h1 {
+        font-size: clamp(1.55rem, 3.5vw, 2.35rem);
+      }
+
+      h2,
+      .slide-inner-fit h2,
+      .slide-roles h2 {
+        font-size: clamp(1.2rem, 2.4vw, 1.55rem);
         margin-bottom: 0.35rem;
       }
 
-      .slide-roles .grid-3 {
-        margin-top: 0.5rem;
-        gap: 0.5rem;
+      .slide-tag {
+        margin-bottom: 0.3rem;
+        font-size: 0.68rem;
       }
 
-      .slide-roles .code-snippet-compact {
-        margin-top: 0.5rem;
-        padding: 0.5rem 0.65rem;
+      p, .lead {
+        font-size: 0.84rem;
+        margin-bottom: 0.4rem;
+      }
+
+      li {
+        margin-bottom: 0.25rem;
+        font-size: 0.82rem;
+      }
+
+      .grid-2,
+      .grid-3 {
+        gap: 0.45rem;
+        margin-top: 0.45rem;
+      }
+
+      .card,
+      .metric {
+        padding: 0.6rem 0.7rem;
+      }
+
+      .metric-value {
+        font-size: clamp(1.35rem, 3.5vw, 1.85rem);
+      }
+
+      .terminal,
+      .code-snippet,
+      .code-snippet-compact {
+        margin-top: 0.35rem;
+        padding: 0.45rem 0.6rem;
         font-size: 0.62rem;
+      }
+
+      .diagram svg,
+      .slide-er .er-diagram svg {
+        max-height: min(24vh, 180px);
+      }
+
+      .demo-shot img {
+        max-height: min(22vh, 140px);
+      }
+
+      .demo-shot figcaption {
+        font-size: 0.66rem;
+        padding: 0.35rem 0.5rem;
+      }
+
+      .flow-line {
+        font-size: 0.76rem;
+        padding: 0.4rem 0.55rem;
       }
     }
 
     .tag-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-      gap: 0.65rem;
-      margin-top: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+      gap: var(--gap-block);
+      margin-top: 0.65rem;
     }
 
     .tag-item {
-      padding: 0.7rem 0.85rem;
+      padding: 0.55rem 0.7rem;
       border-radius: var(--radius-md);
       background: rgba(255, 255, 255, 0.55);
       border: 1px solid var(--border);
@@ -456,13 +557,13 @@
 
     .win-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
-      gap: 0.75rem;
-      margin-top: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+      gap: var(--gap-grid);
+      margin-top: 0.65rem;
     }
 
     .win-card {
-      padding: 1rem 1.1rem;
+      padding: 0.75rem 0.85rem;
       border-radius: var(--radius-md);
       background: rgba(255, 255, 255, 0.55);
       border: 1px solid var(--border);
@@ -484,6 +585,10 @@
 
     .slide-diagram-only .diagram svg {
       max-height: min(52vh, 360px);
+    }
+
+    .slide-diagram-only:has(.code-grid) .diagram svg {
+      max-height: min(34vh, 220px);
     }
 
     @media (max-width: 720px) {
@@ -516,30 +621,30 @@
 
     @media (max-height: 720px) {
       .slide-inner-fit h2 {
-        font-size: 1.45rem;
+        font-size: 1.35rem;
       }
 
       .grid-2,
       .grid-3 {
-        gap: 0.65rem;
-        margin-top: 0.85rem;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
       }
 
       .card {
-        padding: 0.95rem 1rem;
+        padding: 0.65rem 0.75rem;
       }
 
       .terminal,
       .code-snippet {
-        margin-top: 0.65rem;
-        padding: 0.6rem 0.75rem;
-        font-size: 0.72rem;
+        margin-top: 0.45rem;
+        padding: 0.5rem 0.65rem;
+        font-size: 0.68rem;
       }
     }
 
     .diagram {
-      margin-top: 1.25rem;
-      padding: 1rem;
+      margin-top: 0.65rem;
+      padding: 0.65rem 0.75rem;
       overflow: visible;
     }
 
@@ -547,7 +652,7 @@
       display: block;
       width: 100%;
       height: auto;
-      max-height: min(34vh, 240px);
+      max-height: min(32vh, 260px);
     }
 
     .diagram-wide {
@@ -563,10 +668,6 @@
     }
 
     @media (max-width: 960px), (max-height: 820px) {
-      .slide-tech {
-        overflow: hidden;
-      }
-
       .slide-tech .grid-2 {
         grid-template-columns: 1fr;
         gap: 0.75rem;
@@ -604,6 +705,17 @@
       .slide-tech .diagram {
         margin-top: 0.35rem;
         padding: 0.55rem 0.65rem;
+      }
+
+      .code-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .slide-diagram-only .code-grid .code-snippet-compact {
+        font-size: 0.6rem;
+        padding: 0.45rem 0.55rem;
       }
 
       .diagram-wide {
@@ -669,13 +781,13 @@
     }
 
     .slide-demo .slide-inner-fit {
-      width: min(1120px, 100%);
+      width: min(var(--inner-fit-max), 100%);
     }
 
     .demo-shot-grid {
       display: grid;
-      gap: 0.65rem;
-      margin-top: 0.85rem;
+      gap: var(--gap-grid);
+      margin-top: 0.55rem;
     }
 
     .demo-shot-grid-3 {
@@ -711,20 +823,9 @@
       display: block;
       width: 100%;
       height: auto;
-      max-height: min(30vh, 230px);
+      max-height: min(32vh, 250px);
       object-fit: cover;
       object-position: top center;
-    }
-
-    @media (max-width: 960px), (max-height: 820px) {
-      .demo-shot-grid-3,
-      .demo-shot-grid-2 {
-        grid-template-columns: 1fr;
-      }
-
-      .demo-shot img {
-        max-height: min(24vh, 180px);
-      }
     }
 
     .tags-table {
@@ -798,6 +899,52 @@
       color: var(--text-muted);
     }
 
+    .roles-table {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .roles-table th,
+    .roles-table td {
+      padding: 0.4rem 0.55rem;
+    }
+
+    .slide-er .grid-2 {
+      align-items: start;
+      margin-top: 0.65rem;
+    }
+
+    .slide-er .er-diagram {
+      margin-top: 0;
+      padding: 0.65rem 0.75rem;
+    }
+
+    .slide-er .er-diagram svg {
+      max-height: min(42vh, 280px);
+    }
+
+    .arch-decisions {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.84rem;
+      color: #334155;
+      line-height: 1.45;
+    }
+
+    .arch-decisions li {
+      margin-bottom: 0.35rem;
+    }
+
+    @media (max-width: 960px), (max-height: 820px) {
+      .slide-er .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .slide-er .er-diagram svg {
+        max-height: min(28vh, 200px);
+      }
+    }
+
     .stack-why {
       margin: 0.85rem 0 0;
       padding: 0;
@@ -816,12 +963,100 @@
     }
 
     .flow-line {
-      margin-top: 0.85rem;
-      padding: 0.65rem 0.85rem;
+      margin-top: 0.5rem;
+      padding: 0.5rem 0.7rem;
       border-radius: var(--radius-md);
       background: rgba(255, 255, 255, 0.55);
       border: 1px solid var(--border);
+      font-size: 0.84rem;
+      color: #334155;
+      max-width: none;
+    }
+
+    .compact-ul {
+      margin: 0.4rem 0 0;
+      padding-left: 1rem;
+    }
+
+    .compact-ul li {
+      margin-bottom: 0.28rem;
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .slide-market .market-lead {
+      font-size: 0.86rem;
+      margin-bottom: 0.45rem;
+      max-width: none;
+    }
+
+    .slide-market .market-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap-grid);
+      margin-top: 0.45rem;
+    }
+
+    .slide-market .market-card {
+      padding: 0.65rem 0.8rem;
+    }
+
+    .slide-market .market-card strong {
+      font-size: 0.92rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .slide-market .flow-line {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      padding: 0.45rem 0.65rem;
+    }
+
+    .slide-problem .problem-split {
+      margin-top: 0.55rem;
+      align-items: start;
+    }
+
+    .slide-problem .problem-label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.92rem;
+      color: var(--accent-hover);
+      margin-bottom: 0.35rem;
+    }
+
+    .slide-problem ul {
+      margin-top: 0;
+    }
+
+    .slide-problem .card span {
       font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .biz-note {
+      font-size: 0.82rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      max-width: none;
+    }
+
+    .biz-card {
+      padding: 0.7rem 0.85rem;
+    }
+
+    .biz-card strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.92rem;
+      color: var(--accent-hover);
+      margin-bottom: 0.35rem;
+    }
+
+    .biz-card span {
+      font-size: 0.84rem;
+      line-height: 1.45;
       color: #334155;
     }
 
@@ -863,6 +1098,50 @@
       color: var(--text-muted);
       pointer-events: none;
       user-select: none;
+      transition: opacity 0.3s var(--ease-out), visibility 0.3s var(--ease-out);
+    }
+
+    .nav-hint.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .nav-toggle {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      z-index: 9999;
+      width: 2.5rem;
+      height: 2.5rem;
+      padding: 0;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--glass-shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: color 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
+    }
+
+    .nav-toggle.is-visible {
+      display: flex;
+    }
+
+    .nav-toggle:hover {
+      color: var(--accent-hover);
+      border-color: var(--accent);
+    }
+
+    .nav-toggle.is-active {
+      color: var(--accent-hover);
+      border-color: var(--accent);
     }
 
     .nav-hint kbd {
@@ -917,10 +1196,244 @@
         display: none;
       }
 
+      .nav-toggle {
+        display: none !important;
+      }
+
       .slide-counter {
         top: auto;
         bottom: 1rem;
         right: 1rem;
+      }
+
+      :root {
+        --ui-top-reserve: 1.65rem;
+        --ui-bottom-reserve: 4.25rem;
+      }
+    }
+
+    /* Большие экраны: шире колонка, чуть крупнее иллюстрации */
+    @media (min-width: 901px) {
+      :root {
+        --inner-max: 1240px;
+        --inner-fit-max: 1180px;
+      }
+
+      .diagram svg {
+        max-height: min(36vh, 280px);
+      }
+
+      .slide-diagram-only .diagram svg {
+        max-height: min(42vh, 320px);
+      }
+
+      .slide-diagram-only:has(.code-grid) .diagram svg {
+        max-height: min(32vh, 260px);
+      }
+
+      .demo-shot img {
+        max-height: min(36vh, 280px);
+      }
+
+      .slide-er .er-diagram svg {
+        max-height: min(42vh, 320px);
+      }
+    }
+
+    /* Узкий / низкий экран: одна колонка + масштабирование под высоту (JS) */
+    @media (max-width: 900px), (max-height: 760px) {
+      :root {
+        --ui-top-reserve: 2.35rem;
+        --ui-bottom-reserve: 2.5rem;
+        --gap-grid: 0.45rem;
+        --gap-block: 0.4rem;
+      }
+
+      .slide {
+        overflow: hidden;
+        justify-content: flex-start;
+        align-items: center;
+        padding-top: var(--ui-top-reserve);
+        padding-bottom: var(--ui-bottom-reserve);
+        padding-left: 0.55rem;
+        padding-right: 0.55rem;
+      }
+
+      .title-slide {
+        justify-content: center;
+        padding-top: clamp(0.85rem, 2vh, 1.5rem);
+      }
+
+      .slide-inner,
+      .slide-inner-fit {
+        transform-origin: top center;
+        flex-shrink: 0;
+        max-width: 100%;
+        overflow-x: clip;
+      }
+
+      .slide-tag {
+        margin-bottom: 0.3rem;
+        font-size: 0.68rem;
+        padding: 0.22rem 0.55rem;
+      }
+
+      h2 {
+        font-size: clamp(1.1rem, 4.8vw, 1.45rem);
+        margin-bottom: 0.35rem;
+      }
+
+      p, li {
+        font-size: 0.8rem;
+        line-height: 1.4;
+      }
+
+      .card {
+        padding: 0.55rem 0.65rem;
+      }
+
+      .card strong {
+        font-size: 0.88rem;
+        margin-bottom: 0.3rem;
+      }
+
+      .card span,
+      .card p {
+        font-size: 0.78rem;
+      }
+
+      .flow-line {
+        font-size: 0.74rem;
+        padding: 0.4rem 0.55rem;
+        margin-top: 0.4rem;
+      }
+
+      .grid-2,
+      .grid-3,
+      .code-grid,
+      .win-grid,
+      .tag-grid,
+      .demo-shot-grid-3,
+      .demo-shot-grid-2,
+      .slide-tech .grid-2,
+      .slide-er .grid-2,
+      .slide-market .market-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.4rem;
+        margin-top: 0.4rem;
+      }
+
+      /* 3б */
+      [data-slide="3b"] li {
+        font-size: 0.76rem;
+        margin-bottom: 0.2rem;
+      }
+
+      /* 4а */
+      [data-slide="4a"] .stack-cards .card span {
+        font-size: 0.74rem;
+      }
+
+      /* 4б */
+      [data-slide="4b"] .diagram {
+        margin-top: 0.35rem;
+        padding: 0.4rem 0.5rem;
+      }
+
+      /* 4в */
+      [data-slide="4v"] .roles-table {
+        font-size: 0.72rem;
+      }
+
+      [data-slide="4v"] .roles-table th,
+      [data-slide="4v"] .roles-table td {
+        padding: 0.3rem 0.4rem;
+      }
+
+      /* 5а–5б demo */
+      .demo-shot-grid {
+        margin-top: 0.35rem;
+        gap: 0.35rem;
+      }
+
+      .demo-shot figcaption {
+        font-size: 0.62rem;
+        padding: 0.3rem 0.45rem;
+        line-height: 1.3;
+      }
+
+      .demo-shot img {
+        max-height: 68px;
+        object-fit: cover;
+        object-position: top center;
+      }
+
+      [data-slide="5b"] .demo-shot img {
+        max-height: 88px;
+      }
+
+      [data-slide="5a"] .demo-meta {
+        font-size: 0.68rem;
+      }
+
+      [data-slide="5b"] .demo-metrics {
+        margin-top: 0.45rem !important;
+        gap: 0.35rem;
+      }
+
+      [data-slide="5b"] .demo-metrics .metric {
+        padding: 0.45rem 0.35rem;
+      }
+
+      [data-slide="5b"] .demo-metrics .metric-value {
+        font-size: 1.1rem;
+      }
+
+      [data-slide="5b"] .demo-metrics .metric-label {
+        font-size: 0.62rem;
+        margin-top: 0.25rem;
+      }
+
+      /* 7 */
+      [data-slide="7"] .biz-note {
+        font-size: 0.72rem;
+        margin-bottom: 0.35rem;
+      }
+
+      [data-slide="7"] .biz-card {
+        padding: 0.45rem 0.55rem;
+      }
+
+      [data-slide="7"] .biz-card strong {
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+      }
+
+      [data-slide="7"] .biz-card span {
+        font-size: 0.7rem;
+        line-height: 1.35;
+      }
+
+      .diagram-wide {
+        display: none;
+      }
+
+      .diagram-narrow {
+        display: block;
+      }
+
+      .diagram-narrow svg,
+      .slide-diagram-only .diagram svg,
+      .slide-er .er-diagram svg {
+        max-height: min(18vh, 100px);
+      }
+
+      .code-snippet,
+      .code-snippet-compact {
+        font-size: 0.55rem;
+        line-height: 1.28;
+        overflow-x: hidden;
+        word-break: break-word;
       }
     }
 
@@ -936,13 +1449,20 @@
   </style>
 </head>
 <body>
-  <div class="progress" id="progress" style="width: 5.88%"></div>
-  <div class="slide-counter" id="counter">1 / 17</div>
-  <div class="nav-hint">
+  <div class="progress" id="progress" style="width: 5.56%"></div>
+  <div class="slide-counter" id="counter">1 / 18</div>
+  <div class="nav-hint" id="navHint">
     <span><kbd>↓</kbd> <kbd>→</kbd> <kbd>Space</kbd> — далее</span>
     <span><kbd>↑</kbd> <kbd>←</kbd> — назад</span>
     <span><kbd>Home</kbd> <kbd>End</kbd> — край</span>
   </div>
+  <button
+    class="nav-toggle"
+    id="navToggle"
+    type="button"
+    aria-label="Показать подсказки навигации"
+    aria-pressed="false"
+  >?</button>
 
   <main class="deck" id="deck" aria-live="polite">
 
@@ -953,13 +1473,17 @@
         <p class="slide-tag">SkyPro · Fullstack · OB2</p>
         <h1><span class="gradient-text">Creavity</span><br>платформа платного контента</h1>
         <p class="lead">
-          Авторы монетизируют экспертизу: бесплатные материалы — для всех,
-          платные — после регистрации и разовой подписки через Stripe.
+          Монорепозиторий: Python/Django 6 + React 19. Prod в Yandex Cloud, код на GitHub.
+        </p>
+        <p class="flow-line" style="max-width: 52ch; text-align: center; margin: 0.5rem auto 0">
+          Доклад: проблема → рыночный контекст → решение → архитектура →
+          демо → тесты → бизнес-эффект
         </p>
         <div class="meta-row">
           <span>Код проекта: OB2</span>
           <span>Попов Николай</span>
-          <span>Июль 2026</span>
+          <span>Июнь 2026</span>
+          <span>Yandex Cloud</span>
           <a href="https://github.com/webmiko/ob2-paid-content" target="_blank" rel="noopener">
             GitHub
           </a>
@@ -981,228 +1505,254 @@
       <div class="brand-footer">OB2 — защита дипломного проекта</div>
     </section>
 
-    <!-- Слайд 2а: Проблема -->
-    <section class="slide" data-slide="2a" style="z-index: 2">
+    <!-- Слайд 2а–2б: Проблема -->
+    <section class="slide slide-problem" data-slide="2a" style="z-index: 2">
       <div class="slide-inner slide-inner-fit">
-        <p class="slide-tag">Слайд 2<span class="slide-part">а</span> · Проблема</p>
-        <h2>Бизнес- и пользовательская боль</h2>
+        <p class="slide-tag">Слайд 2<span class="slide-part">а–б</span> · Проблема</p>
+        <h2>Проблема рынка</h2>
         <p>
-          Независимые авторы публикуют контент в разрозненных каналах
-          без единого paywall и контроля доступа к paid-материалам.
+          Авторы — преподаватели, эксперты, креаторы — продают контент кустарно:
+          мессенджеры, облачные диски, Excel-списки. Доступ к платным материалам
+          выдаётся вручную. Нет единого <strong>paywall</strong> — барьера,
+          который отображает заглушку до оплаты.
         </p>
-        <div class="grid-2">
-          <div class="glass card">
-            <strong>Как сейчас</strong>
-            <span>
-              Ручная выдача доступа, Excel, ссылки «для своих»,
-              нет прозрачной оплаты и защиты контента.
-            </span>
+        <div class="grid-2 problem-split">
+          <div>
+            <strong class="problem-label">Боли бизнеса</strong>
+            <ul>
+              <li>Ручная работа съедает до <strong>40%</strong> времени автора</li>
+              <li>Выручка теряется, контент утекает</li>
+              <li>Отсутствует <strong>API</strong> для подключения собственного сайта</li>
+            </ul>
           </div>
           <div class="glass card">
-            <strong>Последствия</strong>
+            <strong>Цель Creavity</strong>
             <span>
-              Потеря выручки, утечки материалов, высокие операционные затраты
-              на поддержку подписчиков.
+              Автоматизировать монетизацию: один вход, оплата картой,
+              мгновенный доступ без участия автора.
             </span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Слайд 2б: Аудитория и метрики -->
-    <section class="slide" data-slide="2b" style="z-index: 3">
+    <!-- Слайд 2в: Рыночный контекст -->
+    <section class="slide slide-market" data-slide="2v" style="z-index: 4">
       <div class="slide-inner slide-inner-fit">
-        <p class="slide-tag">Слайд 2<span class="slide-part">б</span> · Проблема</p>
-        <h2>Аудитория и масштаб боли</h2>
-        <div class="grid-2">
-          <div class="glass card">
-            <strong>Целевая аудитория</strong>
-            <span>
-              Эксперты, преподаватели, креаторы — продают курсы
-              и premium-материалы онлайн.
-            </span>
+        <p class="slide-tag">Слайд 2<span class="slide-part">в</span> · Рынок</p>
+        <h2>Рыночный контекст и аналоги</h2>
+        <p class="market-lead">
+          На рынке есть инструменты монетизации, но нет единой платформы
+          с одной подпиской на всех авторов.
+        </p>
+        <div class="market-grid">
+          <div class="glass card market-card">
+            <strong>Зарубежные аналоги</strong>
+            <ul class="compact-ul">
+              <li>
+                <strong>Patreon, Boosty, Buy Me a Coffee</strong> — подписка
+                на отдельного автора
+              </li>
+              <li>
+                <strong>Medium</strong> — прямой аналог Creavity: $5/мес
+                открывает всех авторов
+              </li>
+            </ul>
           </div>
-          <div class="glass card">
-            <strong>Бизнес-цель</strong>
-            <span>
-              Автоматизировать монетизацию: один вход, оплата,
-              мгновенный доступ без ручной работы.
-            </span>
+          <div class="glass card market-card">
+            <strong>Российские аналоги</strong>
+            <ul class="compact-ul">
+              <li>
+                <strong>Boosty Pro</strong> (499 ₽) — не все авторы,
+                нет сквозного paywall
+              </li>
+              <li>
+                <strong>VK Donut, Дзен</strong> — закрытые экосистемы, нет API
+              </li>
+              <li>Полного аналога «одна подписка — весь premium» нет</li>
+            </ul>
           </div>
         </div>
-        <div class="grid-3">
-          <div class="glass metric">
-            <span class="metric-value">~40%</span>
-            <span class="metric-label">
-              времени на ручную выдачу доступа
-              <br><small>допущение: 50+ подписчиков</small>
-            </span>
-          </div>
-          <div class="glass metric">
-            <span class="metric-value">3+</span>
-            <span class="metric-label">инструмента в «зоопарке» автора</span>
-          </div>
-          <div class="glass metric">
-            <span class="metric-value">0</span>
-            <span class="metric-label">единого API для SPA и клиентов</span>
-          </div>
-        </div>
+        <p class="flow-line">
+          <strong>Creavity = Netflix/Medium для авторов</strong>: один платёж →
+          все paid; paywall через <code>can_view_post_body</code>.
+          Ниша: СНГ-платформа с универсальной подпиской и открытым API.
+        </p>
       </div>
     </section>
 
     <!-- Слайд 3а: Концепция -->
-    <section class="slide slide-roles" data-slide="3a" style="z-index: 4">
+    <section class="slide slide-roles" data-slide="3a" style="z-index: 5">
       <div class="slide-inner slide-inner-fit">
         <p class="slide-tag">Слайд 3<span class="slide-part">а</span> · Концепция</p>
-        <h2>Что делает продукт</h2>
-        <p>Монорепозиторий: JSON API + React SPA + PostgreSQL.</p>
-        <p style="font-size: 0.88rem; margin-bottom: 0.65rem">
-          Роль <strong>не выбирается</strong> в профиле: guest / user / sub / author —
-          автоматически по входу, оплате и авторству поста.
+        <h2>Концепция решения</h2>
+        <p>
+          <strong>Python + Django 6 + Django REST Framework (DRF)</strong> — REST API, JSON ·
+          <strong>React 19</strong> (Vite) — SPA (одностраничное приложение) ·
+          <strong>PostgreSQL 16</strong> (база данных).
         </p>
-        <ul>
-          <li>Публикации free/paid с единым paywall</li>
-          <li>Регистрация по телефону, JWT для SPA и REST API</li>
-          <li>Stripe Checkout → разовая подписка → все paid-посты</li>
-          <li>CRUD постов; опубликовал — ты автор своих paid</li>
-        </ul>
-        <div class="grid-3" style="margin-top: 0.75rem">
-          <div class="glass metric">
-            <span class="metric-value">Guest</span>
-            <span class="metric-label">не вошёл · free да · paid — paywall</span>
-          </div>
-          <div class="glass metric">
-            <span class="metric-value">User</span>
-            <span class="metric-label">login · CRUD · свои paid видит всегда</span>
-          </div>
-          <div class="glass metric">
-            <span class="metric-value">Sub</span>
-            <span class="metric-label">после Stripe · все paid всех авторов</span>
-          </div>
-        </div>
+        <p class="flow-line" style="font-size: 0.84rem; margin-top: 0.45rem">
+          <strong>Логика доступа:</strong> бесплатный пост открыт всем; платный — автору
+          безусловно, остальным только при активной подписке. Один алгоритм в API и шаблонах.
+        </p>
         <pre class="code-snippet code-snippet-compact"><span class="cm"># posts/services/access.py</span>
-<span class="kw">def</span> <span class="fn">can_view_post_body</span>(user, post) -> bool:
-    <span class="kw">if not</span> post.is_paid: <span class="kw">return</span> <span class="fn">True</span>  <span class="cm"># free → всем</span>
-    <span class="kw">if</span> user <span class="kw">is None or</span> user.is_anonymous: <span class="kw">return</span> <span class="fn">False</span>  <span class="cm"># guest</span>
-    <span class="kw">if</span> post.author_id == user.pk: <span class="kw">return</span> <span class="fn">True</span>  <span class="cm"># автор поста</span>
-    <span class="kw">return</span> user_has_active_subscription(user)  <span class="cm"># подписчик</span></pre>
+<span class="kw">def</span> <span class="fn">can_view_post_body</span>(user, post, *, subscription_active=None):
+    <span class="kw">if not</span> post.is_paid: <span class="kw">return</span> <span class="fn">True</span>
+    <span class="kw">if</span> user <span class="kw">is None or</span> user.is_anonymous: <span class="kw">return</span> <span class="fn">False</span>
+    <span class="kw">if</span> post.author_id == user.pk: <span class="kw">return</span> <span class="fn">True</span>
+    <span class="kw">if</span> subscription_active <span class="kw">is not</span> <span class="fn">None</span>: <span class="kw">return</span> subscription_active
+    <span class="kw">return</span> user_has_active_subscription(user)</pre>
+        <p style="font-size: 0.84rem; margin-top: 0.5rem">
+          Уровни доступа — на слайде <strong>3в</strong> (без отдельной таблицы прав в БД).
+        </p>
       </div>
     </section>
 
     <!-- Слайд 3б: MVP -->
-    <section class="slide" data-slide="3b" style="z-index: 5">
+    <section class="slide slide-dense" data-slide="3b" style="z-index: 6">
       <div class="slide-inner slide-inner-fit">
         <p class="slide-tag">Слайд 3<span class="slide-part">б</span> · Концепция</p>
-        <h2>MVP и scope</h2>
+        <h2>MVP и осознанные упрощения</h2>
         <div class="grid-2">
           <div class="glass card">
-            <strong>В MVP вошло</strong>
+            <strong>Отложено на версию 2</strong>
             <ul style="margin-top: 0.5rem">
-              <li>Sync Stripe success URL → activate_subscription()</li>
-              <li>JWT auth + paywall + CRUD постов</li>
-              <li>Docker Compose + CI/CD + prod на Yandex Cloud</li>
-              <li>React SPA + PWA + Django admin</li>
+              <li><strong>Celery + Redis</strong> — фоновые задачи и очереди</li>
+              <li><strong>Webhook Stripe</strong> — мгновенные уведомления об оплате</li>
+              <li>HTTPS и аналитика MAU (активные пользователи в месяц)</li>
             </ul>
+            <p class="mobile-hide" style="margin-top: 0.65rem; font-size: 0.84rem">
+              Выплаты авторам не в v1 — деньги на платформенный аккаунт Stripe;
+              v2: <strong>Stripe Connect</strong> (автоматические выплаты).
+            </p>
           </div>
           <div class="glass card">
-            <strong>Сознательно отложено (v2)</strong>
+            <strong>Как работает сейчас (v1)</strong>
             <ul style="margin-top: 0.5rem">
-              <li>Celery + Redis + Stripe webhook</li>
-              <li>HTTPS + собственный домен</li>
-              <li>Email-уведомления, аналитика MAU</li>
+              <li>Активация подписки <strong>сразу</strong> после возврата со Stripe Checkout</li>
+              <li><code>activate_subscription()</code> — можно вызывать повторно без ошибок</li>
+              <li>Демо-подписка <strong>990 ₽</strong> на всю платформу</li>
             </ul>
-            <p style="margin-top: 0.75rem; font-size: 0.88rem">
-              Scope v1 минимален: проще отладка, защита и деплой.
+            <p style="margin-top: 0.65rem; font-size: 0.84rem">
+              Синхронная активация — проще отлаживать и быстрее запускать.
+              <span class="mobile-hide">
+                Цена 990 ₽ — как Boosty Pro (499–1000 ₽) и Medium ($5), «всё включено».
+              </span>
             </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Слайд 3в: Paywall и выгода сторон -->
-    <section class="slide" data-slide="3v" style="z-index: 6">
+    <!-- Слайд 3в: Уровни доступа -->
+    <section class="slide" data-slide="3v" style="z-index: 7">
       <div class="slide-inner slide-inner-fit">
         <p class="slide-tag">Слайд 3<span class="slide-part">в</span> · Концепция</p>
-        <h2>Paywall и win-win модель</h2>
-        <p class="flow-line" style="margin-top: 0">
-          <strong>Paywall</strong> — «стена доступа»: free-посты видны всем,
-          paid — только после разовой подписки на платформу (не на автора).
-          Проверка в API: <code>can_view_post_body()</code>.
+        <h2>Три уровня доступа</h2>
+        <p style="font-size: 0.88rem; margin-bottom: 0.55rem">
+          Роли вычисляются при каждом запросе — не поле в профиле и не таблица прав.
         </p>
-        <p style="font-size: 0.9rem; margin-bottom: 0.5rem">
-          Одна подписка Creavity → все paid-материалы всех авторов. Все стороны в выигрыше:
-        </p>
-        <div class="win-grid">
-          <div class="win-card">
-            <strong>Читатель (guest)</strong>
+        <div class="grid-3">
+          <div class="glass card">
+            <strong>Гость</strong>
             <span>
-              Бесплатные материалы без регистрации; понятная воронка
-              «попробовал free → захотел premium».
+              Видит бесплатное; платное закрыто paywall — заголовок и кнопка оплаты.
             </span>
           </div>
-          <div class="win-card">
+          <div class="glass card">
+            <strong>Зарегистрированный пользователь</strong>
+            <span>
+              <strong>JWT-токен</strong>; CRUD своих постов. Свой платный пост видит всегда.
+            </span>
+          </div>
+          <div class="glass card">
             <strong>Подписчик</strong>
             <span>
-              Один платёж (~990 ₽) и Stripe Checkout — доступ ко всем авторам,
-              без десятка разрозненных ссылок и паролей.
-            </span>
-          </div>
-          <div class="win-card">
-            <strong>Автор</strong>
-            <span>
-              Free — витрина, paid — эксклюзив; аудитория, комментарии,
-              статистика; свой Stripe не нужен. Свои paid-посты видит всегда.
-            </span>
-          </div>
-          <div class="win-card">
-            <strong>Платформа Creavity</strong>
-            <span>
-              Единый paywall и монетизация; больше premium-контента —
-              сильнее ценность подписки. v2: выплаты авторам (Stripe Connect).
+              После оплаты через <strong>Stripe</strong> — все paid-материалы
+              <strong>всех</strong> авторов одной подпиской.
             </span>
           </div>
         </div>
+        <p class="flow-line" style="margin-top: 0.65rem">
+          Единая подписка Creavity (~990 ₽) · не подписка на отдельного автора.
+        </p>
       </div>
     </section>
 
     <!-- Слайд 4а: Стек -->
-    <section class="slide slide-tech" data-slide="4a" style="z-index: 7">
+    <section class="slide slide-tech slide-dense" data-slide="4a" style="z-index: 8">
       <div class="slide-inner slide-inner-fit">
         <p class="slide-tag">Слайд 4<span class="slide-part">а</span> · Техника</p>
-        <h2>Стек и слои</h2>
-        <div class="pill-row">
-          <span class="pill">Python 3.14</span>
-          <span class="pill">Django 6 + DRF</span>
-          <span class="pill">SimpleJWT</span>
-          <span class="pill">PostgreSQL 16</span>
-          <span class="pill">React 19 + Vite</span>
-          <span class="pill">nginx</span>
-          <span class="pill">Stripe SDK</span>
-          <span class="pill">GitHub Actions</span>
+        <h2>Техническая архитектура</h2>
+        <div class="grid-2 stack-cards" style="margin-top: 0.55rem">
+          <div class="glass card">
+            <strong>Бэкенд (сервер)</strong>
+            <span>Django + DRF (REST Framework) + Simple JWT (токены) · Stripe Checkout</span>
+            <span style="display: block; margin-top: 0.3rem; color: var(--accent-hover)">
+              Почему: «батарейки в комплекте» — ORM, админка, готовый REST
+            </span>
+          </div>
+          <div class="glass card">
+            <strong>Фронтенд (клиент)</strong>
+            <span>React 19 + Vite · PWA (прогрессивное веб-приложение)</span>
+            <span style="display: block; margin-top: 0.3rem; color: var(--accent-hover)">
+              Почему: динамичный UI, один JSON API на все клиенты
+            </span>
+          </div>
+          <div class="glass card">
+            <strong>Прокси</strong>
+            <span>nginx — раздаёт статику и перенаправляет API-запросы → Django</span>
+            <span style="display: block; margin-top: 0.3rem; color: var(--accent-hover)">
+              Почему: одна точка для статики, /api и лимита запросов
+            </span>
+          </div>
+          <div class="glass card">
+            <strong>Инфраструктура</strong>
+            <span>PostgreSQL 16 · GitHub Actions (CI/CD) → Docker → продакшн</span>
+            <span style="display: block; margin-top: 0.3rem; color: var(--accent-hover)">
+              Почему: надёжные транзакции оплат (не SQLite) + автодеплой
+            </span>
+          </div>
         </div>
-        <ul style="margin-top: 1rem">
-          <li><strong>views → services → models</strong> — бизнес-логика в сервисах</li>
-          <li><strong>can_view_post_body()</strong> — единая проверка paywall</li>
-          <li><strong>activate_subscription()</strong> — идемпотентная активация</li>
-        </ul>
-        <p class="flow-line">
-          Запрос → JWT auth → service → ORM → JSON-ответ
+        <p class="mobile-hide" style="font-size: 0.88rem; margin: 0.65rem 0 0">
+          <strong>REST API</strong> — доступ к данным через HTTP в формате JSON.
+          <strong>CRUD</strong> — базовые операции: Create (создать), Read (читать),
+          Update (обновить), Delete (удалить). Документация — <strong>Swagger</strong>
+          на <code>/api/docs/</code>. Роли и схема БД — <strong>слайд 4в</strong>.
         </p>
-        <ul class="stack-why">
-          <li><strong>Django + DRF</strong> — ORM, admin, API из коробки</li>
-          <li><strong>PostgreSQL</strong> — prod-ready СУБД</li>
-          <li><strong>Stripe</strong> — сторонний API по ТЗ OB2</li>
-        </ul>
+        <p class="code-caption mobile-hide">Маршруты и PostViewSet (ModelViewSet = CRUD) — из репозитория</p>
+        <div class="code-grid mobile-hide">
+          <pre class="code-snippet code-snippet-compact"><span class="cm"># config/urls.py</span>
+path(<span class="str">"api/token/"</span>, PhoneTokenObtainPairView.as_view()),
+path(<span class="str">"api/users/"</span>, include(<span class="str">"users.urls"</span>)),
+path(<span class="str">"api/posts/"</span>, include(<span class="str">"posts.urls"</span>)),</pre>
+          <pre class="code-snippet code-snippet-compact"><span class="cm"># posts/views.py</span>
+<span class="kw">class</span> <span class="fn">PostViewSet</span>(viewsets.ModelViewSet):
+    permission_classes = (IsAuthorOrReadOnly,)
+    <span class="kw">def</span> <span class="fn">get_permissions</span>(self):
+        <span class="kw">if</span> self.action <span class="kw">in</span> (<span class="str">"list"</span>, <span class="str">"retrieve"</span>):
+            <span class="kw">return</span> [AllowAny()]
+        <span class="kw">return</span> [IsAuthenticated(), IsAuthorOrReadOnly()]</pre>
+        </div>
+        <pre class="code-snippet code-snippet-compact mobile-hide"><span class="cm"># posts/serializers.py — paywall в JSON без утечки body</span>
+<span class="kw">def</span> <span class="fn">get_body</span>(self, obj):
+    <span class="kw">return</span> obj.body <span class="kw">if</span> self.get_can_view_body(obj) <span class="kw">else</span> <span class="fn">None</span></pre>
+        <p class="flow-line" style="margin-top: 0.65rem">
+          JWT → ViewSet → can_view_post_body() → ORM → JSON
+        </p>
       </div>
     </section>
 
     <!-- Слайд 4б: Архитектура -->
-    <section class="slide slide-tech slide-diagram-only" data-slide="4b" style="z-index: 8">
+    <section class="slide slide-tech slide-diagram-only slide-dense" data-slide="4b" style="z-index: 9">
       <div class="slide-inner slide-inner-fit">
         <p class="slide-tag">Слайд 4<span class="slide-part">б</span> · Техника</p>
         <h2>Архитектура</h2>
         <p class="flow-line" style="margin-top: 0">
-          v1: sync Stripe (без Celery). Фоновые задачи — v2: Celery + webhook.
+          Поток данных: приложение (SPA) → nginx → Django ViewSet →
+          сервисный слой → ORM → PostgreSQL. Оплата: пользователь → Stripe →
+          возврат на сайт → <code>activate_subscription()</code> (можно вызвать повторно).
+          Доступ проверяется через <code>can_view_post_body()</code>, а не через таблицу прав.
         </p>
         <div class="glass diagram card">
           <div class="diagram-wide">
@@ -1271,23 +1821,143 @@
             </svg>
           </div>
         </div>
+        <p class="code-caption mobile-hide">Клиент SPA и прокси nginx — тот же монорепозиторий</p>
+        <div class="code-grid mobile-hide">
+          <pre class="code-snippet code-snippet-compact"><span class="cm">// frontend/src/api/client.ts</span>
+<span class="kw">export async function</span> <span class="fn">apiFetch</span>(path, options) {
+  <span class="kw">if</span> (accessToken) {
+    headers.set(<span class="str">"Authorization"</span>, <span class="str">`Bearer ${accessToken}`</span>);
+  }
+  <span class="kw">return</span> fetch(path, { ...options, headers });
+}</pre>
+          <pre class="code-snippet code-snippet-compact"><span class="cm"># deploy/nginx/ob2.conf</span>
+location /api/ {
+    limit_req zone=api_limit burst=30 nodelay;
+    proxy_pass http://web:8000;
+    proxy_set_header Host $host;
+}</pre>
+        </div>
+        <p class="flow-line mobile-hide" style="margin-top: 0.5rem; font-size: 0.84rem">
+          Оплата: Checkout Session → success URL →
+          <code>activate_subscription()</code> (повторный вызов безопасен).
+        </p>
+      </div>
+    </section>
+
+    <!-- Слайд 4в: Схема БД и роли -->
+    <section class="slide slide-tech slide-er slide-dense" data-slide="4v" style="z-index: 10">
+      <div class="slide-inner slide-inner-fit">
+        <p class="slide-tag">Слайд 4<span class="slide-part">в</span> · Техника</p>
+        <h2>ORM: схема БД и роли</h2>
+        <p class="flow-line" style="margin-top: 0">
+          Django ORM · PostgreSQL 16 · без raw SQL. Paywall — в API, не в отдельной таблице прав.
+        </p>
+        <div class="grid-2">
+          <div class="glass diagram card er-diagram">
+            <svg viewBox="0 0 560 280" xmlns="http://www.w3.org/2000/svg" role="img"
+              aria-label="ER: User, Post, Payment, Subscription, Comment">
+              <defs>
+                <marker id="er-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                  <path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/>
+                </marker>
+              </defs>
+              <rect x="200" y="108" width="120" height="48" rx="10" fill="#eef1f8" stroke="#6366f1" stroke-width="2"/>
+              <text x="260" y="128" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a"
+                font-family="Plus Jakarta Sans, sans-serif">User</text>
+              <text x="260" y="146" text-anchor="middle" font-size="9" fill="#64748b"
+                font-family="Inter, sans-serif">phone · display_name</text>
+              <rect x="24" y="24" width="108" height="44" rx="10" fill="#fff" stroke="#cbd5e1"/>
+              <text x="78" y="44" text-anchor="middle" font-size="11" font-weight="600" fill="#0f172a"
+                font-family="Plus Jakarta Sans, sans-serif">Post</text>
+              <text x="78" y="58" text-anchor="middle" font-size="9" fill="#64748b"
+                font-family="Inter, sans-serif">is_paid · body</text>
+              <path d="M132 46 L200 124" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#er-arrow)"/>
+              <text x="148" y="76" font-size="9" fill="#6366f1" font-family="Inter, sans-serif">author 1:N</text>
+              <rect x="24" y="200" width="108" height="40" rx="10" fill="#fff" stroke="#cbd5e1"/>
+              <text x="78" y="224" text-anchor="middle" font-size="11" font-weight="600" fill="#0f172a"
+                font-family="Plus Jakarta Sans, sans-serif">Comment</text>
+              <path d="M78 200 L78 68" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#er-arrow)"/>
+              <text x="88" y="140" font-size="9" fill="#64748b" font-family="Inter, sans-serif">post</text>
+              <path d="M132 220 L200 148" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#er-arrow)"/>
+              <text x="148" y="192" font-size="9" fill="#64748b" font-family="Inter, sans-serif">author</text>
+              <rect x="400" y="36" width="120" height="44" rx="10" fill="#fff" stroke="#cbd5e1"/>
+              <text x="460" y="56" text-anchor="middle" font-size="11" font-weight="600" fill="#0f172a"
+                font-family="Plus Jakarta Sans, sans-serif">Payment</text>
+              <text x="460" y="70" text-anchor="middle" font-size="9" fill="#64748b"
+                font-family="Inter, sans-serif">status · stripe_session</text>
+              <path d="M400 58 L320 124" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#er-arrow)"/>
+              <text x="348" y="78" font-size="9" fill="#6366f1" font-family="Inter, sans-serif">user 1:N</text>
+              <rect x="400" y="188" width="120" height="44" rx="10" fill="#fff" stroke="#cbd5e1"/>
+              <text x="460" y="208" text-anchor="middle" font-size="11" font-weight="600" fill="#0f172a"
+                font-family="Plus Jakarta Sans, sans-serif">Subscription</text>
+              <text x="460" y="222" text-anchor="middle" font-size="9" fill="#64748b"
+                font-family="Inter, sans-serif">is_active · activated_at</text>
+              <path d="M320 140 L400 210" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#er-arrow)"/>
+              <text x="348" y="182" font-size="9" fill="#6366f1" font-family="Inter, sans-serif">user 1:1</text>
+              <path d="M460 188 L460 80" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#er-arrow)"/>
+              <text x="472" y="138" font-size="9" fill="#64748b" font-family="Inter, sans-serif">payment</text>
+            </svg>
+          </div>
+          <div>
+            <strong style="font-size: 0.88rem">Роли (вычисляются при запросе, не поле в БД)</strong>
+            <table class="demo-table roles-table">
+              <thead>
+                <tr>
+                  <th>Роль</th>
+                  <th>Доступ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Guest</strong></td>
+                  <td>free-посты; paid — paywall</td>
+                </tr>
+                <tr>
+                  <td><strong>User</strong></td>
+                  <td>CRUD своих постов; paid чужих — скрыт</td>
+                </tr>
+                <tr>
+                  <td><strong>Subscriber</strong></td>
+                  <td>все paid всех авторов после Stripe</td>
+                </tr>
+                <tr>
+                  <td><strong>Author</strong></td>
+                  <td>свои paid видит всегда (без подписки)</td>
+                </tr>
+              </tbody>
+            </table>
+            <strong class="mobile-hide" style="display: block; margin-top: 0.75rem; font-size: 0.88rem">
+              Архитектурные решения
+            </strong>
+            <ul class="arch-decisions mobile-hide">
+              <li><code>can_view_post_body()</code> — paywall в API, не в таблице прав</li>
+              <li><code>AUTH_USER_MODEL</code> — вход по телефону, не username</li>
+              <li>Один <code>PENDING</code> payment на пользователя (constraint)</li>
+              <li><code>activate_subscription()</code> — повторный вызов безопасен после оплаты</li>
+              <li>Admin: <strong>Forms</strong> + <strong>Templates</strong> (теги OB2)</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- Слайд 5а: Demo 1–3 -->
-    <section class="slide slide-demo" data-slide="5a" style="z-index: 9">
+    <section class="slide slide-demo slide-demo-tight slide-dense" data-slide="5a" style="z-index: 11">
       <div class="slide-inner slide-inner-fit">
-        <p class="slide-tag">Слайд 5<span class="slide-part">а</span> · Demo</p>
-        <h2>Live demo: шаги 1–3</h2>
-        <p style="max-width: none">
-          <a href="http://158.160.242.143/" target="_blank" rel="noopener">158.160.242.143</a>
-          · <code>79000001001</code> / <code>DemoPass123</code>
-          · оплата: <code>79000001002</code>
-        </p>
+        <div class="demo-slide-head">
+          <p class="slide-tag">Слайд 5<span class="slide-part">а</span> · Demo</p>
+          <h2>Live demo: шаги 1–3</h2>
+          <p class="demo-meta" style="max-width: none">
+            <a href="http://158.160.242.143/" target="_blank" rel="noopener">158.160.242.143</a>
+            · <code>79000001001</code> / <code>DemoPass123</code>
+            · оплата: <code>79000001002</code>
+            · API: <code>/api/docs/</code> (Swagger)
+          </p>
+        </div>
         <div class="demo-shot-grid demo-shot-grid-3">
           <figure class="demo-shot">
             <figcaption>
-              <strong>1.</strong> Guest → paywall: paid-пост без body и video
+              <strong>1.</strong> Guest: заголовок + paywall, кнопка «оформить подписку»
             </figcaption>
             <img
               src="screenshots/demo-01-guest-paywall.png"
@@ -1297,7 +1967,7 @@
           </figure>
           <figure class="demo-shot">
             <figcaption>
-              <strong>2.</strong> Login → JWT в SPA; профиль и CRUD постов
+              <strong>2.</strong> Авторизация: тестовый пользователь <code>79000001001</code>
             </figcaption>
             <img
               src="screenshots/demo-02-login.png"
@@ -1307,7 +1977,8 @@
           </figure>
           <figure class="demo-shot">
             <figcaption>
-              <strong>3.</strong> POST /api/payments/create/ → Stripe Checkout
+              <strong>3.</strong> Аккаунт без подписки <code>79000001002</code> —
+              Stripe Checkout, тестовая среда, 990 ₽
             </figcaption>
             <img
               src="screenshots/demo-03-stripe-checkout.png"
@@ -1316,20 +1987,30 @@
             >
           </figure>
         </div>
-        <pre class="code-snippet"><span class="cm"># POST /api/payments/create/</span>
-{ "payment_url": "https://checkout.stripe.com/..." }</pre>
+        <div class="code-grid demo-slide-foot mobile-hide">
+          <pre class="code-snippet code-snippet-compact"><span class="cm"># config/urls.py — шаг 2: JWT login</span>
+path(<span class="str">"api/token/"</span>, PhoneTokenObtainPairView.as_view()),
+<span class="cm"># POST { "phone": "79000001001", "password": "..." }</span>
+<span class="cm"># → { "access": "...", "refresh": "..." }</span></pre>
+          <pre class="code-snippet code-snippet-compact"><span class="cm"># users/payment_views.py — шаг 3</span>
+<span class="kw">class</span> <span class="fn">PaymentCreateView</span>(APIView):
+    permission_classes = (IsAuthenticated,)
+    <span class="kw">def</span> <span class="fn">post</span>(self, request):
+        session = create_checkout_session(payment)
+        <span class="kw">return</span> Response({<span class="str">"payment_url"</span>: session.payment_url})</pre>
+        </div>
       </div>
     </section>
 
     <!-- Слайд 5б: Demo 4–5 -->
-    <section class="slide slide-demo" data-slide="5b" style="z-index: 10">
+    <section class="slide slide-demo slide-dense" data-slide="5b" style="z-index: 12">
       <div class="slide-inner slide-inner-fit">
         <p class="slide-tag">Слайд 5<span class="slide-part">б</span> · Demo</p>
         <h2>Live demo: шаги 4–5</h2>
         <div class="demo-shot-grid demo-shot-grid-2">
           <figure class="demo-shot">
             <figcaption>
-              <strong>4.</strong> Subscriber → paid-пост: body, video, комментарии
+              <strong>4.</strong> После возврата подписка активна — текст, YouTube, комментарии
             </figcaption>
             <img
               src="screenshots/demo-04-subscriber-post.png"
@@ -1339,7 +2020,7 @@
           </figure>
           <figure class="demo-shot">
             <figcaption>
-              <strong>5.</strong> Admin /admin/ — Forms + Templates, ORM-модели
+              <strong>5.</strong> Админка Django — пользователи, платежи, подписки
             </figcaption>
             <img
               src="screenshots/demo-05-admin.png"
@@ -1348,14 +2029,17 @@
             >
           </figure>
         </div>
-        <div class="grid-3" style="margin-top: 1rem">
+        <div class="grid-3 demo-metrics" style="margin-top: 1rem">
           <div class="glass metric">
             <span class="metric-value">14</span>
             <span class="metric-label">демо-публикаций · 6 авторов</span>
           </div>
           <div class="glass metric">
             <span class="metric-value">17/17</span>
-            <span class="metric-label">prod smoke · Stripe e2e OK</span>
+            <span class="metric-label">
+              дымовых проверок на проде
+              <br><small>оплата → доступ подтверждён</small>
+            </span>
           </div>
           <div class="glass metric">
             <span class="metric-value">Live</span>
@@ -1366,7 +2050,7 @@
     </section>
 
     <!-- Слайд 6а: Метрики тестов -->
-    <section class="slide" data-slide="6a" style="z-index: 11">
+    <section class="slide" data-slide="6a" style="z-index: 13">
       <div class="slide-inner slide-inner-fit">
         <p class="slide-tag">Слайд 6<span class="slide-part">а</span> · Тестирование</p>
         <h2>Метрики pytest</h2>
@@ -1375,20 +2059,20 @@
             <span class="metric-value">147</span>
             <span class="metric-label">
               passed · 0 failed
-              <br><small>~57 с</small>
+              <br><small>~1 мин</small>
             </span>
           </div>
           <div class="glass metric">
-            <span class="metric-value">89.8%</span>
+            <span class="metric-value">89.78%</span>
             <span class="metric-label">
-              coverage
-              <br><small>1579 stmt · порог 85%</small>
+              покрытие кода
+              <br><small>1579 строк · минимум 85%</small>
             </span>
           </div>
           <div class="glass metric">
             <span class="metric-value">30</span>
             <span class="metric-label">
-              модулей со 100% покрытием
+              модулей с полным покрытием
               <br><small>config + users + posts</small>
             </span>
           </div>
@@ -1396,12 +2080,12 @@
         <pre class="terminal" aria-label="Вывод pytest"><span class="dim">$ poetry run pytest -q</span>
 <span class="ok">147 passed</span>, 14 warnings in 56.62s
 Required test coverage of 85% reached.
-<span class="ok">Total coverage: 89.78%</span></pre>
+<span class="ok">Total coverage: 89.78%</span> <span class="dim">(1579 строк кода)</span></pre>
       </div>
     </section>
 
     <!-- Слайд 6б: Типы тестов -->
-    <section class="slide" data-slide="6b" style="z-index: 12">
+    <section class="slide" data-slide="6b" style="z-index: 14">
       <div class="slide-inner slide-inner-fit">
         <p class="slide-tag">Слайд 6<span class="slide-part">б</span> · Тестирование</p>
         <h2>Типы тестов и критичный сценарий</h2>
@@ -1409,61 +2093,63 @@ Required test coverage of 85% reached.
           <div class="glass card">
             <strong>Юнит-тесты</strong>
             <span>
-              normalize_phone, activate_subscription, can_view_post_body,
-              serializers, permissions
+              Нормализация телефона, paywall, активация подписки, сериализаторы
             </span>
           </div>
           <div class="glass card">
-            <strong>API / интеграционные</strong>
+            <strong>Интеграционные</strong>
             <span>
-              register → JWT → paywall → payments → success → subscriber access
+              Регистрация → JWT → платёж → доступ подписчика
             </span>
           </div>
         </div>
-        <pre class="code-snippet"><span class="cm"># posts/services/access.py</span>
-<span class="kw">def</span> <span class="fn">can_view_post_body</span>(user, post) -> bool:
-    <span class="cm"># author · subscriber · free post</span>
-    ...</pre>
-        <p style="margin-top: 0.85rem; font-size: 0.88rem">
-          test_security.py: аноним не видит video_url paid;
-          subscriber — после activate_subscription().
+        <pre class="code-snippet code-snippet-compact"><span class="cm"># tests/test_security.py</span>
+<span class="kw">def</span> <span class="fn">test_paid_post_hides_video_metadata_for_guest</span>(api_client, author):
+    post = Post.objects.create(title=<span class="str">"Paid video"</span>, is_paid=<span class="fn">True</span>, ...)
+    response = api_client.get(post_detail_url(post.pk))
+    <span class="kw">assert</span> response.data[<span class="str">"has_video"</span>] <span class="kw">is</span> <span class="fn">False</span>
+    <span class="kw">assert</span> response.data[<span class="str">"video_provider"</span>] <span class="kw">is</span> <span class="fn">None</span></pre>
+        <p style="margin-top: 0.65rem; font-size: 0.88rem">
+          Тест безопасности: аноним не получает URL видео платного поста через API.
         </p>
       </div>
     </section>
 
     <!-- Слайд 7: Бизнес-ценность -->
-    <section class="slide" data-slide="7" style="z-index: 13">
+    <section class="slide slide-dense" data-slide="7" style="z-index: 15">
       <div class="slide-inner slide-inner-fit">
         <p class="slide-tag">Слайд 7 · Бизнес-ценность</p>
-        <h2>Эффект в цифрах</h2>
-        <p>Допущение: 100 активных подписчиков / месяц.</p>
+        <h2>Бизнес-ценность</h2>
+        <p class="biz-note">
+          Допущение: 100 активных подписчиков в месяц и отраслевые ориентиры.
+        </p>
         <div class="grid-2">
-          <div class="glass metric">
-            <span class="metric-value">−80%</span>
-            <span class="metric-label">
-              ручных операций
-              <br><small>было 9 мин/подписчик</small>
+          <div class="glass biz-card">
+            <strong>Экономия времени</strong>
+            <span>
+              До 40% времени авторов — администрирование. Ручной процесс:
+              ~9 мин/подписчик. Автоматизация −80% → <strong>~15 ч/мес</strong>.
             </span>
           </div>
-          <div class="glass metric">
-            <span class="metric-value">~15 ч</span>
-            <span class="metric-label">
-              экономия / месяц
-              <br><small>9 мин × 100 ≈ 15 ч</small>
+          <div class="glass biz-card">
+            <strong>Рост конверсии</strong>
+            <span>
+              Единая платёжная страница вместо переписки. UX-исследования
+              (Baymard): упрощение чекаута +20–35%. Консервативно: <strong>+25%</strong>.
             </span>
           </div>
-          <div class="glass metric">
-            <span class="metric-value">+25%</span>
-            <span class="metric-label">
-              конверсия в оплату
-              <br><small>единый Stripe Checkout</small>
+          <div class="glass biz-card">
+            <strong>Рыночная цена</strong>
+            <span>
+              Подписка <strong>990 ₽</strong> — верхняя граница российского рынка,
+              но отражает ценность «единый доступ ко всем авторам».
             </span>
           </div>
-          <div class="glass metric">
-            <span class="metric-value">Stripe</span>
-            <span class="metric-label">
-              интеграция e2e на prod
-              <br><small>сторонний API · тег OB2</small>
+          <div class="glass biz-card">
+            <strong>Готовность к запуску</strong>
+            <span>
+              Stripe работает на боевом сервере, сценарий «оплата → подписка → доступ»
+              проверен. Можно запускать пилот <strong>сразу</strong> — нулевое время выхода на рынок.
             </span>
           </div>
         </div>
@@ -1471,68 +2157,61 @@ Required test coverage of 85% reached.
     </section>
 
     <!-- Слайд 8а: Итоги MVP -->
-    <section class="slide" data-slide="8a" style="z-index: 14">
+    <section class="slide" data-slide="8a" style="z-index: 16">
       <div class="slide-inner slide-inner-fit">
         <p class="slide-tag">Слайд 8<span class="slide-part">а</span> · Заключение</p>
         <h2>Итоги MVP</h2>
         <div class="grid-2">
           <div>
-            <h3>Сделано</h3>
+            <h3>MVP (минимально жизнеспособный продукт)</h3>
             <ul>
-              <li>CRUD free/paid + paywall + JWT</li>
-              <li>Stripe Checkout + activate_subscription()</li>
-              <li>React SPA + PWA + Django admin</li>
-              <li>Docker + CI/CD + prod Yandex Cloud</li>
+              <li>Paywall, JWT-аутентификация, CRUD операции с постами</li>
+              <li>Stripe Checkout, активация подписки</li>
+              <li>React PWA (прогрессивное веб-приложение), админка Django</li>
+              <li>Docker Compose, CI/CD (непрерывная интеграция/деплой), продакшн в облаке</li>
+              <li>147 автотестов с высоким покрытием</li>
             </ul>
           </div>
           <div>
-            <h3>Backlog v2</h3>
+            <h3>Бэклог (планы на будущее)</h3>
             <ul>
-              <li>Следующий слайд — roadmap и задел архитектуры</li>
+              <li>Stripe webhook (уведомления) + Celery/Redis (фоновые задачи)</li>
+              <li>Stripe Connect (автовыплаты авторам), тарифные планы</li>
+              <li>HTTPS (защищённое соединение), мониторинг, MAU-аналитика (активные пользователи)</li>
             </ul>
           </div>
         </div>
-        <p class="flow-line" style="margin-top: 1rem">
-          STAR · R: 147 тестов, 89.78% coverage, prod deploy, Stripe e2e OK
-        </p>
       </div>
     </section>
 
     <!-- Слайд 8б: Развитие платформы -->
-    <section class="slide" data-slide="8b" style="z-index: 15">
+    <section class="slide" data-slide="8b" style="z-index: 17">
       <div class="slide-inner slide-inner-fit">
-        <p class="slide-tag">Слайд 8<span class="slide-part">б</span> · Развитие</p>
-        <h2>Roadmap Creavity</h2>
+        <p class="slide-tag">Слайд 8<span class="slide-part">б</span> · Заключение</p>
+        <h2>Заложенная архитектура</h2>
         <div class="grid-2">
           <div class="glass card">
-            <strong>Куда развивать продукт</strong>
+            <strong>Расширяемость v1</strong>
             <ul style="margin-top: 0.5rem">
-              <li>Stripe webhook + Celery — надёжная активация без redirect</li>
-              <li>Stripe Connect — выплаты авторам, доля платформы</li>
-              <li>Подписки: период, тарифы, промокоды, per-author</li>
-              <li>HTTPS + домен, мониторинг, масштабирование web/worker</li>
-              <li>Аналитика MAU, конверсия, модерация, mobile-клиент</li>
+              <li>Сервисный слой: <code>can_view_post_body()</code>, Stripe, activate</li>
+              <li>Единственная точка активации подписки — повторный вызов безопасен</li>
+              <li>Все настройки через переменные окружения (.env)</li>
+              <li>Monorepo: JSON API + SPA — новые клиенты без смены backend</li>
             </ul>
           </div>
           <div class="glass card">
-            <strong>Уже заложено в v1</strong>
-            <ul style="margin-top: 0.5rem">
-              <li>Monorepo: JSON API + SPA — новые клиенты без смены backend</li>
-              <li>services/: activate_subscription(), can_view_post_body(), stripe</li>
-              <li>Idempotent activate — webhook подключится без второго алгоритма</li>
-              <li>config/constants + .env — сумма, JWT, Stripe без правок views</li>
-              <li>Docker + CI/CD + PWA; JWT permissions; 147 тестов, 89.78%</li>
-            </ul>
+            <strong>Принцип развития</strong>
+            <span style="display: block; margin-top: 0.5rem">
+              Новый функционал — новый сервис и тесты, без дублирования бизнес-логики.
+              Webhook Stripe и Celery подключатся к тому же <code>activate_subscription()</code>.
+            </span>
           </div>
         </div>
-        <p class="flow-line" style="margin-top: 0.85rem; font-size: 0.86rem">
-          Принцип: новая фича → сервис + тест; v2 не ломает v1 (DRY, один paywall, один activate).
-        </p>
       </div>
     </section>
 
     <!-- Слайд 8в: Теги OB2 (1/2) -->
-    <section class="slide" data-slide="8c" style="z-index: 16">
+    <section class="slide" data-slide="8c" style="z-index: 18">
       <div class="slide-inner slide-inner-fit">
         <p class="slide-tag">Слайд 8<span class="slide-part">в</span> · Теги OB2</p>
         <h2>Соответствие тегам (1/2)</h2>
@@ -1549,7 +2228,7 @@ Required test coverage of 85% reached.
     </section>
 
     <!-- Слайд 8г: Теги OB2 (2/2) -->
-    <section class="slide title-slide" data-slide="8d" style="z-index: 17">
+    <section class="slide title-slide" data-slide="8d" style="z-index: 19">
       <div class="slide-inner slide-inner-fit">
         <p class="slide-tag">Слайд 8<span class="slide-part">г</span> · Теги OB2</p>
         <h2>Соответствие тегам (2/2)</h2>
@@ -1561,7 +2240,11 @@ Required test coverage of 85% reached.
           <div class="tag-item"><strong>Templates</strong><span>templates/admin/, payments/success.html</span></div>
           <div class="tag-item"><strong>Сторонние API</strong><span>Stripe Checkout + activate_subscription()</span></div>
         </div>
-        <p class="lead" style="margin-top: 1.5rem; text-align: center; max-width: none">
+        <p class="flow-line" style="margin-top: 1rem; font-size: 0.88rem">
+          Все теги ОБ-2 закрыты: регистрация/вход, JWT, ORM, PostgreSQL, Docker,
+          Ruff, Git без секретов, внешний API Stripe.
+        </p>
+        <p class="lead" style="margin-top: 1rem; text-align: center; max-width: none">
           Спасибо! Готов ответить на вопросы.
         </p>
       </div>
@@ -1577,12 +2260,17 @@ Required test coverage of 85% reached.
       const total = slides.length;
       const progress = document.getElementById("progress");
       const counter = document.getElementById("counter");
+      const navHint = document.getElementById("navHint");
+      const navToggle = document.getElementById("navToggle");
+      let hintForced = false;
       const DURATION_FWD = 820;
       const DURATION_BACK = 680;
       const WHEEL_THRESHOLD = 55;
       const WHEEL_RESET_MS = 150;
       const WHEEL_COOLDOWN_MS = 950;
-
+      const FIT_LAYOUT_MQ = window.matchMedia("(max-width: 900px), (max-height: 760px)");
+      const MIN_SLIDE_SCALE = 0.2;
+      let fitResizeTimer = null;
       let current = 0;
       let animating = false;
       let pendingIndex = null;
@@ -1591,11 +2279,138 @@ Required test coverage of 85% reached.
       let wheelCooldown = false;
       let wheelCooldownTimer = null;
 
+      function getViewportHeight() {
+        return window.visualViewport
+          ? window.visualViewport.height
+          : window.innerHeight;
+      }
+
+      function getUiReserve(slide) {
+        var reserveTop = 14;
+        var reserveBottom = 10;
+        if (slide.classList.contains("title-slide")) {
+          return { top: reserveTop, bottom: reserveBottom + 24 };
+        }
+        if (window.matchMedia("(max-width: 900px)").matches) {
+          reserveTop = 8;
+          reserveBottom = window.matchMedia("(max-width: 720px)").matches ? 52 : 28;
+        }
+        return { top: reserveTop, bottom: reserveBottom };
+      }
+
+      function getAvailableHeight(slide) {
+        var style = window.getComputedStyle(slide);
+        var padTop = parseFloat(style.paddingTop) || 0;
+        var padBottom = parseFloat(style.paddingBottom) || 0;
+        var ui = getUiReserve(slide);
+        return getViewportHeight() - padTop - padBottom - ui.top - ui.bottom;
+      }
+
+      function resetSlideFit(slide) {
+        var inner = slide.querySelector(".slide-inner");
+        if (!inner) {
+          return;
+        }
+        inner.classList.remove("is-scaled");
+        inner.style.transform = "";
+        inner.style.width = "";
+        inner.style.maxWidth = "";
+        inner.style.marginBottom = "";
+      }
+
+      function fitSlide(slide) {
+        var inner = slide.querySelector(".slide-inner");
+        if (!inner) {
+          return;
+        }
+
+        resetSlideFit(slide);
+
+        var available = getAvailableHeight(slide);
+        if (available < 40) {
+          return;
+        }
+
+        var naturalH = inner.offsetHeight;
+        if (naturalH <= available) {
+          return;
+        }
+
+        var scale = (available / naturalH) * 0.96;
+        scale = Math.max(MIN_SLIDE_SCALE, Math.min(1, scale));
+
+        inner.classList.add("is-scaled");
+        inner.style.transformOrigin = "top center";
+        inner.style.transform = "scale(" + scale + ")";
+
+        var scaledH = inner.getBoundingClientRect().height;
+        if (scaledH > available + 1 && scale > MIN_SLIDE_SCALE) {
+          scale = scale * (available / scaledH) * 0.97;
+          scale = Math.max(MIN_SLIDE_SCALE, scale);
+          inner.style.transform = "scale(" + scale + ")";
+          scaledH = naturalH * scale;
+        } else {
+          scaledH = naturalH * scale;
+        }
+
+        inner.style.marginBottom = "-" + Math.max(0, naturalH - scaledH) + "px";
+      }
+
+      function fitAllSlides() {
+        slides.forEach(function (slide, i) {
+          if (i === current) {
+            fitSlide(slide);
+          } else {
+            resetSlideFit(slide);
+          }
+        });
+      }
+
+      function scheduleFitSlides() {
+        window.requestAnimationFrame(function () {
+          window.requestAnimationFrame(fitAllSlides);
+        });
+      }
+
+      function syncNav() {
+        if (!navHint || !navToggle) {
+          return;
+        }
+        if (current === 0) {
+          hintForced = false;
+          navHint.classList.remove("is-hidden");
+          navToggle.classList.remove("is-visible", "is-active");
+          navToggle.setAttribute("aria-pressed", "false");
+          return;
+        }
+        navToggle.classList.add("is-visible");
+        if (hintForced) {
+          navHint.classList.remove("is-hidden");
+          navToggle.classList.add("is-active");
+          navToggle.setAttribute("aria-pressed", "true");
+        } else {
+          navHint.classList.add("is-hidden");
+          navToggle.classList.remove("is-active");
+          navToggle.setAttribute("aria-pressed", "false");
+        }
+      }
+
       function updateUi() {
         const pct = ((current + 1) / total) * 100;
         progress.style.width = pct + "%";
         counter.textContent = (current + 1) + " / " + total;
         document.title = "Creavity OB2 · слайд " + (current + 1) + " / " + total;
+        syncNav();
+      }
+
+      if (navToggle) {
+        navToggle.addEventListener("click", function () {
+          if (current === 0) {
+            return;
+          }
+          hintForced = !hintForced;
+          syncNav();
+        });
       }
 
       function syncSlideStates(activeIndex) {
@@ -1628,6 +2443,7 @@ Required test coverage of 85% reached.
         syncSlideStates(index);
         current = index;
         updateUi();
+        scheduleFitSlides();
         animating = false;
         pendingIndex = null;
       }
@@ -1640,6 +2456,8 @@ Required test coverage of 85% reached.
         slide.classList.add("is-active");
         current = index;
         updateUi();
+        scheduleFitSlides();
+        window.setTimeout(scheduleFitSlides, DURATION_FWD);
         window.setTimeout(releaseAnimation, DURATION_FWD);
       }
 
@@ -1672,6 +2490,8 @@ Required test coverage of 85% reached.
 
         current = index;
         updateUi();
+        scheduleFitSlides();
+        window.setTimeout(scheduleFitSlides, DURATION_BACK);
       }
 
       function goTo(index) {
@@ -1826,8 +2646,39 @@ Required test coverage of 85% reached.
         }
       }, { passive: true });
 
+      window.addEventListener("resize", function () {
+        if (fitResizeTimer) {
+          window.clearTimeout(fitResizeTimer);
+        }
+        fitResizeTimer = window.setTimeout(scheduleFitSlides, 120);
+      });
+
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", scheduleFitSlides);
+        window.visualViewport.addEventListener("scroll", scheduleFitSlides);
+      }
+
+      FIT_LAYOUT_MQ.addEventListener("change", scheduleFitSlides);
+
+      window.addEventListener("orientationchange", function () {
+        window.setTimeout(scheduleFitSlides, 200);
+      });
+
+      document.querySelectorAll(".demo-shot img").forEach(function (img) {
+        if (img.complete) {
+          return;
+        }
+        img.addEventListener("load", scheduleFitSlides);
+      });
+
+      window.addEventListener("load", scheduleFitSlides);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(scheduleFitSlides);
+      }
+
       syncSlideStates(0);
       updateUi();
+      scheduleFitSlides();
     })();
   </script>
 </body>
