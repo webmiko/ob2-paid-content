@@ -4,6 +4,7 @@ import {
   absoluteUrl,
   buildPageTitle,
   DEFAULT_DESCRIPTION,
+  FAVICON_HREF,
   getSiteUrl,
   SITE_NAME,
 } from "../seo/site";
@@ -73,7 +74,7 @@ function applyPageMeta(options: PageMetaOptions): void {
     document.head.querySelector('meta[name="keywords"]')?.remove();
   }
   upsertLink("canonical", canonical);
-  upsertLink("icon", "/favicon.svg", { type: "image/svg+xml" });
+  upsertLink("icon", FAVICON_HREF, { type: "image/svg+xml" });
   upsertLink("alternate", getSiteUrl(), { hreflang: "ru" });
 
   upsertMeta("property", "og:site_name", SITE_NAME);

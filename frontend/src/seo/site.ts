@@ -5,6 +5,9 @@ export const SITE_TAGLINE = "Платформа авторов и платног
 export const DEFAULT_DESCRIPTION =
   "Creavity — публикации авторов: бесплатные материалы для всех, платный контент по одной подписке на платформу.";
 
+/** Версия в query — сброс агрессивного кэша favicon в браузере и PWA. */
+export const FAVICON_HREF = "/favicon.svg?v=3";
+
 const DEFAULT_SITE_URL = "http://localhost";
 
 /** Базовый URL сайта из VITE_SITE_URL (без завершающего слэша). */
