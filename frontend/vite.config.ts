@@ -114,7 +114,7 @@ export default defineConfig(({ mode }) => {
           display: "standalone",
           orientation: "portrait-primary",
           theme_color: "#2563eb",
-          background_color: "#ffffff",
+          background_color: "#eef1f8",
           categories: ["education", "entertainment"],
           icons: [
             {

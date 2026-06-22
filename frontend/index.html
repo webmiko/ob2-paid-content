@@ -53,6 +53,112 @@
         background: inherit;
         color: inherit;
       }
+
+      .app-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        background: linear-gradient(165deg, #eef1f8 0%, #e2e8f4 48%, #eef1f8 100%);
+        color: #0f172a;
+        transition: opacity 0.35s ease, visibility 0.35s ease;
+      }
+
+      html[data-theme="dark"] .app-splash {
+        background: linear-gradient(165deg, #0b1120 0%, #111827 50%, #0b1120 100%);
+        color: #e2e8f0;
+      }
+
+      .app-splash--hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .app-splash__card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.65rem;
+        max-width: 20rem;
+        text-align: center;
+      }
+
+      .app-splash__logo {
+        width: 4.5rem;
+        height: 4.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 12px 32px rgba(37, 99, 235, 0.28);
+      }
+
+      .app-splash__title {
+        margin: 0.35rem 0 0;
+        font-size: 1.65rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .app-splash__tagline {
+        margin: 0;
+        font-size: 0.92rem;
+        line-height: 1.45;
+        color: #475569;
+      }
+
+      html[data-theme="dark"] .app-splash__tagline {
+        color: #94a3b8;
+      }
+
+      .app-splash__welcome {
+        margin: 0.5rem 0 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #2563eb;
+      }
+
+      html[data-theme="dark"] .app-splash__welcome {
+        color: #93c5fd;
+      }
+
+      html[data-welcome-splash="0"] .app-splash__welcome {
+        display: none;
+      }
+
+      .app-splash__loading {
+        margin: 0.75rem 0 0;
+        font-size: 0.82rem;
+        color: #64748b;
+        animation: app-splash-pulse 1.4s ease-in-out infinite;
+      }
+
+      html[data-theme="dark"] .app-splash__loading {
+        color: #94a3b8;
+      }
+
+      @keyframes app-splash-pulse {
+        0%,
+        100% {
+          opacity: 0.45;
+        }
+
+        50% {
+          opacity: 1;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .app-splash {
+          transition: none;
+        }
+
+        .app-splash__loading {
+          animation: none;
+          opacity: 0.75;
+        }
+      }
     </style>
     <script>
       (function () {
@@ -86,10 +192,42 @@
         document.documentElement.dataset.theme = theme;
         document.documentElement.dataset.bsTheme = theme;
         document.documentElement.style.colorScheme = theme;
+
+        var welcomeKey = "creavity-welcome-seen";
+        document.documentElement.dataset.welcomeSplash =
+          localStorage.getItem(welcomeKey) ? "0" : "1";
       })();
     </script>
   </head>
   <body>
+    <div
+      id="app-splash"
+      class="app-splash"
+      role="status"
+      aria-live="polite"
+      aria-label="Загрузка Creavity"
+    >
+      <div class="app-splash__card">
+        <svg
+          class="app-splash__logo"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 64 64"
+          role="img"
+          aria-label="Creavity"
+        >
+          <rect width="64" height="64" rx="14" fill="#2563eb" />
+          <path
+            fill="#ffffff"
+            d="M46 22.5C40.5 15.5 31.8 12 23 12 11.6 12 3 20.6 3 32s8.6 20 20 20c8.8 0 17.5-3.5 23-10.5l-8-6.2
+               C33.8 45.2 28.2 47 23 47 13.8 47 7 40.2 7 32S13.8 17 23 17c5.2 0 10.8 1.8 15 5.3l8-6.2z"
+          />
+        </svg>
+        <p class="app-splash__title">Creavity</p>
+        <p class="app-splash__tagline">Платформа авторов и платного контента</p>
+        <p class="app-splash__welcome">Добро пожаловать</p>
+        <p class="app-splash__loading">Загрузка…</p>
+      </div>
+    </div>
     <div id="root"></div>
     <script>
       (function () {
